@@ -26,9 +26,9 @@
 
 typedef enum
 {
-  XTI_WakeUp           = 1,
-  XTI_Interrupt        = 2,
-  XTI_WakeUpInterrupt  = 3
+  XTI_WakeUp = 1,
+  XTI_Interrupt = 2,
+  XTI_WakeUpInterrupt = 3
 } XTIMode_TypeDef;
 
 typedef enum
@@ -37,26 +37,26 @@ typedef enum
   XTI_RisingEdge
 } XTITriggerEdge_TypeDef;
 
-#define XTI_Line0  0x0001
-#define XTI_Line1  (XTI_Line0<<1)
-#define XTI_Line2  (XTI_Line1<<1)
-#define XTI_Line3  (XTI_Line2<<1)
-#define XTI_Line4  (XTI_Line3<<1)
-#define XTI_Line5  (XTI_Line4<<1)
-#define XTI_Line6  (XTI_Line5<<1)
-#define XTI_Line7  (XTI_Line6<<1)
-#define XTI_Line8  (XTI_Line7<<1)
-#define XTI_Line9  (XTI_Line8<<1)
-#define XTI_Line10 (XTI_Line9<<1)
-#define XTI_Line11 (XTI_Line10<<1)
-#define XTI_Line12 (XTI_Line11<<1)
-#define XTI_Line13 (XTI_Line12<<1)
-#define XTI_Line14 (XTI_Line13<<1)
-#define XTI_Line15 (XTI_Line14<<1)
+#define XTI_Line0 0x0001
+#define XTI_Line1 (XTI_Line0 << 1)
+#define XTI_Line2 (XTI_Line1 << 1)
+#define XTI_Line3 (XTI_Line2 << 1)
+#define XTI_Line4 (XTI_Line3 << 1)
+#define XTI_Line5 (XTI_Line4 << 1)
+#define XTI_Line6 (XTI_Line5 << 1)
+#define XTI_Line7 (XTI_Line6 << 1)
+#define XTI_Line8 (XTI_Line7 << 1)
+#define XTI_Line9 (XTI_Line8 << 1)
+#define XTI_Line10 (XTI_Line9 << 1)
+#define XTI_Line11 (XTI_Line10 << 1)
+#define XTI_Line12 (XTI_Line11 << 1)
+#define XTI_Line13 (XTI_Line12 << 1)
+#define XTI_Line14 (XTI_Line13 << 1)
+#define XTI_Line15 (XTI_Line14 << 1)
 
 /*******************************************************************************
 * Function Name  : XTI_Init
-* Description    : This routine is used to initialize the XIT peripheral 
+* Description    : This routine is used to initialize the XIT peripheral
                    to reset state.
 * Input 1        : None
 * Output         : None
@@ -72,9 +72,12 @@ void XTI_Init(void);
 * Output         : None
 * Return         : None
 *******************************************************************************/
-inline void XTI_ModeConfig(XTIMode_TypeDef Mode,FunctionalState NewState)
+inline void XTI_ModeConfig(XTIMode_TypeDef Mode, FunctionalState NewState)
 {
-  if (NewState==ENABLE) XTI->CTRL|=Mode; else XTI->CTRL&=~Mode;
+  if (NewState == ENABLE)
+    XTI->CTRL |= Mode;
+  else
+    XTI->CTRL &= ~Mode;
 }
 
 /*******************************************************************************
@@ -106,7 +109,7 @@ void XTI_LineConfig(u16 Lines, FunctionalState NewState);
 *******************************************************************************/
 inline u16 XTI_InterruptLineValue(void)
 {
-  return XTI->PRL | ((u16)XTI->PRH<<8);
+  return XTI->PRL | ((u16)XTI->PRH << 8);
 }
 
 /*******************************************************************************
@@ -119,7 +122,7 @@ inline u16 XTI_InterruptLineValue(void)
 inline void XTI_PendingBitClear(u16 Lines)
 {
   XTI->PRL &= ~Lines;
-  XTI->PRH &= ~((Lines>>8)&0x00FF);
+  XTI->PRH &= ~((Lines >> 8) & 0x00FF);
 }
 
 /*******************************************************************************

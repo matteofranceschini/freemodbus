@@ -2,7 +2,7 @@
  * FreeModbus Libary: Atmel AT91SAM3S Demo Application
  * Copyright (C) 2010 Christian Walter <cwalter@embedded-solutions.at>
  *
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -13,7 +13,7 @@
  *   documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *   derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * IF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -40,51 +40,46 @@
 /* ----------------------- Variables ----------------------------------------*/
 static xQueueHandle xQueueHdl;
 
-
 /* ----------------------- Start implementation -----------------------------*/
-BOOL
-xMBPortEventInit( void )
+BOOL xMBPortEventInit(void)
 {
-    BOOL            bStatus = FALSE;
-    if( 0 != ( xQueueHdl = xQueueCreate( 1, sizeof( eMBEventType ) ) ) )
+    BOOL bStatus = FALSE;
+    if (0 != (xQueueHdl = xQueueCreate(1, sizeof(eMBEventType))))
     {
         bStatus = TRUE;
     }
     return bStatus;
 }
 
-void
-vMBPortEventClose( void )
+void vMBPortEventClose(void)
 {
-    if( 0 != xQueueHdl )
+    if (0 != xQueueHdl)
     {
-        vQueueDelete( xQueueHdl );
+        vQueueDelete(xQueueHdl);
         xQueueHdl = 0;
     }
 }
 
-BOOL
-xMBPortEventPost( eMBEventType eEvent )
+BOOL xMBPortEventPost(eMBEventType eEvent)
 {
-    BOOL            bStatus = TRUE;
-    if( bMBPortIsWithinException(  ) )
+    BOOL bStatus = TRUE;
+    if (bMBPortIsWithinException())
     {
-        ( void )xQueueSendFromISR( xQueueHdl, ( const void * )&eEvent, pdFALSE );
+        (void)xQueueSendFromISR(xQueueHdl, (const void *)&eEvent, pdFALSE);
     }
     else
     {
-        ( void )xQueueSend( xQueueHdl, ( const void * )&eEvent, pdFALSE );
+        (void)xQueueSend(xQueueHdl, (const void *)&eEvent, pdFALSE);
     }
 
     return bStatus;
 }
 
-BOOL
-xMBPortEventGet( eMBEventType * peEvent )
+BOOL xMBPortEventGet(eMBEventType *peEvent)
 {
-    BOOL            xEventHappened = FALSE;
+    BOOL xEventHappened = FALSE;
 
-    if( pdTRUE == xQueueReceive( xQueueHdl, peEvent, portTICK_RATE_MS * 50 ) )
+    if (pdTRUE == xQueueReceive(xQueueHdl, peEvent, portTICK_RATE_MS * 50))
     {
         xEventHappened = TRUE;
     }

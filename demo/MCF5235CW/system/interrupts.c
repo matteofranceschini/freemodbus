@@ -31,16 +31,15 @@
 
 #include "m523xbcc.h"
 
-void
-exception_handler( void *framep )
+void exception_handler(void *framep)
 {
-    ( void )framep;
+    (void)framep;
 }
 
 __interrupt__ void
-irq_handler( void )
+irq_handler(void)
 {
-    /* 
+    /*
      * This is the catch all interrupt handler for all user defined
      * interrupts.  To create specific handlers, create a new interrupt
      * handler and change vectors.s to point to the new handler.

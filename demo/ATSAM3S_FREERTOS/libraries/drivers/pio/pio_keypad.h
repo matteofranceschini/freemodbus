@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -40,45 +40,57 @@
 //         Global Definitions
 //------------------------------------------------------------------------------
 
-
-
-
 //------------------------------------------------------------------------------
 //         Global Macros
 //------------------------------------------------------------------------------
 //enable keypad press interrupt
-#define PIO_KeyPadEnableKPIt(pPIO)	((pPIO)->KIER = 1<<0)
+#define PIO_KeyPadEnableKPIt(pPIO) ((pPIO)->KIER = 1 << 0)
 
 //enable keypad release interrupt
-#define PIO_KeyPadEnableKRIt(pPIO)	((pPIO)->KIER = 1<<1)
+#define PIO_KeyPadEnableKRIt(pPIO) ((pPIO)->KIER = 1 << 1)
 
 //disable keypad press interrupt
-#define PIO_KeyPadDisableKPIt(pPIO)	((pPIO)->KIDR = 1<<0)
+#define PIO_KeyPadDisableKPIt(pPIO) ((pPIO)->KIDR = 1 << 0)
 
 //disable keypad release interrupt
-#define PIO_KeyPadDisableKRIt(pPIO)	((pPIO)->KIDR = 1<<1)
+#define PIO_KeyPadDisableKRIt(pPIO) ((pPIO)->KIDR = 1 << 1)
 
 //enable keypad controller interrupt
-#define PIO_KeyPadEnableIt(pPIO, mode)	{switch(mode):\
-						case 1:PIO_KeyPadEnableKPIt(pPIO);break;\
-						case 2:PIO_KeyPadEnableKRIt(pPIO);break;\
-						case 3:PIO_KeyPadEnableKPIt(pPIO);\
-						       PIO_KeyPadEnableKRIt(pPIO);break;\
-						default:break;\
-					}
+#define PIO_KeyPadEnableIt(pPIO, mode)                     \
+	{                                                      \
+		switch (mode):\
+						case 1:PIO_KeyPadEnableKPIt(pPIO); \
+		break;                                             \
+	case 2:                                                \
+		PIO_KeyPadEnableKRIt(pPIO);                        \
+		break;                                             \
+	case 3:                                                \
+		PIO_KeyPadEnableKPIt(pPIO);                        \
+		PIO_KeyPadEnableKRIt(pPIO);                        \
+		break;                                             \
+	default:                                               \
+		break;                                             \
+	}
 
 //disable keypad controller interrupt
-#define PIO_KeyPadDisableIt(pPIO, mode) {switch(mode):\
-						case 1:PIO_KeyPadDisableKPIt(pPIO);break;\
-						case 2:PIO_KeyPadDisableKRIt(pPIO);break;\
-						case 3:PIO_KeyPadDisableKPIt(pPIO);\
-						       PIO_KeyPadDisableKRIt(pPIO);break;\
-						default:break;\
-					}
+#define PIO_KeyPadDisableIt(pPIO, mode)                     \
+	{                                                       \
+		switch (mode):\
+						case 1:PIO_KeyPadDisableKPIt(pPIO); \
+		break;                                              \
+	case 2:                                                 \
+		PIO_KeyPadDisableKRIt(pPIO);                        \
+		break;                                              \
+	case 3:                                                 \
+		PIO_KeyPadDisableKPIt(pPIO);                        \
+		PIO_KeyPadDisableKRIt(pPIO);                        \
+		break;                                              \
+	default:                                                \
+		break;                                              \
+	}
 
 //get keypad controller interrupt mask
-#define PIO_KeyPadGetItMask(pPIO)	((pPIO)->PIO_KIMR)
-
+#define PIO_KeyPadGetItMask(pPIO) ((pPIO)->PIO_KIMR)
 
 //------------------------------------------------------------------------------
 /// Calculates the size of an array of Pin instances. The array must be defined
@@ -86,55 +98,54 @@
 /// \param pPins  Local array of Pin instances.
 /// \return Number of elements in array.
 //------------------------------------------------------------------------------
-#define PIO_LISTSIZE(pPins)    (sizeof(pPins) / sizeof(Pin))
+#define PIO_LISTSIZE(pPins) (sizeof(pPins) / sizeof(Pin))
 
 //------------------------------------------------------------------------------
 //         Global Types
 //------------------------------------------------------------------------------
-typedef enum {
+typedef enum
+{
 	FALSE,
 	TRUE
 } bool;
 
-typedef struct _KeyPadConfig {
-	bool enable;//keypad controller enable or disable
-	unsigned char col:3;//config column size
-	unsigned char row:3;//config row size
-        unsigned int debouncing;//config debouncing
+typedef struct _KeyPadConfig
+{
+	bool enable;			 //keypad controller enable or disable
+	unsigned char col : 3;   //config column size
+	unsigned char row : 3;   //config row size
+	unsigned int debouncing; //config debouncing
 } KeyPadConfig;
 
-
-typedef struct _KeyColRow {
-      unsigned char row:3;
-      unsigned char col:3;
+typedef struct _KeyColRow
+{
+	unsigned char row : 3;
+	unsigned char col : 3;
 } KeyColRow;
 
- 
-typedef struct _KeyDownEvent {
-      bool press;//at least 1 pressed key detected, or 0
-      unsigned char keyPressNum;//simultaneously pressed key number
-      KeyColRow preKeyMatrix[4];//pressed key matrix
+typedef struct _KeyDownEvent
+{
+	bool press;				   //at least 1 pressed key detected, or 0
+	unsigned char keyPressNum; //simultaneously pressed key number
+	KeyColRow preKeyMatrix[4]; //pressed key matrix
 } KeyDownEvent;
 
- 
-
-typedef struct _KeyUpEvent {
-      bool release;//at least 1 released key  detected, or 0
-      unsigned char keyRelNum;//simultaneously released key number
-      KeyColRow relKeyMatrix[4];//released key matrix
+typedef struct _KeyUpEvent
+{
+	bool release;			   //at least 1 released key  detected, or 0
+	unsigned char keyRelNum;   //simultaneously released key number
+	KeyColRow relKeyMatrix[4]; //released key matrix
 } KeyUpEvent;
 
-      
-
-typedef struct _KeyEvent {
-      KeyDownEvent kdEvent;
-      KeyUpEvent   kuEvent;
+typedef struct _KeyEvent
+{
+	KeyDownEvent kdEvent;
+	KeyUpEvent kuEvent;
 } KeyEvent;
 
 //------------------------------------------------------------------------------
-//         Global Access Macros 
+//         Global Access Macros
 //------------------------------------------------------------------------------
-
 
 //------------------------------------------------------------------------------
 //         Global Functions
@@ -148,6 +159,4 @@ void PIO_KeypadEnableIt(AT91S_PIO *pio, unsigned int mode);
 
 void PIO_KeypadDisableIt(AT91S_PIO *pio, unsigned int mode);
 
-
 #endif //#ifndef PIO_KEYPAD_H
-

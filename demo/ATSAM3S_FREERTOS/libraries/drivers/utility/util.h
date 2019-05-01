@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -34,9 +34,9 @@
 //         Global Functions
 //------------------------------------------------------------------------------
 
-extern void          UTIL_DbguDumpFrame(unsigned char *pFrame, unsigned int size);
+extern void UTIL_DbguDumpFrame(unsigned char *pFrame, unsigned int size);
 
-extern void          UTIL_DbguDumpMemory(unsigned char *pBuffer, unsigned int size, unsigned int address);
+extern void UTIL_DbguDumpMemory(unsigned char *pBuffer, unsigned int size, unsigned int address);
 
 extern unsigned char UTIL_DbguGetInteger(unsigned int *pValue);
 
@@ -45,4 +45,3 @@ extern unsigned char UTIL_DbguGetIntegerMinMax(unsigned int *pValue, unsigned in
 extern unsigned char UTIL_DbguGetHexa32(unsigned int *pValue);
 
 #endif //#ifndef UTIL_H
-

@@ -1,4 +1,4 @@
- /*
+/*
   * FreeModbus Libary: MCF5235 Port
   * Copyright (C) 2006 Christian Walter <wolti@sil.at>
   * Parts of crt0.S Copyright (c) 1995, 1996, 1998 Cygnus Support
@@ -30,12 +30,14 @@
 
 /* ----------------------- Defines ------------------------------------------*/
 #undef INLINE
-#define INLINE                  inline
+#define INLINE inline
 
-#define assert( x )             LWIP_ASSERT( #x, x );
+#define assert(x) LWIP_ASSERT(#x, x);
 
-#define PR_BEGIN_EXTERN_C       extern "C" {
-#define PR_END_EXTERN_C         }
+#define PR_BEGIN_EXTERN_C \
+  extern "C"              \
+  {
+#define PR_END_EXTERN_C }
 /*
 #ifndef TRUE
 #define TRUE                    1
@@ -48,34 +50,34 @@
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif
-#define MB_TCP_DEBUG            1       /* Debug output in TCP module. */
+#define MB_TCP_DEBUG 1 /* Debug output in TCP module. */
 /* ----------------------- Type definitions ---------------------------------*/
-typedef char    BOOL;
+typedef char BOOL;
 
 typedef unsigned char UCHAR;
-typedef char    CHAR;
+typedef char CHAR;
 
 typedef unsigned short USHORT;
-typedef short   SHORT;
+typedef short SHORT;
 
 typedef unsigned long ULONG;
-typedef long    LONG;
+typedef long LONG;
 
 #ifdef MB_TCP_DEBUG
 typedef enum
 {
-    MB_LOG_DEBUG,
-    MB_LOG_INFO,
-    MB_LOG_WARN,
-    MB_LOG_ERROR
+  MB_LOG_DEBUG,
+  MB_LOG_INFO,
+  MB_LOG_WARN,
+  MB_LOG_ERROR
 } eMBPortLogLevel;
 #endif
 
 /* ----------------------- Function prototypes ------------------------------*/
 #ifdef MB_TCP_DEBUG
-void            vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule,
-                            const CHAR * szFmt, ... );
-void            prvvMBTCPLogFrame( UCHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen );
+void vMBPortLog(eMBPortLogLevel eLevel, const CHAR *szModule,
+                const CHAR *szFmt, ...);
+void prvvMBTCPLogFrame(UCHAR *pucMsg, UCHAR *pucFrame, USHORT usFrameLen);
 #endif
 
 #ifdef __cplusplus

@@ -52,13 +52,16 @@
  *----------------------------------------------------------------------------*/
 
 /** Console baudrate always using 115200. */
-#define CONSOLE_BAUDRATE    115200
+#define CONSOLE_BAUDRATE 115200
 /** Usart Hw interface used by the console (UART0). */
-#define CONSOLE_USART       UART0
+#define CONSOLE_USART UART0
 /** Usart Hw ID used by the console (UART0). */
-#define CONSOLE_ID          ID_UART0
+#define CONSOLE_ID ID_UART0
 /** Pins description corresponding to Rxd,Txd, (UART pins) */
-#define CONSOLE_PINS        {PINS_UART}
+#define CONSOLE_PINS \
+    {                \
+        PINS_UART    \
+    }
 
 /*----------------------------------------------------------------------------
  *        Variables
@@ -73,8 +76,8 @@ static uint8_t isConsolInitialized = 0;
  * \param baudrate  Baudrate at which the USART should operate (in Hz).
  * \param masterClock  Frequency of the system master clock (in Hz).
  */
-static void UART_Configure( uint32_t baudrate,
-                            uint32_t masterClock)
+static void UART_Configure(uint32_t baudrate,
+                           uint32_t masterClock)
 {
     const Pin pPins[] = CONSOLE_PINS;
     Uart *pUart = CONSOLE_USART;
@@ -86,11 +89,10 @@ static void UART_Configure( uint32_t baudrate,
     PMC->PMC_PCER0 = 1 << CONSOLE_ID;
 
     /* Reset and disable receiver & transmitter */
-    pUart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX
-                   | UART_CR_RXDIS | UART_CR_TXDIS;
+    pUart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
 
     /* Configure mode */
-    pUart->UART_MR =  (0x4 <<  9); /* TODO: Change with new symbols: AT91C_UART_CHRL_8_BITS | AT91C_UART_PAR_NONE */
+    pUart->UART_MR = (0x4 << 9); /* TODO: Change with new symbols: AT91C_UART_CHRL_8_BITS | AT91C_UART_PAR_NONE */
 
     /* Configure baudrate */
     /* Asynchronous, no oversampling */
@@ -119,11 +121,11 @@ void UART_PutChar(uint8_t c)
         UART_Configure(CONSOLE_BAUDRATE, BOARD_MCK);
 
     /* Wait for the transmitter to be ready */
-    while ((pUart->UART_SR & UART_SR_TXEMPTY) == 0);
+    while ((pUart->UART_SR & UART_SR_TXEMPTY) == 0)
+        ;
 
     /* Send character */
     pUart->UART_THR = c;
-
 }
 
 /**
@@ -139,7 +141,8 @@ uint8_t UART_GetChar(void)
     if (!isConsolInitialized)
         UART_Configure(CONSOLE_BAUDRATE, BOARD_MCK);
 
-    while((pUart->UART_SR & UART_SR_RXRDY) == 0);
+    while ((pUart->UART_SR & UART_SR_RXRDY) == 0)
+        ;
     return pUart->UART_RHR;
 }
 
@@ -172,13 +175,15 @@ bool UART_IsRxReady(void)
  * \return The character written if successful, or -1 if the output stream is
  * not stdout or stderr.
  */
-int fputc ( int c, FILE * pStream )
+int fputc(int c, FILE *pStream)
 {
-    if ((pStream == stdout) || (pStream == stderr)) {
+    if ((pStream == stdout) || (pStream == stderr))
+    {
         UART_PutChar(c);
         return c;
     }
-    else {
+    else
+    {
 
         return EOF;
     }
@@ -198,9 +203,11 @@ signed int fputs(const char *pStr, FILE *pStream)
 {
     signed int num = 0;
 
-    while (*pStr != 0) {
+    while (*pStr != 0)
+    {
 
-        if (fputc(*pStr, pStream) == -1) {
+        if (fputc(*pStr, pStream) == -1)
+        {
 
             return -1;
         }
@@ -238,15 +245,17 @@ static int _UngetChar = EOF;
  * \return The character written if successful, or -1 if the output stream is
  * not stdout or stderr.
  */
-int fgetc (FILE * pStream )
+int fgetc(FILE *pStream)
 {
     int c;
 
-    if (pStream == stdin) {
+    if (pStream == stdin)
+    {
         c = UART_GetChar();
         return c;
     }
-    else {
+    else
+    {
 
         return EOF;
     }

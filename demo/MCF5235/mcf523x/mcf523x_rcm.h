@@ -16,7 +16,7 @@
  *                                                                                  *
  *                                                                                  *
  * HISTORY                                                                          *
- *                                                                                  *	
+ *                                                                                  *
  ************************************************************************************/
 
 #ifndef __MCF523X_RCM_H__
@@ -29,20 +29,20 @@
 *********************************************************************/
 
 /* Register read/write macros */
-#define MCF_RCM_RCR    (*(vuint8 *)(void*)(&__IPSBAR[0x110000]))
-#define MCF_RCM_RSR    (*(vuint8 *)(void*)(&__IPSBAR[0x110001]))
+#define MCF_RCM_RCR (*(vuint8 *)(void *)(&__IPSBAR[0x110000]))
+#define MCF_RCM_RSR (*(vuint8 *)(void *)(&__IPSBAR[0x110001]))
 
 /* Bit definitions and macros for MCF_RCM_RCR */
-#define MCF_RCM_RCR_FRCRSTOUT    (0x40)
-#define MCF_RCM_RCR_SOFTRST      (0x80)
+#define MCF_RCM_RCR_FRCRSTOUT (0x40)
+#define MCF_RCM_RCR_SOFTRST (0x80)
 
 /* Bit definitions and macros for MCF_RCM_RSR */
-#define MCF_RCM_RSR_LOL          (0x01)
-#define MCF_RCM_RSR_LOC          (0x02)
-#define MCF_RCM_RSR_EXT          (0x04)
-#define MCF_RCM_RSR_POR          (0x08)
-#define MCF_RCM_RSR_WDR          (0x10)
-#define MCF_RCM_RSR_SOFT         (0x20)
+#define MCF_RCM_RSR_LOL (0x01)
+#define MCF_RCM_RSR_LOC (0x02)
+#define MCF_RCM_RSR_EXT (0x04)
+#define MCF_RCM_RSR_POR (0x08)
+#define MCF_RCM_RSR_WDR (0x10)
+#define MCF_RCM_RSR_SOFT (0x20)
 
 /********************************************************************/
 

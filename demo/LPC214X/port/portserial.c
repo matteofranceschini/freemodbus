@@ -28,15 +28,15 @@
 
 /* ----------------------- static functions ---------------------------------*/
 static void
-sio_irq( void )
+sio_irq(void)
     __irq;
-     static void     prvvUARTTxReadyISR( void );
-     static void     prvvUARTRxISR( void );
+static void prvvUARTTxReadyISR(void);
+static void prvvUARTRxISR(void);
 
 /* ----------------------- Start implementation -----------------------------*/
-     void            vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
+void vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
 {
-    if( xRxEnable )
+    if (xRxEnable)
     {
         U1IER |= 0x01;
     }
@@ -44,10 +44,10 @@ sio_irq( void )
     {
         U1IER &= ~0x01;
     }
-    if( xTxEnable )
+    if (xTxEnable)
     {
         U1IER |= 0x02;
-        prvvUARTTxReadyISR(  );
+        prvvUARTTxReadyISR();
     }
     else
     {
@@ -55,24 +55,22 @@ sio_irq( void )
     }
 }
 
-void
-vMBPortClose( void )
+void vMBPortClose(void)
 {
 }
 
-BOOL
-xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
+BOOL xMBPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity)
 {
-    BOOL            bInitialized = TRUE;
-    USHORT          cfg = 0;
-    ULONG           reload = ( ( PCLK / ulBaudRate ) / 16UL );
-    volatile char   dummy;
+    BOOL bInitialized = TRUE;
+    USHORT cfg = 0;
+    ULONG reload = ((PCLK / ulBaudRate) / 16UL);
+    volatile char dummy;
 
-    ( void )ucPORT;
+    (void)ucPORT;
     /* Configure UART1 Pins */
-    PINSEL0 = 0x00050000;       /* Enable RxD1 and TxD1 */
+    PINSEL0 = 0x00050000; /* Enable RxD1 and TxD1 */
 
-    switch ( ucDataBits )
+    switch (ucDataBits)
     {
     case 5:
         break;
@@ -93,7 +91,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         bInitialized = FALSE;
     }
 
-    switch ( eParity )
+    switch (eParity)
     {
     case MB_PAR_NONE:
         break;
@@ -107,44 +105,42 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         break;
     }
 
-    if( bInitialized )
+    if (bInitialized)
     {
-        U1LCR = cfg;            /* Configure Data Bits and Parity */
-        U1IER = 0;              /* Disable UART1 Interrupts */
+        U1LCR = cfg; /* Configure Data Bits and Parity */
+        U1IER = 0;   /* Disable UART1 Interrupts */
 
-        U1LCR |= 0x80;          /* Set DLAB */
-        U1DLL = reload;         /* Set Baud     */
-        U1DLM = reload >> 8;    /* Set Baud */
-        U1LCR &= ~0x80;         /* Clear DLAB */
+        U1LCR |= 0x80;       /* Set DLAB */
+        U1DLL = reload;      /* Set Baud     */
+        U1DLM = reload >> 8; /* Set Baud */
+        U1LCR &= ~0x80;      /* Clear DLAB */
 
         /* Configure UART1 Interrupt */
-        VICVectAddr0 = ( unsigned long )sio_irq;
+        VICVectAddr0 = (unsigned long)sio_irq;
         VICVectCntl0 = 0x20 | 7;
-        VICIntEnable = 1 << 7;  /* Enable UART1 Interrupt */
+        VICIntEnable = 1 << 7; /* Enable UART1 Interrupt */
 
-        dummy = U1IIR;          /* Required to Get Interrupts Started */
+        dummy = U1IIR; /* Required to Get Interrupts Started */
     }
 
     return bInitialized;
 }
 
-BOOL
-xMBPortSerialPutByte( CHAR ucByte )
+BOOL xMBPortSerialPutByte(CHAR ucByte)
 {
     U1THR = ucByte;
 
     /* Wait till U0THR and U0TSR are both empty */
-    while( !( U1LSR & 0x20 ) )
+    while (!(U1LSR & 0x20))
     {
     }
 
     return TRUE;
 }
 
-BOOL
-xMBPortSerialGetByte( CHAR * pucByte )
+BOOL xMBPortSerialGetByte(CHAR *pucByte)
 {
-    while( !( U1LSR & 0x01 ) )
+    while (!(U1LSR & 0x01))
     {
     }
 
@@ -154,33 +150,31 @@ xMBPortSerialGetByte( CHAR * pucByte )
     return TRUE;
 }
 
-
-void
-sio_irq( void )
+void sio_irq(void)
     __irq
 {
-    volatile char   dummy;
-    volatile char   IIR;
+    volatile char dummy;
+    volatile char IIR;
 
-    while( ( ( IIR = U1IIR ) & 0x01 ) == 0 )
+    while (((IIR = U1IIR) & 0x01) == 0)
     {
-        switch ( IIR & 0x0E )
+        switch (IIR & 0x0E)
         {
-        case 0x06:             /* Receive Line Status */
-            dummy = U1LSR;      /* Just clear the interrupt source */
+        case 0x06:         /* Receive Line Status */
+            dummy = U1LSR; /* Just clear the interrupt source */
             break;
 
-        case 0x04:             /* Receive Data Available */
-        case 0x0C:             /* Character Time-Out */
-            prvvUARTRxISR(  );
+        case 0x04: /* Receive Data Available */
+        case 0x0C: /* Character Time-Out */
+            prvvUARTRxISR();
             break;
 
-        case 0x02:             /* THRE Interrupt */
-            prvvUARTTxReadyISR(  );
+        case 0x02: /* THRE Interrupt */
+            prvvUARTTxReadyISR();
             break;
 
-        case 0x00:             /* Modem Interrupt */
-            dummy = U1MSR;      /* Just clear the interrupt source */
+        case 0x00:         /* Modem Interrupt */
+            dummy = U1MSR; /* Just clear the interrupt source */
             break;
 
         default:
@@ -188,31 +182,30 @@ sio_irq( void )
         }
     }
 
-    VICVectAddr = 0xFF;         /* Acknowledge Interrupt */
+    VICVectAddr = 0xFF; /* Acknowledge Interrupt */
 }
 
-
-/* 
+/*
  * Create an interrupt handler for the transmit buffer empty interrupt
  * (or an equivalent) for your target processor. This function should then
  * call pxMBFrameCBTransmitterEmpty( ) which tells the protocol stack that
- * a new character can be sent. The protocol stack will then call 
+ * a new character can be sent. The protocol stack will then call
  * xMBPortSerialPutByte( ) to send the character.
  */
 static void
-prvvUARTTxReadyISR( void )
+prvvUARTTxReadyISR(void)
 {
-    pxMBFrameCBTransmitterEmpty(  );
+    pxMBFrameCBTransmitterEmpty();
 }
 
-/* 
+/*
  * Create an interrupt handler for the receive interrupt for your target
  * processor. This function should then call pxMBFrameCBByteReceived( ). The
  * protocol stack will then call xMBPortSerialGetByte( ) to retrieve the
  * character.
  */
 static void
-prvvUARTRxISR( void )
+prvvUARTRxISR(void)
 {
-    pxMBFrameCBByteReceived(  );
+    pxMBFrameCBByteReceived();
 }

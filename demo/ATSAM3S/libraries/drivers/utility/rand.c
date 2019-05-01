@@ -55,6 +55,5 @@ void srand(unsigned int seed)
 int rand(void)
 {
     next = next * 1103515245 + 12345;
-    return (unsigned int)(next/131072) % 65536;
+    return (unsigned int)(next / 131072) % 65536;
 }
-

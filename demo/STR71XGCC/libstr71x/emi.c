@@ -21,5 +21,4 @@
 
 #include "emi.h"
 
-
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

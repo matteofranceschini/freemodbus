@@ -44,25 +44,25 @@
 #include "m523xbcc.h"
 
 /* ------------------------ Defines --------------------------------------- */
-#define portVECTOR_TABLE                __VECTOR_RAM
-#define portVECTOR_SYSCALL              ( 32 + portTRAP_YIELD )
-#define portVECTOR_TIMER                ( 64 + 36 )
+#define portVECTOR_TABLE __VECTOR_RAM
+#define portVECTOR_SYSCALL (32 + portTRAP_YIELD)
+#define portVECTOR_TIMER (64 + 36)
 
-#define MCF_PIT_PRESCALER               512UL
-#define MCF_PIT_TIMER_TICKS             ( FSYS_2 / MCF_PIT_PRESCALER )
-#define MCF_PIT_MODULUS_REGISTER(freq)  ( MCF_PIT_TIMER_TICKS / ( freq ) - 1UL)
+#define MCF_PIT_PRESCALER 512UL
+#define MCF_PIT_TIMER_TICKS (FSYS_2 / MCF_PIT_PRESCALER)
+#define MCF_PIT_MODULUS_REGISTER(freq) (MCF_PIT_TIMER_TICKS / (freq)-1UL)
 
-#define portNO_CRITICAL_NESTING         ( ( unsigned portLONG ) 0 )
-#define portINITIAL_CRITICAL_NESTING    ( ( unsigned portLONG ) 10 )
+#define portNO_CRITICAL_NESTING ((unsigned portLONG)0)
+#define portINITIAL_CRITICAL_NESTING ((unsigned portLONG)10)
 
-#define TIMER_RESET_ASM_IMPL  \
-    lea         __IPSBAR,a0;  \
-    adda.l      #0x150000,a0; \
-    move.w      (a0),d1;      \
-    moveq       #0,d0;        \
-    move.w      d1,d0;        \
-    ori.l       #0x4,d0;      \
-    move.w      d0,(a0)
+#define TIMER_RESET_ASM_IMPL \
+    lea __IPSBAR, a0;        \
+    adda.l #0x150000, a0;    \
+    move.w(a0), d1;          \
+    moveq #0, d0;            \
+    move.w d1, d0;           \
+    ori.l #0x4, d0;          \
+    move.w d0, (a0)
 
 /* ------------------------ Global variables ------------------------------ */
 extern volatile void *pxCurrentTCB;
@@ -75,25 +75,25 @@ volatile unsigned portLONG ulCriticalNesting = portINITIAL_CRITICAL_NESTING;
 /* ------------------------ Start implementation -------------------------- */
 
 portSTACK_TYPE *
-pxPortInitialiseStack( portSTACK_TYPE * pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters )
+pxPortInitialiseStack(portSTACK_TYPE *pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters)
 {
     /* Place the parameter on the stack in the expected location. */
-    *pxTopOfStack = ( portSTACK_TYPE ) pvParameters;
+    *pxTopOfStack = (portSTACK_TYPE)pvParameters;
     pxTopOfStack--;
 
     /* Place dummy return address on stack. Tasks should never terminate so
      * we can set this to anything. */
-    *pxTopOfStack = ( portSTACK_TYPE ) 0;
+    *pxTopOfStack = (portSTACK_TYPE)0;
     pxTopOfStack--;
 
     /* Create a Motorola Coldfire exception stack frame. First comes the return
      * address. */
-    *pxTopOfStack = ( portSTACK_TYPE ) pxCode;
+    *pxTopOfStack = (portSTACK_TYPE)pxCode;
     pxTopOfStack--;
 
     /* Format, fault-status, vector number for exception stack frame. Task
      * run in supervisor mode. */
-    *pxTopOfStack = 0x40002000UL | ( portVECTOR_SYSCALL + 32 ) << 18;
+    *pxTopOfStack = 0x40002000UL | (portVECTOR_SYSCALL + 32) << 18;
     pxTopOfStack--;
 
     /* Set the initial critical section nesting counter to zero. This value
@@ -101,35 +101,35 @@ pxPortInitialiseStack( portSTACK_TYPE * pxTopOfStack, pdTASK_CODE pxCode, void *
     *pxTopOfStack = 0;
     *pxTopOfStack--;
 
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xA6;    /* A6 / FP */
+    *pxTopOfStack = (portSTACK_TYPE)0xA6; /* A6 / FP */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xA5;    /* A5 */
+    *pxTopOfStack = (portSTACK_TYPE)0xA5; /* A5 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xA4;    /* A4 */
+    *pxTopOfStack = (portSTACK_TYPE)0xA4; /* A4 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xA3;    /* A3 */
+    *pxTopOfStack = (portSTACK_TYPE)0xA3; /* A3 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xA2;    /* A2 */
+    *pxTopOfStack = (portSTACK_TYPE)0xA2; /* A2 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xA1;    /* A1 */
+    *pxTopOfStack = (portSTACK_TYPE)0xA1; /* A1 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xA0;    /* A0 */
+    *pxTopOfStack = (portSTACK_TYPE)0xA0; /* A0 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xD7;    /* D7 */
+    *pxTopOfStack = (portSTACK_TYPE)0xD7; /* D7 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xD6;    /* D6 */
+    *pxTopOfStack = (portSTACK_TYPE)0xD6; /* D6 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xD5;    /* D5 */
+    *pxTopOfStack = (portSTACK_TYPE)0xD5; /* D5 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xD4;    /* D4 */
+    *pxTopOfStack = (portSTACK_TYPE)0xD4; /* D4 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xD3;    /* D3 */
+    *pxTopOfStack = (portSTACK_TYPE)0xD3; /* D3 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xD2;    /* D2 */
+    *pxTopOfStack = (portSTACK_TYPE)0xD2; /* D2 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xD1;    /* D1 */
+    *pxTopOfStack = (portSTACK_TYPE)0xD1; /* D1 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xD0;    /* D0 */
+    *pxTopOfStack = (portSTACK_TYPE)0xD0; /* D0 */
 
     return pxTopOfStack;
 }
@@ -138,15 +138,15 @@ pxPortInitialiseStack( portSTACK_TYPE * pxTopOfStack, pdTASK_CODE pxCode, void *
  * Called by portYIELD() or taskYIELD() to manually force a context switch.
  */
 asm void
-prvPortYield( void )
+prvPortYield(void)
 {
     move.w #0x2700, sr;
     /* Perform the context switch.  First save the context of the current task. */
-    portSAVE_CONTEXT_IMPL(  );
+    portSAVE_CONTEXT_IMPL();
     /* Find the highest priority task that is ready to run. */
     jsr vTaskSwitchContext;
     /* Restore the context of the new task. */
-    portRESTORE_CONTEXT_IMPL(  );
+    portRESTORE_CONTEXT_IMPL();
 }
 
 #if configUSE_PREEMPTION == 0
@@ -154,41 +154,39 @@ prvPortYield( void )
  * The ISR used for the scheduler tick depends on whether the cooperative or
  * the preemptive scheduler is being used.
  */
-__declspec( interrupt )
-static void     prvPortPreemptiveTick( void )
+__declspec(interrupt) static void prvPortPreemptiveTick(void)
 {
     /* The cooperative scheduler requires a normal IRQ service routine to
      * simply increment the system tick.
      */
-    vTaskIncrementTick(  );
+    vTaskIncrementTick();
     MCF_PIT_PCSR0 |= MCF_PIT_PCSR_PIF;
 }
 
 #else
 
 asm void
-prvPortPreemptiveTick(  )
+prvPortPreemptiveTick()
 {
     move.w #0x2700, sr;
     /* Perform the context switch.  First save the context of the current task. */
-    portSAVE_CONTEXT_IMPL(  );
+    portSAVE_CONTEXT_IMPL();
     TIMER_RESET_ASM_IMPL;
     jsr vTaskIncrementTick;
     /* Find the highest priority task that is ready to run. */
     jsr vTaskSwitchContext;
     /* Restore the context of the new task. */
-    portRESTORE_CONTEXT_IMPL(  );
+    portRESTORE_CONTEXT_IMPL();
 }
 
 #endif
 
-void
-vPortEnterCritical(  )
+void vPortEnterCritical()
 {
     /* FIXME: We should store the old IPL here - How are we supposed to do
      * this.
      */
-    ( void )portSET_IPL( portIPL_MAX );
+    (void)portSET_IPL(portIPL_MAX);
 
     /* Now interrupts are disabled ulCriticalNesting can be accessed
      * directly.  Increment ulCriticalNesting to keep a count of how many times
@@ -196,27 +194,26 @@ vPortEnterCritical(  )
     ulCriticalNesting++;
 }
 
-void
-vPortExitCritical(  )
+void vPortExitCritical()
 {
-    if( ulCriticalNesting > portNO_CRITICAL_NESTING )
+    if (ulCriticalNesting > portNO_CRITICAL_NESTING)
     {
         /* Decrement the nesting count as we are leaving a critical section. */
         ulCriticalNesting--;
 
         /* If the nesting level has reached zero then interrupts should be
            re-enabled. */
-        if( ulCriticalNesting == portNO_CRITICAL_NESTING )
+        if (ulCriticalNesting == portNO_CRITICAL_NESTING)
         {
-            ( void )portSET_IPL( 0 );
+            (void)portSET_IPL(0);
         }
     }
 }
 
 portBASE_TYPE
-xPortStartScheduler( void )
+xPortStartScheduler(void)
 {
-    extern void     ( *portVECTOR_TABLE[] ) (  );
+    extern void (*portVECTOR_TABLE[])();
 
     /* Add entry in vector table for yield system call. */
     portVECTOR_TABLE[portVECTOR_SYSCALL] = prvPortYield;
@@ -224,28 +221,27 @@ xPortStartScheduler( void )
     portVECTOR_TABLE[portVECTOR_TIMER] = prvPortPreemptiveTick;
 
     /* Configure the timer for the system clock. */
-    if( configTICK_RATE_HZ > 0 )
+    if (configTICK_RATE_HZ > 0)
     {
         /* Configure prescaler */
-        MCF_PIT_PCSR0 = MCF_PIT_PCSR_PRE( 0x9 ) | MCF_PIT_PCSR_RLD | MCF_PIT_PCSR_OVW;
+        MCF_PIT_PCSR0 = MCF_PIT_PCSR_PRE(0x9) | MCF_PIT_PCSR_RLD | MCF_PIT_PCSR_OVW;
         /* Initialize the periodic timer interrupt. */
-        MCF_PIT_PMR0 = MCF_PIT_MODULUS_REGISTER( configTICK_RATE_HZ );
+        MCF_PIT_PMR0 = MCF_PIT_MODULUS_REGISTER(configTICK_RATE_HZ);
         /* Configure interrupt priority and level and unmask interrupt. */
-        MCF_INTC0_ICR36 = MCF_INTC0_ICRn_IL( 0x1 ) | MCF_INTC0_ICRn_IP( 0x1 );
-        MCF_INTC0_IMRH &= ~( MCF_INTC0_IMRH_INT_MASK36 );
-        MCF_INTC0_IMRL &= ~( MCF_INTC0_IMRL_MASKALL );
+        MCF_INTC0_ICR36 = MCF_INTC0_ICRn_IL(0x1) | MCF_INTC0_ICRn_IP(0x1);
+        MCF_INTC0_IMRH &= ~(MCF_INTC0_IMRH_INT_MASK36);
+        MCF_INTC0_IMRL &= ~(MCF_INTC0_IMRL_MASKALL);
         /* Enable interrupts */
         MCF_PIT_PCSR0 |= MCF_PIT_PCSR_PIE | MCF_PIT_PCSR_EN | MCF_PIT_PCSR_PIF;
     }
 
     /* Restore the context of the first task that is going to run. */
-    portRESTORE_CONTEXT(  );
+    portRESTORE_CONTEXT();
 
     /* Should not get here. */
     return pdTRUE;
 }
 
-void
-vPortEndScheduler( void )
+void vPortEndScheduler(void)
 {
 }

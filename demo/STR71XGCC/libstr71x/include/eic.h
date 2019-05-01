@@ -26,39 +26,39 @@
 
 typedef enum
 {
-  T0TIMI_IRQChannel    = 0,
-  FLASH_IRQChannel     = 1,
-  RCCU_IRQChannel      = 2,
-  RTC_IRQChannel       = 3,
-  WDG_IRQChannel       = 4,
-  XTI_IRQChannel       = 5,
-  USBHP_IRQChannel     = 6,
+  T0TIMI_IRQChannel = 0,
+  FLASH_IRQChannel = 1,
+  RCCU_IRQChannel = 2,
+  RTC_IRQChannel = 3,
+  WDG_IRQChannel = 4,
+  XTI_IRQChannel = 5,
+  USBHP_IRQChannel = 6,
   I2C0ITERR_IRQChannel = 7,
   I2C1ITERR_IRQChannel = 8,
-  UART0_IRQChannel     = 9,
-  UART1_IRQChannel     = 10,
-  UART2_IRQChannel     = 11,
-  UART3_IRQChannel     = 12,
-  SPI0_IRQChannel      = 13,
-  SPI1_IRQChannel      = 14,
-  I2C0_IRQChannel      = 15,
-  I2C1_IRQChannel      = 16,
-  CAN_IRQChannel       = 17,
-  ADC_IRQChannel       = 18,
-  T1TIMI_IRQChannel    = 19,
-  T2TIMI_IRQChannel    = 20,
-  T3TIMI_IRQChannel    = 21,
-  HDLC_IRQChannel      = 25,
-  USBLP_IRQChannel     = 26,
-  T0TOI_IRQChannel     = 29,
-  T0OC1_IRQChannel     = 30,
-  T0OC2_IRQChannel     = 31
+  UART0_IRQChannel = 9,
+  UART1_IRQChannel = 10,
+  UART2_IRQChannel = 11,
+  UART3_IRQChannel = 12,
+  SPI0_IRQChannel = 13,
+  SPI1_IRQChannel = 14,
+  I2C0_IRQChannel = 15,
+  I2C1_IRQChannel = 16,
+  CAN_IRQChannel = 17,
+  ADC_IRQChannel = 18,
+  T1TIMI_IRQChannel = 19,
+  T2TIMI_IRQChannel = 20,
+  T3TIMI_IRQChannel = 21,
+  HDLC_IRQChannel = 25,
+  USBLP_IRQChannel = 26,
+  T0TOI_IRQChannel = 29,
+  T0OC1_IRQChannel = 30,
+  T0OC2_IRQChannel = 31
 } IRQChannel_TypeDef;
 
 typedef enum
 {
-  T0TIMI_FIQChannel     = 0x00000001,
-  WDG_FIQChannel        = 0x00000002,
+  T0TIMI_FIQChannel = 0x00000001,
+  WDG_FIQChannel = 0x00000002,
   WDGT0TIMI_FIQChannels = 0x00000003
 } FIQChannel_TypeDef;
 
@@ -81,7 +81,10 @@ void EIC_Init(void);
 *******************************************************************************/
 inline void EIC_IRQConfig(FunctionalState NewState)
 {
-  if (NewState==ENABLE) EIC->ICR |= 0x0001; else EIC->ICR &= ~0x0001;
+  if (NewState == ENABLE)
+    EIC->ICR |= 0x0001;
+  else
+    EIC->ICR &= ~0x0001;
 }
 
 /*******************************************************************************
@@ -93,7 +96,10 @@ inline void EIC_IRQConfig(FunctionalState NewState)
 *******************************************************************************/
 inline void EIC_FIQConfig(FunctionalState NewState)
 {
-  if (NewState==ENABLE) EIC->ICR |= 0x0002; else EIC->ICR &= ~0x0002;
+  if (NewState == ENABLE)
+    EIC->ICR |= 0x0002;
+  else
+    EIC->ICR &= ~0x0002;
 }
 
 /*******************************************************************************
@@ -106,8 +112,10 @@ inline void EIC_FIQConfig(FunctionalState NewState)
 *******************************************************************************/
 inline void EIC_IRQChannelConfig(IRQChannel_TypeDef IRQChannel, FunctionalState NewState)
 {
-  if (NewState==ENABLE) EIC->IER |= 0x0001 << IRQChannel;
-  else EIC->IER &= ~(0x0001 << IRQChannel);
+  if (NewState == ENABLE)
+    EIC->IER |= 0x0001 << IRQChannel;
+  else
+    EIC->IER &= ~(0x0001 << IRQChannel);
 }
 
 /*******************************************************************************
@@ -119,10 +127,12 @@ inline void EIC_IRQChannelConfig(IRQChannel_TypeDef IRQChannel, FunctionalState 
 * Return         : None
 *******************************************************************************/
 inline void EIC_FIQChannelConfig(FIQChannel_TypeDef FIQChannel,
-                          FunctionalState NewState)
+                                 FunctionalState NewState)
 {
-  if (NewState==ENABLE) EIC->FIR |= FIQChannel;
-  else EIC->FIR &= ~FIQChannel;
+  if (NewState == ENABLE)
+    EIC->FIR |= FIQChannel;
+  else
+    EIC->FIR &= ~FIQChannel;
 }
 
 /*******************************************************************************
@@ -135,7 +145,7 @@ inline void EIC_FIQChannelConfig(FIQChannel_TypeDef FIQChannel,
 *******************************************************************************/
 inline void EIC_IRQChannelPriorityConfig(IRQChannel_TypeDef IRQChannel, u8 Priority)
 {
-  EIC->SIR[IRQChannel] = (EIC->SIR[IRQChannel]&0xFFFF0000) | (u16)Priority & 0x000F;
+  EIC->SIR[IRQChannel] = (EIC->SIR[IRQChannel] & 0xFFFF0000) | (u16)Priority & 0x000F;
 }
 
 /*******************************************************************************
@@ -181,7 +191,7 @@ inline IRQChannel_TypeDef EIC_CurrentIRQChannelValue(void)
 *******************************************************************************/
 inline FIQChannel_TypeDef EIC_CurrentFIQChannelValue(void)
 {
-   return (FIQChannel_TypeDef)((EIC->FIR >> 2) & 0x0003);
+  return (FIQChannel_TypeDef)((EIC->FIR >> 2) & 0x0003);
 }
 
 /*******************************************************************************

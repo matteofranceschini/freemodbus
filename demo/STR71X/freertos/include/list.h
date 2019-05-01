@@ -19,26 +19,26 @@
 
 	A special exception to the GPL can be applied should you wish to distribute
 	a combined work that includes FreeRTOS, without being obliged to provide
-	the source code for any proprietary components.  See the licensing section 
+	the source code for any proprietary components.  See the licensing section
 	of http://www.FreeRTOS.org for full details of how and when the exception
 	can be applied.
 
 	***************************************************************************
-	See http://www.FreeRTOS.org for documentation, latest information, license 
-	and contact details.  Please ensure to read the configuration and relevant 
+	See http://www.FreeRTOS.org for documentation, latest information, license
+	and contact details.  Please ensure to read the configuration and relevant
 	port sections of the online documentation.
 	***************************************************************************
 */
 
 /*
  * This is the list implementation used by the scheduler.  While it is tailored
- * heavily for the schedulers needs, it is also available for use by 
- * application code.  
+ * heavily for the schedulers needs, it is also available for use by
+ * application code.
  *
  * xLists can only store pointers to xListItems.  Each xListItem contains a
- * numeric value (xItemValue).  Most of the time the lists are sorted in 
+ * numeric value (xItemValue).  Most of the time the lists are sorted in
  * descending item value order.
- * 
+ *
  * Lists are created already containing one list item.  The value of this
  * item is the maximum possible that can be stored, it is therefore always at
  * the end of the list and acts as a marker.  The list member pxHead always
@@ -49,15 +49,14 @@
  * In addition to it's value, each list item contains a pointer to the next
  * item in the list (pxNext), a pointer to the list it is in (pxContainer)
  * and a pointer to back to the object that contains it.  These later two
- * pointers are included for efficiency of list manipulation.  There is 
- * effectively a two way link between the object containing the list item and 
+ * pointers are included for efficiency of list manipulation.  There is
+ * effectively a two way link between the object containing the list item and
  * the list item itself.
- *  
- *  
+ *
+ *
  * \page ListIntroduction List Implementation
  * \ingroup FreeRTOSIntro
  */
-
 
 #ifndef LIST_H
 #define LIST_H
@@ -68,12 +67,12 @@
 struct xLIST_ITEM
 {
 	portTickType xItemValue;				/*< The value being listed.  In most cases this is used to sort the list in descending order. */
-	volatile struct xLIST_ITEM * pxNext;	/*< Pointer to the next xListItem in the list. */
-	volatile struct xLIST_ITEM * pxPrevious;/*< Pointer to the previous xListItem in the list. */
-	void * pvOwner;							/*< Pointer to the object (normally a TCB) that contains the list item.  There is therefore a two way link between the object containing the list item and the list item itself. */
-	void * pvContainer;						/*< Pointer to the list in which this list item is placed (if any). */
+	volatile struct xLIST_ITEM *pxNext;		/*< Pointer to the next xListItem in the list. */
+	volatile struct xLIST_ITEM *pxPrevious; /*< Pointer to the previous xListItem in the list. */
+	void *pvOwner;							/*< Pointer to the object (normally a TCB) that contains the list item.  There is therefore a two way link between the object containing the list item and the list item itself. */
+	void *pvContainer;						/*< Pointer to the list in which this list item is placed (if any). */
 };
-typedef struct xLIST_ITEM xListItem;		/* For some reason lint wants this as two separate definitions. */
+typedef struct xLIST_ITEM xListItem; /* For some reason lint wants this as two separate definitions. */
 
 /*
  * Definition of the type of queue used by the scheduler.
@@ -81,9 +80,9 @@ typedef struct xLIST_ITEM xListItem;		/* For some reason lint wants this as two 
 typedef struct xLIST
 {
 	unsigned portBASE_TYPE uxNumberOfItems;
-	volatile xListItem * pxHead;			/*< Pointer to the xListEnd item.  xListEnd contains a wrap back pointer to true list head. */
-	volatile xListItem * pxIndex;			/*< Used to walk through the list.  Points to the last item returned by a call to pvListGetOwnerOfNextEntry (). */
-	volatile xListItem xListEnd;			/*< List item that contains the maximum possible item value meaning it is always at the end of the list and is therefore used as a marker. */
+	volatile xListItem *pxHead;  /*< Pointer to the xListEnd item.  xListEnd contains a wrap back pointer to true list head. */
+	volatile xListItem *pxIndex; /*< Used to walk through the list.  Points to the last item returned by a call to pvListGetOwnerOfNextEntry (). */
+	volatile xListItem xListEnd; /*< List item that contains the maximum possible item value meaning it is always at the end of the list and is therefore used as a marker. */
 } xList;
 
 /*
@@ -93,7 +92,10 @@ typedef struct xLIST
  * \page listSET_LIST_ITEM_OWNER listSET_LIST_ITEM_OWNER
  * \ingroup LinkedList
  */
-#define listSET_LIST_ITEM_OWNER( pxListItem, pxOwner )		{ ( pxListItem )->pvOwner = ( void * ) pxOwner; }
+#define listSET_LIST_ITEM_OWNER(pxListItem, pxOwner) \
+	{                                                \
+		(pxListItem)->pvOwner = (void *)pxOwner;     \
+	}
 
 /*
  * Access macro to set the value of the list item.  In most cases the value is
@@ -102,17 +104,20 @@ typedef struct xLIST
  * \page listSET_LIST_ITEM_VALUE listSET_LIST_ITEM_VALUE
  * \ingroup LinkedList
  */
-#define listSET_LIST_ITEM_VALUE( pxListItem, xValue )		{ ( pxListItem )->xItemValue = xValue; }
+#define listSET_LIST_ITEM_VALUE(pxListItem, xValue) \
+	{                                               \
+		(pxListItem)->xItemValue = xValue;          \
+	}
 
 /*
- * Access macro the retrieve the value of the list item.  The value can 
+ * Access macro the retrieve the value of the list item.  The value can
  * represent anything - for example a the priority of a task, or the time at
  * which a task should be unblocked.
  *
  * \page listGET_LIST_ITEM_VALUE listGET_LIST_ITEM_VALUE
  * \ingroup LinkedList
  */
-#define listGET_LIST_ITEM_VALUE( pxListItem )				( ( pxListItem )->xItemValue )
+#define listGET_LIST_ITEM_VALUE(pxListItem) ((pxListItem)->xItemValue)
 
 /*
  * Access macro to determine if a list contains any items.  The macro will
@@ -121,17 +126,17 @@ typedef struct xLIST
  * \page listLIST_IS_EMPTY listLIST_IS_EMPTY
  * \ingroup LinkedList
  */
-#define listLIST_IS_EMPTY( pxList )				( ( pxList )->uxNumberOfItems == ( unsigned portBASE_TYPE ) 0 )
+#define listLIST_IS_EMPTY(pxList) ((pxList)->uxNumberOfItems == (unsigned portBASE_TYPE)0)
 
 /*
  * Access macro to return the number of items in the list.
  */
-#define listCURRENT_LIST_LENGTH( pxList )		( ( pxList )->uxNumberOfItems )
+#define listCURRENT_LIST_LENGTH(pxList) ((pxList)->uxNumberOfItems)
 
 /*
  * Access function to obtain the owner of the next entry in a list.
  *
- * The list member pxIndex is used to walk through a list.  Calling 
+ * The list member pxIndex is used to walk through a list.  Calling
  * listGET_OWNER_OF_NEXT_ENTRY increments pxIndex to the next item in the list
  * and returns that entries pxOwner parameter.  Using multiple calls to this
  * function it is therefore possible to move through every item contained in
@@ -139,7 +144,7 @@ typedef struct xLIST
  *
  * The pxOwner parameter of a list item is a pointer to the object that owns
  * the list item.  In the scheduler this is normally a task control block.
- * The pxOwner parameter effectively creates a two way link between the list 
+ * The pxOwner parameter effectively creates a two way link between the list
  * item and its owner.
  *
  * @param pxList The list from which the next item owner is to be returned.
@@ -147,18 +152,18 @@ typedef struct xLIST
  * \page listGET_OWNER_OF_NEXT_ENTRY listGET_OWNER_OF_NEXT_ENTRY
  * \ingroup LinkedList
  */
-#define listGET_OWNER_OF_NEXT_ENTRY( pxTCB, pxList )									\
-{																						\
-	/* Increment the index to the next item and return the item, ensuring */			\
-	/* we don't return the marker used at the end of the list.  */						\
-																						\
-	( pxList )->pxIndex = ( pxList )->pxIndex->pxNext;									\
-	if( ( pxList )->pxIndex == ( pxList )->pxHead )										\
-	{																					\
-		( pxList )->pxIndex = ( pxList )->pxIndex->pxNext;								\
-	}																					\
-	pxTCB = ( volatile tskTCB * ) ( pxList )->pxIndex->pvOwner;							\
-}
+#define listGET_OWNER_OF_NEXT_ENTRY(pxTCB, pxList)                               \
+	{                                                                            \
+		/* Increment the index to the next item and return the item, ensuring */ \
+		/* we don't return the marker used at the end of the list.  */           \
+                                                                                 \
+		(pxList)->pxIndex = (pxList)->pxIndex->pxNext;                           \
+		if ((pxList)->pxIndex == (pxList)->pxHead)                               \
+		{                                                                        \
+			(pxList)->pxIndex = (pxList)->pxIndex->pxNext;                       \
+		}                                                                        \
+		pxTCB = (volatile tskTCB *)(pxList)->pxIndex->pvOwner;                   \
+	}
 
 /*
  * Access function to obtain the owner of the first entry in a list.  Lists
@@ -176,7 +181,7 @@ typedef struct xLIST
  * \page listGET_OWNER_OF_HEAD_ENTRY listGET_OWNER_OF_HEAD_ENTRY
  * \ingroup LinkedList
  */
-#define listGET_OWNER_OF_HEAD_ENTRY( pxList )  ( ( pxList->uxNumberOfItems != ( unsigned portBASE_TYPE ) 0 ) ? ( pxList->pxHead->pxNext->pvOwner ) : ( NULL ) )
+#define listGET_OWNER_OF_HEAD_ENTRY(pxList) ((pxList->uxNumberOfItems != (unsigned portBASE_TYPE)0) ? (pxList->pxHead->pxNext->pvOwner) : (NULL))
 
 /*
  * Check to see if a list item is within a list.  The list item maintains a
@@ -188,7 +193,7 @@ typedef struct xLIST
  * @return pdTRUE is the list item is in the list, otherwise pdFALSE.
  * pointer against
  */
-#define listIS_CONTAINED_WITHIN( pxList, pxListItem ) ( ( pxListItem )->pvContainer == ( void * ) pxList )
+#define listIS_CONTAINED_WITHIN(pxList, pxListItem) ((pxListItem)->pvContainer == (void *)pxList)
 
 /*
  * Must be called before a list is used!  This initialises all the members
@@ -200,7 +205,7 @@ typedef struct xLIST
  * \page vListInitialise vListInitialise
  * \ingroup LinkedList
  */
-void vListInitialise( xList *pxList );
+void vListInitialise(xList *pxList);
 
 /*
  * Must be called before a list item is used.  This sets the list container to
@@ -211,7 +216,7 @@ void vListInitialise( xList *pxList );
  * \page vListInitialiseItem vListInitialiseItem
  * \ingroup LinkedList
  */
-void vListInitialiseItem( xListItem *pxItem );
+void vListInitialiseItem(xListItem *pxItem);
 
 /*
  * Insert a list item into a list.  The item will be inserted into the list in
@@ -224,14 +229,14 @@ void vListInitialiseItem( xListItem *pxItem );
  * \page vListInsert vListInsert
  * \ingroup LinkedList
  */
-void vListInsert( xList *pxList, xListItem *pxNewListItem );
+void vListInsert(xList *pxList, xListItem *pxNewListItem);
 
 /*
  * Insert a list item into a list.  The item will be inserted in a position
  * such that it will be the last item within the list returned by multiple
  * calls to listGET_OWNER_OF_NEXT_ENTRY.
  *
- * The list member pvIndex is used to walk through a list.  Calling 
+ * The list member pvIndex is used to walk through a list.  Calling
  * listGET_OWNER_OF_NEXT_ENTRY increments pvIndex to the next item in the list.
  * Placing an item in a list using vListInsertEnd effectively places the item
  * in the list position pointed to by pvIndex.  This means that every other
@@ -245,7 +250,7 @@ void vListInsert( xList *pxList, xListItem *pxNewListItem );
  * \page vListInsertEnd vListInsertEnd
  * \ingroup LinkedList
  */
-void vListInsertEnd( xList *pxList, xListItem *pxNewListItem );
+void vListInsertEnd(xList *pxList, xListItem *pxNewListItem);
 
 /*
  * Remove an item from a list.  The list item has a pointer to the list that
@@ -257,9 +262,6 @@ void vListInsertEnd( xList *pxList, xListItem *pxNewListItem );
  * \page vListRemove vListRemove
  * \ingroup LinkedList
  */
-void vListRemove( xListItem *pxItemToRemove );
-
-
+void vListRemove(xListItem *pxItemToRemove);
 
 #endif
-

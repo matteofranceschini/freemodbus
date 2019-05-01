@@ -60,23 +60,23 @@
 #include "task.h"
 
 #ifndef configKERNEL_INTERRUPT_PRIORITY
-	#define configKERNEL_INTERRUPT_PRIORITY 255
+#define configKERNEL_INTERRUPT_PRIORITY 255
 #endif
 
 /* Constants required to manipulate the NVIC. */
-#define portNVIC_SYSTICK_CTRL		( ( volatile unsigned long *) 0xe000e010 )
-#define portNVIC_SYSTICK_LOAD		( ( volatile unsigned long *) 0xe000e014 )
-#define portNVIC_INT_CTRL			( ( volatile unsigned long *) 0xe000ed04 )
-#define portNVIC_SYSPRI2			( ( volatile unsigned long *) 0xe000ed20 )
-#define portNVIC_SYSTICK_CLK		0x00000004
-#define portNVIC_SYSTICK_INT		0x00000002
-#define portNVIC_SYSTICK_ENABLE		0x00000001
-#define portNVIC_PENDSVSET			0x10000000
-#define portNVIC_PENDSV_PRI			( ( ( unsigned long ) configKERNEL_INTERRUPT_PRIORITY ) << 16 )
-#define portNVIC_SYSTICK_PRI		( ( ( unsigned long ) configKERNEL_INTERRUPT_PRIORITY ) << 24 )
+#define portNVIC_SYSTICK_CTRL ((volatile unsigned long *)0xe000e010)
+#define portNVIC_SYSTICK_LOAD ((volatile unsigned long *)0xe000e014)
+#define portNVIC_INT_CTRL ((volatile unsigned long *)0xe000ed04)
+#define portNVIC_SYSPRI2 ((volatile unsigned long *)0xe000ed20)
+#define portNVIC_SYSTICK_CLK 0x00000004
+#define portNVIC_SYSTICK_INT 0x00000002
+#define portNVIC_SYSTICK_ENABLE 0x00000001
+#define portNVIC_PENDSVSET 0x10000000
+#define portNVIC_PENDSV_PRI (((unsigned long)configKERNEL_INTERRUPT_PRIORITY) << 16)
+#define portNVIC_SYSTICK_PRI (((unsigned long)configKERNEL_INTERRUPT_PRIORITY) << 24)
 
 /* Constants required to set up the initial stack. */
-#define portINITIAL_XPSR			( 0x01000000 )
+#define portINITIAL_XPSR (0x01000000)
 
 /* Each task maintains its own interrupt status in the critical nesting
 variable. */
@@ -85,78 +85,78 @@ static unsigned portBASE_TYPE uxCriticalNesting = 0xaaaaaaaa;
 /*
  * Setup the timer to generate the tick interrupts.
  */
-static void prvSetupTimerInterrupt( void );
+static void prvSetupTimerInterrupt(void);
 
 /*
  * Exception handlers.
  */
-void xPortPendSVHandler( void );
-void xPortSysTickHandler( void );
-void vPortSVCHandler( void );
+void xPortPendSVHandler(void);
+void xPortSysTickHandler(void);
+void vPortSVCHandler(void);
 
 /*
  * Start first task is a separate function so it can be tested in isolation.
  */
-void vPortStartFirstTask( void );
+void vPortStartFirstTask(void);
 
 /*-----------------------------------------------------------*/
 
 /*
  * See header file for description.
  */
-portSTACK_TYPE *pxPortInitialiseStack( portSTACK_TYPE *pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters )
+portSTACK_TYPE *pxPortInitialiseStack(portSTACK_TYPE *pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters)
 {
 	/* Simulate the stack frame as it would be created by a context switch
 	interrupt. */
-	*pxTopOfStack = portINITIAL_XPSR;	/* xPSR */
+	*pxTopOfStack = portINITIAL_XPSR; /* xPSR */
 	pxTopOfStack--;
-	*pxTopOfStack = ( portSTACK_TYPE ) pxCode;	/* PC */
+	*pxTopOfStack = (portSTACK_TYPE)pxCode; /* PC */
 	pxTopOfStack--;
-	*pxTopOfStack = 0;	/* LR */
-	pxTopOfStack -= 5;	/* R12, R3, R2 and R1. */
-	*pxTopOfStack = ( portSTACK_TYPE ) pvParameters;	/* R0 */
-	pxTopOfStack -= 8;	/* R11, R10, R9, R8, R7, R6, R5 and R4. */
+	*pxTopOfStack = 0;							  /* LR */
+	pxTopOfStack -= 5;							  /* R12, R3, R2 and R1. */
+	*pxTopOfStack = (portSTACK_TYPE)pvParameters; /* R0 */
+	pxTopOfStack -= 8;							  /* R11, R10, R9, R8, R7, R6, R5 and R4. */
 
 	return pxTopOfStack;
 }
 /*-----------------------------------------------------------*/
 
 //__asm void vPortSVCHandler( void )
-__asm void SVC_Handler( void )
+__asm void SVC_Handler(void)
 {
 	PRESERVE8
 
-	ldr	r3, =pxCurrentTCB		/* Restore the context. */
-	ldr r1, [r3]				/* Use pxCurrentTCBConst to get the pxCurrentTCB address. */
-	ldr r0, [r1]				/* The first item in pxCurrentTCB is the task top of stack. */
-	ldmia r0!, {r4-r11}		/* Pop the registers that are not automatically saved on exception entry and the critical nesting count. */
-	msr psp, r0					/* Restore the task stack pointer. */
-	mov r0, #0
-	msr	basepri, r0
-	orr r14, #0xd				
-	bx r14						
+	ldr r3, = pxCurrentTCB /* Restore the context. */
+				ldr r1,
+		[r3] /* Use pxCurrentTCBConst to get the pxCurrentTCB address. */
+		ldr r0,
+		[r1] /* The first item in pxCurrentTCB is the task top of stack. */
+		ldmia r0 !,
+		{r4 - r11} /* Pop the registers that are not automatically saved on exception entry and the critical nesting count. */
+	msr psp,
+		r0 /* Restore the task stack pointer. */
+			mov r0,
+		#0 msr basepri, r0 orr r14, #0xd bx r14
 }
 /*-----------------------------------------------------------*/
 
-__asm void vPortStartFirstTask( void )
-{
+__asm void vPortStartFirstTask(void){
 	PRESERVE8
 
-	/* Use the NVIC offset register to locate the stack. */
-	ldr r0, =0xE000ED08
-	ldr r0, [r0]
-	ldr r0, [r0]
+		/* Use the NVIC offset register to locate the stack. */
+		ldr r0,
+	= 0xE000ED08 ldr r0, [r0] ldr r0, [r0]
 	/* Set the msp back to the start of the stack. */
-	msr msp, r0
-	/* Call SVC to start the first task. */
-	svc 0
-}
+	msr msp,
+	r0
+		/* Call SVC to start the first task. */
+		svc 0}
 /*-----------------------------------------------------------*/
 
 /*
  * See header file for description.
  */
-portBASE_TYPE xPortStartScheduler( void )
+portBASE_TYPE xPortStartScheduler(void)
 {
 	/* Make PendSV, CallSV and SysTick the same priroity as the kernel. */
 	*(portNVIC_SYSPRI2) |= portNVIC_PENDSV_PRI;
@@ -165,7 +165,7 @@ portBASE_TYPE xPortStartScheduler( void )
 	/* Start the timer that generates the tick ISR.  Interrupts are disabled
 	here already. */
 	prvSetupTimerInterrupt();
-	
+
 	/* Initialise the critical nesting count ready for the first task. */
 	uxCriticalNesting = 0;
 
@@ -177,31 +177,31 @@ portBASE_TYPE xPortStartScheduler( void )
 }
 /*-----------------------------------------------------------*/
 
-void vPortEndScheduler( void )
+void vPortEndScheduler(void)
 {
 	/* It is unlikely that the CM3 port will require this function as there
 	is nothing to return to.  */
 }
 /*-----------------------------------------------------------*/
 
-void vPortYieldFromISR( void )
+void vPortYieldFromISR(void)
 {
 	/* Set a PendSV to request a context switch. */
 	*(portNVIC_INT_CTRL) = portNVIC_PENDSVSET;
 }
 /*-----------------------------------------------------------*/
 
-void vPortEnterCritical( void )
+void vPortEnterCritical(void)
 {
 	portDISABLE_INTERRUPTS();
 	uxCriticalNesting++;
 }
 /*-----------------------------------------------------------*/
 
-void vPortExitCritical( void )
+void vPortExitCritical(void)
 {
 	uxCriticalNesting--;
-	if( uxCriticalNesting == 0 )
+	if (uxCriticalNesting == 0)
 	{
 		portENABLE_INTERRUPTS();
 	}
@@ -209,7 +209,7 @@ void vPortExitCritical( void )
 /*-----------------------------------------------------------*/
 
 //__asm void xPortPendSVHandler( void )
-__asm void PendSV_Handler( void )
+__asm void PendSV_Handler(void)
 {
 	extern uxCriticalNesting;
 	extern pxCurrentTCB;
@@ -217,45 +217,46 @@ __asm void PendSV_Handler( void )
 
 	PRESERVE8
 
-	mrs r0, psp						
+	mrs r0, psp
 
-	ldr	r3, =pxCurrentTCB		 	 /* Get the location of the current TCB. */
-	ldr	r2, [r3]						
+				ldr r3,
+		= pxCurrentTCB /* Get the location of the current TCB. */
+			ldr r2,
+		[r3]
 
-	stmdb r0!, {r4-r11}				 /* Save the remaining registers. */
-	str r0, [r2]					 /* Save the new top of stack into the first member of the TCB. */
+		stmdb r0 !,
+		{r4 - r11} /* Save the remaining registers. */
+	str r0,
+		[r2] /* Save the new top of stack into the first member of the TCB. */
 
-	stmdb sp!, {r3, r14}		
-	mov r0, #configMAX_SYSCALL_INTERRUPT_PRIORITY
-	msr basepri, r0		
-	bl vTaskSwitchContext
-	mov r0, #0
-	msr basepri, r0
-	ldmia sp!, {r3, r14}			
+		stmdb sp !,
+		{r3, r14} mov r0, #configMAX_SYSCALL_INTERRUPT_PRIORITY msr basepri, r0 bl vTaskSwitchContext mov r0, #0 msr basepri, r0 ldmia sp !, {r3, r14}
 
-	ldr r1, [r3]					
-	ldr r0, [r1]					 /* The first item in pxCurrentTCB is the task top of stack. */
-	ldmia r0!, {r4-r11}			 /* Pop the registers and the critical nesting count. */
-	msr psp, r0						
-	bx r14
-	nop
+	ldr r1,
+		[r3] ldr r0, [r1] /* The first item in pxCurrentTCB is the task top of stack. */
+		ldmia r0 !,
+		{r4 - r11} /* Pop the registers and the critical nesting count. */
+	msr psp,
+		r0
+			bx r14
+				nop
 }
 /*-----------------------------------------------------------*/
 
-void xPortSysTickHandler( void )
+void xPortSysTickHandler(void)
 {
-unsigned long ulDummy;
+	unsigned long ulDummy;
 
-	/* If using preemption, also force a context switch. */
-	#if configUSE_PREEMPTION == 1
-		*(portNVIC_INT_CTRL) = portNVIC_PENDSVSET;	
-	#endif
+/* If using preemption, also force a context switch. */
+#if configUSE_PREEMPTION == 1
+	*(portNVIC_INT_CTRL) = portNVIC_PENDSVSET;
+#endif
 
 	ulDummy = portSET_INTERRUPT_MASK_FROM_ISR();
 	{
 		vTaskIncrementTick();
 	}
-	portCLEAR_INTERRUPT_MASK_FROM_ISR( ulDummy );
+	portCLEAR_INTERRUPT_MASK_FROM_ISR(ulDummy);
 }
 /*-----------------------------------------------------------*/
 
@@ -263,34 +264,26 @@ unsigned long ulDummy;
  * Setup the systick timer to generate the tick interrupts at the required
  * frequency.
  */
-void prvSetupTimerInterrupt( void )
+void prvSetupTimerInterrupt(void)
 {
 	/* Configure SysTick to interrupt at the requested rate. */
-	*(portNVIC_SYSTICK_LOAD) = ( configCPU_CLOCK_HZ / configTICK_RATE_HZ ) - 1UL;
+	*(portNVIC_SYSTICK_LOAD) = (configCPU_CLOCK_HZ / configTICK_RATE_HZ) - 1UL;
 	*(portNVIC_SYSTICK_CTRL) = portNVIC_SYSTICK_CLK | portNVIC_SYSTICK_INT | portNVIC_SYSTICK_ENABLE;
 }
 /*-----------------------------------------------------------*/
 
-__asm void vPortSetInterruptMask( void )
+__asm void vPortSetInterruptMask(void)
 {
 	PRESERVE8
 
-	push { r0 }
-	mov r0, #configMAX_SYSCALL_INTERRUPT_PRIORITY
-	msr basepri, r0
-	pop { r0 }
-	bx r14
+	push{r0} mov r0, #configMAX_SYSCALL_INTERRUPT_PRIORITY msr basepri, r0 pop{r0} bx r14
 }
 
 /*-----------------------------------------------------------*/
 
-__asm void vPortClearInterruptMask( void )
+__asm void vPortClearInterruptMask(void)
 {
 	PRESERVE8
 
-	push { r0 }
-	mov r0, #0
-	msr basepri, r0
-	pop { r0 }
-	bx r14
+	push{r0} mov r0, #0 msr basepri, r0 pop{r0} bx r14
 }

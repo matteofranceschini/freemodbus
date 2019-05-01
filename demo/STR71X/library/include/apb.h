@@ -24,31 +24,31 @@
 #include "71x_map.h"
 
 /* APB1 Peripherals */
-#define  I2C0_Periph      0x0000
-#define  I2C1_Periph      0x0002
-#define  UART0_Periph     0x0008
-#define  UART1_Periph     0x0010
-#define  UART2_Periph     0x0020
-#define  UART3_Periph     0x0080
-#define  USB_Periph       0x0100
-#define  CAN_Periph       0x0200
-#define  BSPI0_Periph     0x0400
-#define  BSPI1_Periph     0x0800
-#define  HDLC_Periph      0x2000
+#define I2C0_Periph 0x0000
+#define I2C1_Periph 0x0002
+#define UART0_Periph 0x0008
+#define UART1_Periph 0x0010
+#define UART2_Periph 0x0020
+#define UART3_Periph 0x0080
+#define USB_Periph 0x0100
+#define CAN_Periph 0x0200
+#define BSPI0_Periph 0x0400
+#define BSPI1_Periph 0x0800
+#define HDLC_Periph 0x2000
 
 /* APB2 Peripherals */
-#define  XTI_Periph       0x0000
-#define  GPIO0_Periph     0x0002
-#define  GPIO1_Periph     0x0004
-#define  GPIO2_Periph     0x0008
-#define  ADC12_Periph     0x0010
-#define  TIM0_Periph      0x0080
-#define  TIM1_Periph      0x0200
-#define  TIM2_Periph      0x0400
-#define  TIM3_Periph      0x0800
-#define  RTC_Periph       0x1000
-#define  WDG_Periph       0x2000
-#define  EIC_Periph       0x4000
+#define XTI_Periph 0x0000
+#define GPIO0_Periph 0x0002
+#define GPIO1_Periph 0x0004
+#define GPIO2_Periph 0x0008
+#define ADC12_Periph 0x0010
+#define TIM0_Periph 0x0080
+#define TIM1_Periph 0x0200
+#define TIM2_Periph 0x0400
+#define TIM3_Periph 0x0800
+#define RTC_Periph 0x1000
+#define WDG_Periph 0x2000
+#define EIC_Periph 0x4000
 
 /*******************************************************************************
 * Function Name  : APB_ClockConfig
@@ -59,12 +59,14 @@
 *                  NewValue (u16)
 * Return         : None
 *******************************************************************************/
-INLINE void APB_ClockConfig ( APB_TypeDef *APBx,
-                              FunctionalState NewState,
-                              u16 NewValue )
+INLINE void APB_ClockConfig(APB_TypeDef *APBx,
+                            FunctionalState NewState,
+                            u16 NewValue)
 {
-  if (NewState == ENABLE) APBx->CKDIS &= ~NewValue;
-    else APBx->CKDIS |= NewValue;
+  if (NewState == ENABLE)
+    APBx->CKDIS &= ~NewValue;
+  else
+    APBx->CKDIS |= NewValue;
 }
 
 /*******************************************************************************
@@ -76,14 +78,16 @@ INLINE void APB_ClockConfig ( APB_TypeDef *APBx,
 *                  NewValue (u16)
 * Return         : None
 *******************************************************************************/
-INLINE void APB_SwResetConfig ( APB_TypeDef *APBx,
-                                FunctionalState NewState,
-                                u16 NewValue )
+INLINE void APB_SwResetConfig(APB_TypeDef *APBx,
+                              FunctionalState NewState,
+                              u16 NewValue)
 {
-  if (NewState == ENABLE) APBx->SWRES |= NewValue;
-    else APBx->SWRES &= ~NewValue;
+  if (NewState == ENABLE)
+    APBx->SWRES |= NewValue;
+  else
+    APBx->SWRES &= ~NewValue;
 }
 
-#endif	// __APB_H
+#endif // __APB_H
 
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

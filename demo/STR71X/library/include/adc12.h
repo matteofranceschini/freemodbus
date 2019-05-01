@@ -46,20 +46,20 @@ typedef enum
   ADC12_DA1 = 0x02,
   ADC12_DA2 = 0x04,
   ADC12_DA3 = 0x08,
-  ADC12_OR  = 0x2000
+  ADC12_OR = 0x2000
 } ADC12_Flags;
 
 // Masks for the update of interrupt bit for channel n
-#define ADC12_IT0_Mask   0x0100
-#define ADC12_IT1_Mask   0x0200
-#define ADC12_IT2_Mask   0x0400
-#define ADC12_IT3_Mask   0x0800
+#define ADC12_IT0_Mask 0x0100
+#define ADC12_IT1_Mask 0x0200
+#define ADC12_IT2_Mask 0x0400
+#define ADC12_IT3_Mask 0x0800
 
 //Mask for the update of all the interrupt bit in the CSR
-#define ADC12_IT_Mask    0x0F00
+#define ADC12_IT_Mask 0x0F00
 
 //Mask for Selecting mode
-#define ADC12_Mode_Mask  0x0040
+#define ADC12_Mode_Mask 0x0040
 
 //Mask for configuring the converter
 #define ADC12_Start_Mask 0x0020
@@ -78,7 +78,7 @@ void ADC12_Init(void);
 * Input              : None
 * Return             : None
 *******************************************************************************/
-INLINE void ADC12_ConversionStart (void)
+INLINE void ADC12_ConversionStart(void)
 {
   // Set the ADCen bit of the bootconf register
   PCU->BOOTCR |= ADC12_Start_Mask;
@@ -103,11 +103,10 @@ INLINE void ADC12_ConversionStop(void)
 *                      ADC12_ROUND : round robin mode
 * Return             : None
 *******************************************************************************/
-INLINE void ADC12_ModeConfig (ADC12_Modes ConversionMode)
+INLINE void ADC12_ModeConfig(ADC12_Modes ConversionMode)
 {
   // Select the mode of conversion and update the CSR[6]
-  ADC12->CSR= ConversionMode == ADC12_SINGLE ? ADC12->CSR | ADC12_Mode_Mask :\
-                                               ADC12->CSR & ~ADC12_Mode_Mask;
+  ADC12->CSR = ConversionMode == ADC12_SINGLE ? ADC12->CSR | ADC12_Mode_Mask : ADC12->CSR & ~ADC12_Mode_Mask;
 }
 
 /*******************************************************************************
@@ -145,7 +144,7 @@ INLINE void ADC12_ChannelSelect(ADC12_Channels ADC12_Channel)
 * Return             : SET: if the flag is set
 *                      RESET: if the flag is clear
 *******************************************************************************/
-INLINE FlagStatus ADC12_FlagStatus (ADC12_Flags flag)
+INLINE FlagStatus ADC12_FlagStatus(ADC12_Flags flag)
 {
   // Test on the flag status and return set or RESET
   return ADC12->CSR & flag ? SET : RESET;
@@ -161,10 +160,10 @@ INLINE FlagStatus ADC12_FlagStatus (ADC12_Flags flag)
 *                      ADC12_CHANNEL3 : read the DATA3 register
 * Return             : the register value of the channel converted
 *******************************************************************************/
-INLINE u16 ADC12_ConversionValue( ADC12_Channels ADC12_Channel)
+INLINE u16 ADC12_ConversionValue(ADC12_Channels ADC12_Channel)
 {
-  // Clear the corespondent DA bit 
-  ADC12->CSR &= ~(1<<(ADC12_Channel >> 4));
+  // Clear the corespondent DA bit
+  ADC12->CSR &= ~(1 << (ADC12_Channel >> 4));
   // Only the 12 MSB of the DATAn Register are taken
   return *(u16 *)(ADC12_BASE + (ADC12_Channel >> 1)) >> 4;
 }
@@ -176,6 +175,6 @@ INLINE u16 ADC12_ConversionValue( ADC12_Channels ADC12_Channel)
 *                      status=DISABLE=>disable interrupt
 * Return             : None
 *******************************************************************************/
-void ADC12_ITConfig (FunctionalState NewState);
+void ADC12_ITConfig(FunctionalState NewState);
 
 #endif

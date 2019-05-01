@@ -78,7 +78,6 @@
 /*@{*/
 /*@}*/
 
-
 /**
  * \file
  *
@@ -122,7 +121,7 @@ uint8_t SPID_Configure(Spid *pSpid, Spi *pSpiHw, uint8_t spiId)
 {
     /* Initialize the SPI structure*/
     pSpid->pSpiHw = pSpiHw;
-    pSpid->spiId  = spiId;
+    pSpid->spiId = spiId;
     pSpid->semaphore = 1;
     pSpid->pCurrentCommand = 0;
 
@@ -174,7 +173,8 @@ uint8_t SPID_SendCommand(Spid *pSpid, SpidCmd *pCommand)
     uint32_t spiMr;
 
     /* Try to get the dataflash semaphore */
-    if (pSpid->semaphore == 0) {
+    if (pSpid->semaphore == 0)
+    {
 
         return SPID_ERROR_LOCK;
     }
@@ -193,14 +193,14 @@ uint8_t SPID_SendCommand(Spid *pSpid, SpidCmd *pCommand)
     WRITE_SPI(pSpiHw, SPI_MR, spiMr);
 
     /* Initialize the two SPI PDC buffer*/
-    WRITE_SPI(pSpiHw, SPI_RPR, (int) pCommand->pCmd);
+    WRITE_SPI(pSpiHw, SPI_RPR, (int)pCommand->pCmd);
     WRITE_SPI(pSpiHw, SPI_RCR, pCommand->cmdSize);
-    WRITE_SPI(pSpiHw, SPI_TPR, (int) pCommand->pCmd);
+    WRITE_SPI(pSpiHw, SPI_TPR, (int)pCommand->pCmd);
     WRITE_SPI(pSpiHw, SPI_TCR, pCommand->cmdSize);
 
-    WRITE_SPI(pSpiHw, SPI_RNPR, (int) pCommand->pData);
+    WRITE_SPI(pSpiHw, SPI_RNPR, (int)pCommand->pData);
     WRITE_SPI(pSpiHw, SPI_RNCR, pCommand->dataSize);
-    WRITE_SPI(pSpiHw, SPI_TNPR, (int) pCommand->pData);
+    WRITE_SPI(pSpiHw, SPI_TNPR, (int)pCommand->pData);
     WRITE_SPI(pSpiHw, SPI_TNCR, pCommand->dataSize);
 
     /* Initialize the callback*/
@@ -214,7 +214,6 @@ uint8_t SPID_SendCommand(Spid *pSpid, SpidCmd *pCommand)
 
     return 0;
 }
-
 
 /**
  * \brief The SPI_Handler must be called by the SPI Interrupt Service Routine with the
@@ -232,7 +231,8 @@ void SPID_Handler(Spid *pSpid)
 
     /* Read the status register*/
     spiSr = READ_SPI(pSpiHw, SPI_SR);
-    if (spiSr & SPI_SR_RXBUFF) {
+    if (spiSr & SPI_SR_RXBUFF)
+    {
 
         /* Disable transmitter and receiver */
         WRITE_SPI(pSpiHw, SPI_PTCR, SPI_PTCR_RXTDIS | SPI_PTCR_TXTDIS);
@@ -247,7 +247,8 @@ void SPID_Handler(Spid *pSpid)
         pSpid->semaphore++;
 
         /* Invoke the callback associated with the current command*/
-        if (pSpidCmd && pSpidCmd->callback) {
+        if (pSpidCmd && pSpidCmd->callback)
+        {
 
             pSpidCmd->callback(0, pSpidCmd->pArgument);
         }
@@ -264,11 +265,13 @@ void SPID_Handler(Spid *pSpid)
  */
 uint8_t SPID_IsBusy(const Spid *pSpid)
 {
-    if (pSpid->semaphore == 0) {
+    if (pSpid->semaphore == 0)
+    {
 
         return 1;
     }
-    else {
+    else
+    {
 
         return 0;
     }

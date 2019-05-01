@@ -33,60 +33,59 @@ typedef enum
 typedef enum
 {
   UART_EVEN_PARITY = 0x0000,
-  UART_ODD_PARITY  = 0x0020,
+  UART_ODD_PARITY = 0x0020,
   UART_NO_PARITY
 } UARTParity_TypeDef;
 
 typedef enum
 {
-  UART_0_5_StopBits  = 0x00,
-  UART_1_StopBits    = 0x08,
-  UART_1_5_StopBits  = 0x10,
-  UART_2_StopBits    = 0x18
+  UART_0_5_StopBits = 0x00,
+  UART_1_StopBits = 0x08,
+  UART_1_5_StopBits = 0x10,
+  UART_2_StopBits = 0x18
 } UARTStopBits_TypeDef;
 
 typedef enum
 {
-  UARTM_8D   = 0x01,
+  UARTM_8D = 0x01,
   UARTM_7D_P = 0x03,
-  UARTM_9D   = 0x04,
+  UARTM_9D = 0x04,
   UARTM_8D_W = 0x05,
   UARTM_8D_P = 0x07
 } UARTMode_TypeDef;
 
-
 #define DUMMY 0
 
 // UART flags definition
-#define UART_TxFull          0x0200
-#define UART_RxHalfFull      0x0100
-#define UART_TimeOutIdle     0x0080
+#define UART_TxFull 0x0200
+#define UART_RxHalfFull 0x0100
+#define UART_TimeOutIdle 0x0080
 #define UART_TimeOutNotEmpty 0x0040
-#define UART_OverrunError    0x0020
-#define UART_FrameError      0x0010
-#define UART_ParityError     0x0008
-#define UART_TxHalfEmpty     0x0004
-#define UART_TxEmpty         0x0002
-#define UART_RxBufFull       0x0001
+#define UART_OverrunError 0x0020
+#define UART_FrameError 0x0010
+#define UART_ParityError 0x0008
+#define UART_TxHalfEmpty 0x0004
+#define UART_TxEmpty 0x0002
+#define UART_RxBufFull 0x0001
 
 // CR regiter bit definition
 #define UART_FIFOEnableBit 10
-#define UART_RxEnableBit   8
-#define UART_RunBit        7
-#define UART_LoopBackBit   6
-#define UART_ParityOddBit  5
-#define UART_StopBits      3
+#define UART_RxEnableBit 8
+#define UART_RunBit 7
+#define UART_LoopBackBit 6
+#define UART_ParityOddBit 5
+#define UART_StopBits 3
 
 // Stop bits definition
-#define UART_05StopBits     0x00
-#define UART_1StopBit       (0x01<<3)
-#define UART_15StopBits     (0x02<<3)
-#define UART_2StopBits      (0x03<<3)
+#define UART_05StopBits 0x00
+#define UART_1StopBit (0x01 << 3)
+#define UART_15StopBits (0x02 << 3)
+#define UART_2StopBits (0x03 << 3)
 
 // Modes definition
-#define UART_8BitsData       0x01
-#define UART_7BitsData       0x03
-#define UART_9BitsData       0x04
+#define UART_8BitsData 0x01
+#define UART_7BitsData 0x03
+#define UART_9BitsData 0x04
 #define UART_8BitsDataWakeUp 0x05
 #define UART_8BitsDataParity 0x07
 
@@ -109,7 +108,7 @@ void UART_Init(UART_TypeDef *UARTx);
 *******************************************************************************/
 INLINE void UART_ModeConfig(UART_TypeDef *UARTx, UARTMode_TypeDef UART_Mode)
 {
-  UARTx->CR = (UARTx->CR&0xFFF8)|(u16)UART_Mode;
+  UARTx->CR = (UARTx->CR & 0xFFF8) | (u16)UART_Mode;
 }
 
 /*******************************************************************************
@@ -132,7 +131,7 @@ void UART_BaudRateConfig(UART_TypeDef *UARTx, u32 BaudRate);
 *******************************************************************************/
 INLINE void UART_ParityConfig(UART_TypeDef *UARTx, UARTParity_TypeDef Parity)
 {
-  UARTx->CR = (UARTx->CR&0xFFDF)|(u16)Parity;
+  UARTx->CR = (UARTx->CR & 0xFFDF) | (u16)Parity;
 }
 
 /*******************************************************************************
@@ -146,7 +145,7 @@ INLINE void UART_ParityConfig(UART_TypeDef *UARTx, UARTParity_TypeDef Parity)
 *******************************************************************************/
 INLINE void UART_StopBitsConfig(UART_TypeDef *UARTx, UARTStopBits_TypeDef StopBits)
 {
-  UARTx->CR = (UARTx->CR&0xFFE7)|(u16)StopBits;
+  UARTx->CR = (UARTx->CR & 0xFFE7) | (u16)StopBits;
 }
 
 /*******************************************************************************
@@ -383,7 +382,7 @@ INLINE u16 UART_FlagStatus(UART_TypeDef *UARTx)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void sendchar( char *ch );
+void sendchar(char *ch);
 #endif /* USE_SERIAL_PORT */
 
 #endif /* _UART_H */

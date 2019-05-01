@@ -22,12 +22,11 @@
 #define __71x_map_H
 
 #ifndef EXT
-  #define EXT extern
+#define EXT extern
 #endif
 
 #include "71x_conf.h"
 #include "71x_type.h"
-
 
 /* IP registers structures */
 
@@ -186,21 +185,21 @@ typedef volatile struct
 
 typedef volatile struct
 {
-  vu8  CR;
-  vu8  EMPTY1[3];
-  vu8  SR1;
-  vu8  EMPTY2[3];
-  vu8  SR2;
-  vu8  EMPTY3[3];
-  vu8  CCR;
-  vu8  EMPTY4[3];
-  vu8  OAR1;
-  vu8  EMPTY5[3];
-  vu8  OAR2;
-  vu8  EMPTY6[3];
-  vu8  DR;
-  vu8  EMPTY7[3];
-  vu8  ECCR;
+  vu8 CR;
+  vu8 EMPTY1[3];
+  vu8 SR1;
+  vu8 EMPTY2[3];
+  vu8 SR2;
+  vu8 EMPTY3[3];
+  vu8 CCR;
+  vu8 EMPTY4[3];
+  vu8 OAR1;
+  vu8 EMPTY5[3];
+  vu8 OAR2;
+  vu8 EMPTY6[3];
+  vu8 DR;
+  vu8 EMPTY7[3];
+  vu8 ECCR;
 } I2C_TypeDef;
 
 typedef volatile struct
@@ -338,23 +337,22 @@ typedef volatile struct
 
 typedef volatile struct
 {
-  vu8  SR;
-  vu8  EMPTY1[7];
-  vu8  CTRL;
-  vu8  EMPTY2[3];
-  vu8  MRH;
-  vu8  EMPTY3[3];
-  vu8  MRL;
-  vu8  EMPTY4[3];
-  vu8  TRH;
-  vu8  EMPTY5[3];
-  vu8  TRL;
-  vu8  EMPTY6[3];
-  vu8  PRH;
-  vu8  EMPTY7[3];
-  vu8  PRL;
+  vu8 SR;
+  vu8 EMPTY1[7];
+  vu8 CTRL;
+  vu8 EMPTY2[3];
+  vu8 MRH;
+  vu8 EMPTY3[3];
+  vu8 MRL;
+  vu8 EMPTY4[3];
+  vu8 TRH;
+  vu8 EMPTY5[3];
+  vu8 TRL;
+  vu8 EMPTY6[3];
+  vu8 PRH;
+  vu8 EMPTY7[3];
+  vu8 PRL;
 } XTI_TypeDef;
-
 
 /* IRQ vectors */
 typedef volatile struct
@@ -394,218 +392,218 @@ typedef volatile struct
 
 /* Memory mapping */
 
-#define RAM_BASE        0x20000000
+#define RAM_BASE 0x20000000
 
-#define FLASHR_BASE     0x40100000
-#define FLASHPR_BASE    0x4010DFB0
+#define FLASHR_BASE 0x40100000
+#define FLASHPR_BASE 0x4010DFB0
 
-#define EXTMEM_BASE     0x60000000
-#define RCCU_BASE       0xA0000000
-#define PCU_BASE        0xA0000040
-#define APB1_BASE       0xC0000000
-#define APB2_BASE       0xE0000000
-#define EIC_BASE        0xFFFFF800
+#define EXTMEM_BASE 0x60000000
+#define RCCU_BASE 0xA0000000
+#define PCU_BASE 0xA0000040
+#define APB1_BASE 0xC0000000
+#define APB2_BASE 0xE0000000
+#define EIC_BASE 0xFFFFF800
 
-#define I2C0_BASE       (APB1_BASE + 0x1000)
-#define I2C1_BASE       (APB1_BASE + 0x2000)
-#define UART0_BASE      (APB1_BASE + 0x4000)
-#define UART1_BASE      (APB1_BASE + 0x5000)
-#define UART2_BASE      (APB1_BASE + 0x6000)
-#define UART3_BASE      (APB1_BASE + 0x7000)
-#define CAN_BASE        (APB1_BASE + 0x9000)
-#define BSPI0_BASE      (APB1_BASE + 0xA000)
-#define BSPI1_BASE      (APB1_BASE + 0xB000)
-#define USB_BASE        (APB1_BASE + 0x8800)
+#define I2C0_BASE (APB1_BASE + 0x1000)
+#define I2C1_BASE (APB1_BASE + 0x2000)
+#define UART0_BASE (APB1_BASE + 0x4000)
+#define UART1_BASE (APB1_BASE + 0x5000)
+#define UART2_BASE (APB1_BASE + 0x6000)
+#define UART3_BASE (APB1_BASE + 0x7000)
+#define CAN_BASE (APB1_BASE + 0x9000)
+#define BSPI0_BASE (APB1_BASE + 0xA000)
+#define BSPI1_BASE (APB1_BASE + 0xB000)
+#define USB_BASE (APB1_BASE + 0x8800)
 
-#define XTI_BASE        (APB2_BASE + 0x101C)
-#define GPIO0_BASE      (APB2_BASE + 0x3000)
-#define GPIO1_BASE      (APB2_BASE + 0x4000)
-#define GPIO2_BASE      (APB2_BASE + 0x5000)
-#define ADC12_BASE      (APB2_BASE + 0x7000)
-#define TIM0_BASE       (APB2_BASE + 0x9000)
-#define TIM1_BASE       (APB2_BASE + 0xA000)
-#define TIM2_BASE       (APB2_BASE + 0xB000)
-#define TIM3_BASE       (APB2_BASE + 0xC000)
-#define RTC_BASE        (APB2_BASE + 0xD000)
-#define WDG_BASE        (APB2_BASE + 0xE000)
+#define XTI_BASE (APB2_BASE + 0x101C)
+#define GPIO0_BASE (APB2_BASE + 0x3000)
+#define GPIO1_BASE (APB2_BASE + 0x4000)
+#define GPIO2_BASE (APB2_BASE + 0x5000)
+#define ADC12_BASE (APB2_BASE + 0x7000)
+#define TIM0_BASE (APB2_BASE + 0x9000)
+#define TIM1_BASE (APB2_BASE + 0xA000)
+#define TIM2_BASE (APB2_BASE + 0xB000)
+#define TIM3_BASE (APB2_BASE + 0xC000)
+#define RTC_BASE (APB2_BASE + 0xD000)
+#define WDG_BASE (APB2_BASE + 0xE000)
 
-#define EMI_BASE        (EXTMEM_BASE + 0x0C000000)
+#define EMI_BASE (EXTMEM_BASE + 0x0C000000)
 
 /*===================================================================*/
 
 /* IP data access */
 
 #ifndef LIBDEBUG
-  #define ADC12 ((ADC12_TypeDef *)ADC12_BASE)
+#define ADC12 ((ADC12_TypeDef *)ADC12_BASE)
 
-  #define APB1  ((APB_TypeDef *)(APB1_BASE+0x10))
-  #define APB2  ((APB_TypeDef *)(APB2_BASE+0x10))
+#define APB1 ((APB_TypeDef *)(APB1_BASE + 0x10))
+#define APB2 ((APB_TypeDef *)(APB2_BASE + 0x10))
 
-  #define BSPI0 ((BSPI_TypeDef *)BSPI0_BASE)
-  #define BSPI1 ((BSPI_TypeDef *)BSPI1_BASE)
+#define BSPI0 ((BSPI_TypeDef *)BSPI0_BASE)
+#define BSPI1 ((BSPI_TypeDef *)BSPI1_BASE)
 
-  #define CAN   ((CAN_TypeDef *)CAN_BASE)
+#define CAN ((CAN_TypeDef *)CAN_BASE)
 
-  #define EIC   ((EIC_TypeDef *)EIC_BASE)
+#define EIC ((EIC_TypeDef *)EIC_BASE)
 
-  #define EMI   ((EMI_TypeDef *)EMI_BASE)
+#define EMI ((EMI_TypeDef *)EMI_BASE)
 
-  #define FLASHR  ((FLASHR_TypeDef *)FLASHR_BASE)
-  #define FLASHPR ((FLASHPR_TypeDef *)FLASHPR_BASE)
+#define FLASHR ((FLASHR_TypeDef *)FLASHR_BASE)
+#define FLASHPR ((FLASHPR_TypeDef *)FLASHPR_BASE)
 
-  #define GPIO0 ((GPIO_TypeDef *)GPIO0_BASE)
-  #define GPIO1 ((GPIO_TypeDef *)GPIO1_BASE)
-  #define GPIO2 ((GPIO_TypeDef *)GPIO2_BASE)
+#define GPIO0 ((GPIO_TypeDef *)GPIO0_BASE)
+#define GPIO1 ((GPIO_TypeDef *)GPIO1_BASE)
+#define GPIO2 ((GPIO_TypeDef *)GPIO2_BASE)
 
-  #define I2C0  ((I2C_TypeDef *)I2C0_BASE)
-  #define I2C1  ((I2C_TypeDef *)I2C1_BASE)
+#define I2C0 ((I2C_TypeDef *)I2C0_BASE)
+#define I2C1 ((I2C_TypeDef *)I2C1_BASE)
 
-  #define PCU   ((PCU_TypeDef *)PCU_BASE)
+#define PCU ((PCU_TypeDef *)PCU_BASE)
 
-  #define RCCU  ((RCCU_TypeDef *)RCCU_BASE)
+#define RCCU ((RCCU_TypeDef *)RCCU_BASE)
 
-  #define RTC   ((RTC_TypeDef *)RTC_BASE)
+#define RTC ((RTC_TypeDef *)RTC_BASE)
 
-  #define TIM0  ((TIM_TypeDef *)TIM0_BASE)
-  #define TIM1  ((TIM_TypeDef *)TIM1_BASE)
-  #define TIM2  ((TIM_TypeDef *)TIM2_BASE)
-  #define TIM3  ((TIM_TypeDef *)TIM3_BASE)
+#define TIM0 ((TIM_TypeDef *)TIM0_BASE)
+#define TIM1 ((TIM_TypeDef *)TIM1_BASE)
+#define TIM2 ((TIM_TypeDef *)TIM2_BASE)
+#define TIM3 ((TIM_TypeDef *)TIM3_BASE)
 
-  #define UART0 ((UART_TypeDef *)UART0_BASE)
-  #define UART1 ((UART_TypeDef *)UART1_BASE)
-  #define UART2 ((UART_TypeDef *)UART2_BASE)
-  #define UART3 ((UART_TypeDef *)UART3_BASE)
+#define UART0 ((UART_TypeDef *)UART0_BASE)
+#define UART1 ((UART_TypeDef *)UART1_BASE)
+#define UART2 ((UART_TypeDef *)UART2_BASE)
+#define UART3 ((UART_TypeDef *)UART3_BASE)
 
-  #define USB   ((USB_TypeDef *)USB_BASE)
+#define USB ((USB_TypeDef *)USB_BASE)
 
-  #define WDG   ((WDG_TypeDef *)WDG_BASE)
+#define WDG ((WDG_TypeDef *)WDG_BASE)
 
-  #define XTI   ((XTI_TypeDef *)XTI_BASE)
+#define XTI ((XTI_TypeDef *)XTI_BASE)
 
-  #define IRQVectors ((IRQVectors_TypeDef *)&T0TIMI_Addr)
+#define IRQVectors ((IRQVectors_TypeDef *)&T0TIMI_Addr)
 
-#else   /* LIBDEBUG */
+#else /* LIBDEBUG */
 
-  #ifdef _ADC12
-  EXT ADC12_TypeDef *ADC12;
-  #endif
+#ifdef _ADC12
+EXT ADC12_TypeDef *ADC12;
+#endif
 
-  #ifdef _APB
-  #ifdef _APB1
-  EXT APB_TypeDef *APB1;
-  #endif
-  #ifdef _APB2
-  EXT APB_TypeDef *APB2;
-  #endif
-  #endif
+#ifdef _APB
+#ifdef _APB1
+EXT APB_TypeDef *APB1;
+#endif
+#ifdef _APB2
+EXT APB_TypeDef *APB2;
+#endif
+#endif
 
-  #ifdef _BSPI
-  #ifdef _BSPI0
-  EXT BSPI_TypeDef *BSPI0;
-  #endif
-  #ifdef _BSPI1
-  EXT BSPI_TypeDef *BSPI1;
-  #endif
-  #endif
+#ifdef _BSPI
+#ifdef _BSPI0
+EXT BSPI_TypeDef *BSPI0;
+#endif
+#ifdef _BSPI1
+EXT BSPI_TypeDef *BSPI1;
+#endif
+#endif
 
-  #ifdef _CAN
-  EXT CAN_TypeDef *CAN;
-  #endif
+#ifdef _CAN
+EXT CAN_TypeDef *CAN;
+#endif
 
-  #ifdef _EIC
-  EXT EIC_TypeDef *EIC;
-  #endif
+#ifdef _EIC
+EXT EIC_TypeDef *EIC;
+#endif
 
-  #ifdef _EMI
-  EXT EMI_TypeDef *EMI;
-  #endif
+#ifdef _EMI
+EXT EMI_TypeDef *EMI;
+#endif
 
-  #ifdef _FLASH
-  EXT FLASHR_TypeDef *FLASHR;
-  EXT FLASHPR_TypeDef *FLASHPR;
-  #endif
+#ifdef _FLASH
+EXT FLASHR_TypeDef *FLASHR;
+EXT FLASHPR_TypeDef *FLASHPR;
+#endif
 
-  #ifdef _GPIO
-  #ifdef _GPIO0
-  EXT GPIO_TypeDef *GPIO0;
-  #endif
-  #ifdef _GPIO1
-  EXT GPIO_TypeDef *GPIO1;
-  #endif
-  #ifdef _GPIO2
-  EXT GPIO_TypeDef *GPIO2;
-  #endif
-  #endif
+#ifdef _GPIO
+#ifdef _GPIO0
+EXT GPIO_TypeDef *GPIO0;
+#endif
+#ifdef _GPIO1
+EXT GPIO_TypeDef *GPIO1;
+#endif
+#ifdef _GPIO2
+EXT GPIO_TypeDef *GPIO2;
+#endif
+#endif
 
-  #ifdef _I2C
-  #ifdef _I2C0
-  EXT I2C_TypeDef *I2C0;
-  #endif
-  #ifdef _I2C1
-  EXT I2C_TypeDef *I2C1;
-  #endif
-  #endif
+#ifdef _I2C
+#ifdef _I2C0
+EXT I2C_TypeDef *I2C0;
+#endif
+#ifdef _I2C1
+EXT I2C_TypeDef *I2C1;
+#endif
+#endif
 
-  #ifdef _PCU
-  EXT PCU_TypeDef *PCU;
-  #endif
+#ifdef _PCU
+EXT PCU_TypeDef *PCU;
+#endif
 
-  #ifdef _RCCU
-  EXT RCCU_TypeDef *RCCU;
-  #endif
+#ifdef _RCCU
+EXT RCCU_TypeDef *RCCU;
+#endif
 
-  #ifdef _RTC
-  EXT RTC_TypeDef *RTC;
-  #endif
+#ifdef _RTC
+EXT RTC_TypeDef *RTC;
+#endif
 
-  #ifdef _TIM
-  #ifdef _TIM0
-  EXT TIM_TypeDef *TIM0;
-  #endif
-  #ifdef _TIM1
-  EXT TIM_TypeDef *TIM1;
-  #endif
-  #ifdef _TIM2
-  EXT TIM_TypeDef *TIM2;
-  #endif
-  #ifdef _TIM3
-  EXT TIM_TypeDef *TIM3;
-  #endif
-  #endif
+#ifdef _TIM
+#ifdef _TIM0
+EXT TIM_TypeDef *TIM0;
+#endif
+#ifdef _TIM1
+EXT TIM_TypeDef *TIM1;
+#endif
+#ifdef _TIM2
+EXT TIM_TypeDef *TIM2;
+#endif
+#ifdef _TIM3
+EXT TIM_TypeDef *TIM3;
+#endif
+#endif
 
-  #ifdef _UART
-  #ifdef _UART0
-  EXT UART_TypeDef *UART0;
-  #endif
-  #ifdef _UART1
-  EXT UART_TypeDef *UART1;
-  #endif
-  #ifdef _UART2
-  EXT UART_TypeDef *UART2;
-  #endif
-  #ifdef _UART3
-  EXT UART_TypeDef *UART3;
-  #endif
-  #endif
+#ifdef _UART
+#ifdef _UART0
+EXT UART_TypeDef *UART0;
+#endif
+#ifdef _UART1
+EXT UART_TypeDef *UART1;
+#endif
+#ifdef _UART2
+EXT UART_TypeDef *UART2;
+#endif
+#ifdef _UART3
+EXT UART_TypeDef *UART3;
+#endif
+#endif
 
-  #ifdef _USB
-  EXT USB_TypeDef *USB;
-  #endif
+#ifdef _USB
+EXT USB_TypeDef *USB;
+#endif
 
-  #ifdef _WDG
-  EXT WDG_TypeDef *WDG;
-  #endif
+#ifdef _WDG
+EXT WDG_TypeDef *WDG;
+#endif
 
-  #ifdef _XTI
-  EXT XTI_TypeDef *XTI;
-  #endif
+#ifdef _XTI
+EXT XTI_TypeDef *XTI;
+#endif
 
-  #ifdef _IRQVectors
-  EXT IRQVectors_TypeDef *IRQVectors;
-  #endif
+#ifdef _IRQVectors
+EXT IRQVectors_TypeDef *IRQVectors;
+#endif
 
-#endif  /* LIBDEBUG */
+#endif /* LIBDEBUG */
 
-#endif  /* __71x_map_H */
+#endif /* __71x_map_H */
 
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

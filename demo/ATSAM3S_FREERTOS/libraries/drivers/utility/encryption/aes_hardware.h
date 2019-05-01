@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -31,14 +31,14 @@
 /// \unit
 ///
 /// !Purpose
-/// 
+///
 /// Firmware encryption using AES hardware acceleration
 /// This code is based on the AES reference implementation published by Paulo
 /// Barreto and Vincent Rijmen.
-/// 
+///
 /// !Usage
-/// 
-/// -# aes_hard_init: Initialize AES hardware 
+///
+/// -# aes_hard_init: Initialize AES hardware
 /// -# aes_hard_init_CBC: for the CBC mode
 /// -# aes_hard_init_CTR: for the CTR mode
 /// -# aes_hard_init_ECB: for the ECB mode
@@ -60,26 +60,26 @@
 // Check configuration
 //------------------------------------------------------------------------------
 #if (ENCRYPTION_KEY_LENGTH != 16)
-  #error Hardware AES acceleration only supports 128 bits keys.
+#error Hardware AES acceleration only supports 128 bits keys.
 #endif
 
-#if (ENCRYPTION_BLOCK_LENGTH !=  16)
-  #error Hardware AES acceleration only supports 128 bits blocks.
+#if (ENCRYPTION_BLOCK_LENGTH != 16)
+#error Hardware AES acceleration only supports 128 bits blocks.
 #endif
 
 #if !defined(ENCRYPTION_ECB) && \
     !defined(ENCRYPTION_CBC) && \
     !defined(ENCRYPTION_CTR)
-  #error Only ECB, CBC & CTR modes are supported.
+#error Only ECB, CBC & CTR modes are supported.
 #endif
 
 //------------------------------------------------------------------------------
 // Definitions
 //------------------------------------------------------------------------------
 #ifdef ONLY_ONE_ENCRYPTION
-#define ENCRYPTION_INIT     aes_hard_init
-#define ENCRYPTION_CLEANUP  aes_hard_cleanup
-#define ENCRYPTION_DECRYPT  aes_hard_decrypt
+#define ENCRYPTION_INIT aes_hard_init
+#define ENCRYPTION_CLEANUP aes_hard_cleanup
+#define ENCRYPTION_DECRYPT aes_hard_decrypt
 #endif
 
 //------------------------------------------------------------------------------
@@ -96,5 +96,3 @@ extern int aes_hard_decrypt(const unsigned char *, unsigned char *, unsigned int
 
 #endif // defined(USE_ENCRYPTION) && defined(ENCRYPTION_AES_HARD)
 #endif // BOOTLOADER_AES_HARDWARE_H
-
-

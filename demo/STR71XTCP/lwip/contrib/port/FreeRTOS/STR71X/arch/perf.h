@@ -33,7 +33,7 @@
 #define __PERF_H__
 
 /* ------------------------ Defines --------------------------------------- */
-#define PERF_START              /* null definition */
-#define PERF_STOP(x)            /* null definition */
+#define PERF_START   /* null definition */
+#define PERF_STOP(x) /* null definition */
 
 #endif

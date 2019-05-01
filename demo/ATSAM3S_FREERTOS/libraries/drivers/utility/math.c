@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -44,12 +44,14 @@
 /// \param b  Second integer to compare.
 //------------------------------------------------------------------------------
 unsigned int min(unsigned int a, unsigned int b)
-{ 
-    if (a < b) {
+{
+    if (a < b)
+    {
 
         return a;
     }
-    else {
+    else
+    {
 
         return b;
     }
@@ -62,11 +64,13 @@ unsigned int min(unsigned int a, unsigned int b)
 // Do not call this function "abs", problem with gcc !
 unsigned int absv(signed int value)
 {
-    if (value < 0) {
+    if (value < 0)
+    {
 
         return -value;
     }
-    else {
+    else
+    {
 
         return value;
     }
@@ -80,12 +84,12 @@ unsigned int absv(signed int value)
 unsigned int power(unsigned int x, unsigned int y)
 {
     unsigned int result = 1;
-    
-    while (y > 0) {
+
+    while (y > 0)
+    {
 
         result *= x;
         y--;
-    } 
+    }
     return result;
 }
-

@@ -19,18 +19,18 @@
 
 	A special exception to the GPL can be applied should you wish to distribute
 	a combined work that includes FreeRTOS, without being obliged to provide
-	the source code for any proprietary components.  See the licensing section 
+	the source code for any proprietary components.  See the licensing section
 	of http://www.FreeRTOS.org for full details of how and when the exception
 	can be applied.
 
 	***************************************************************************
-	See http://www.FreeRTOS.org for documentation, latest information, license 
-	and contact details.  Please ensure to read the configuration and relevant 
+	See http://www.FreeRTOS.org for documentation, latest information, license
+	and contact details.  Please ensure to read the configuration and relevant
 	port sections of the online documentation.
 	***************************************************************************
 */
 
-/* 
+/*
 
 Changes between V2.5.1 and V2.5.1
 
@@ -39,10 +39,9 @@ Changes between V2.5.1 and V2.5.1
 
 Changes between V2.6.1 and V3.0.0
 
-	+ An overflow check has been added to ensure the next free byte variable 
+	+ An overflow check has been added to ensure the next free byte variable
 	  does not wrap around.
 */
-
 
 /*
  * The simplest possible implementation of pvPortMalloc().  Note that this
@@ -57,19 +56,19 @@ Changes between V2.6.1 and V3.0.0
 
 /* Setup the correct byte alignment mask for the defined byte alignment. */
 #if portBYTE_ALIGNMENT == 4
-	#define heapBYTE_ALIGNMENT_MASK	( ( size_t ) 0x0003 )
+#define heapBYTE_ALIGNMENT_MASK ((size_t)0x0003)
 #endif
 
 #if portBYTE_ALIGNMENT == 2
-	#define heapBYTE_ALIGNMENT_MASK	( ( size_t ) 0x0001 )
+#define heapBYTE_ALIGNMENT_MASK ((size_t)0x0001)
 #endif
 
-#if portBYTE_ALIGNMENT == 1 
-	#define heapBYTE_ALIGNMENT_MASK	( ( size_t ) 0x0000 )
+#if portBYTE_ALIGNMENT == 1
+#define heapBYTE_ALIGNMENT_MASK ((size_t)0x0000)
 #endif
 
 #ifndef heapBYTE_ALIGNMENT_MASK
-	#error "Invalid portBYTE_ALIGNMENT definition"
+#error "Invalid portBYTE_ALIGNMENT definition"
 #endif
 
 /* Allocate the memory for the heap.  The struct is used to force byte
@@ -77,36 +76,36 @@ alignment without using any non-portable code. */
 static struct xRTOS_HEAP
 {
 	unsigned portLONG ulDummy;
-	unsigned portCHAR ucHeap[ configTOTAL_HEAP_SIZE ];
+	unsigned portCHAR ucHeap[configTOTAL_HEAP_SIZE];
 } xHeap;
 
-static size_t xNextFreeByte = ( size_t ) 0;
+static size_t xNextFreeByte = (size_t)0;
 /*-----------------------------------------------------------*/
 
-void *pvPortMalloc( size_t xWantedSize )
+void *pvPortMalloc(size_t xWantedSize)
 {
-void *pvReturn = NULL; 
+	void *pvReturn = NULL;
 
-	/* Ensure that blocks are always aligned to the required number of bytes. */
-	#if portBYTE_ALIGNMENT != 1
-		if( xWantedSize & heapBYTE_ALIGNMENT_MASK )
-		{
-			/* Byte alignment required. */
-			xWantedSize += ( portBYTE_ALIGNMENT - ( xWantedSize & heapBYTE_ALIGNMENT_MASK ) );
-		}
-	#endif
+/* Ensure that blocks are always aligned to the required number of bytes. */
+#if portBYTE_ALIGNMENT != 1
+	if (xWantedSize & heapBYTE_ALIGNMENT_MASK)
+	{
+		/* Byte alignment required. */
+		xWantedSize += (portBYTE_ALIGNMENT - (xWantedSize & heapBYTE_ALIGNMENT_MASK));
+	}
+#endif
 
 	vTaskSuspendAll();
 	{
 		/* Check there is enough room left for the allocation. */
-		if( ( ( xNextFreeByte + xWantedSize ) < configTOTAL_HEAP_SIZE ) &&
-			( ( xNextFreeByte + xWantedSize ) > xNextFreeByte )	)/* Check for overflow. */
+		if (((xNextFreeByte + xWantedSize) < configTOTAL_HEAP_SIZE) &&
+			((xNextFreeByte + xWantedSize) > xNextFreeByte)) /* Check for overflow. */
 		{
 			/* Return the next free byte then increment the index past this
 			block. */
-			pvReturn = &( xHeap.ucHeap[ xNextFreeByte ] );
-			xNextFreeByte += xWantedSize;			
-		}	
+			pvReturn = &(xHeap.ucHeap[xNextFreeByte]);
+			xNextFreeByte += xWantedSize;
+		}
 	}
 	xTaskResumeAll();
 
@@ -114,19 +113,17 @@ void *pvReturn = NULL;
 }
 /*-----------------------------------------------------------*/
 
-void vPortFree( void *pv )
+void vPortFree(void *pv)
 {
-	/* Memory cannot be freed using this scheme.  See heap_2.c and heap_3.c 
-	for alternative implementations, and the memory management pages of 
+	/* Memory cannot be freed using this scheme.  See heap_2.c and heap_3.c
+	for alternative implementations, and the memory management pages of
 	http://www.FreeRTOS.org for more information. */
-	( void ) pv;
+	(void)pv;
 }
 /*-----------------------------------------------------------*/
 
-void vPortInitialiseBlocks( void )
+void vPortInitialiseBlocks(void)
 {
 	/* Only required when static memory is not cleared. */
-	xNextFreeByte = ( size_t ) 0;
+	xNextFreeByte = (size_t)0;
 }
-
-

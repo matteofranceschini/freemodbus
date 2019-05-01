@@ -72,15 +72,12 @@
 /*@{*/
 /*@}*/
 
-
 /**
  * \file
  *
  * Implementation of SPI At45 driver.
  *
  */
-
-
 
 /*----------------------------------------------------------------------------
  *        Headers
@@ -96,7 +93,7 @@
  *----------------------------------------------------------------------------*/
 
 /** Number of dataflash which can be recognized.*/
-#define NUMDATAFLASH    (sizeof(at45Devices) / sizeof(At45Desc))
+#define NUMDATAFLASH (sizeof(at45Devices) / sizeof(At45Desc))
 
 /*----------------------------------------------------------------------------
  *        Local variables
@@ -107,17 +104,16 @@ static uint8_t configuredBinaryPage;
 
 /** At45 device descriptor structure. */
 static const At45Desc at45Devices[] = {
-    {  512,  1, 264,   9, 0x0C, "AT45DB011D"},
-    { 1024,  1, 264,   9, 0x14, "AT45DB021D"},
-    { 2048,  1, 264,   9, 0x1C, "AT45DB041D"},
-    { 4096,  1, 264,   9, 0x24, "AT45DB081D"},
-    { 4096,  1, 528,  10, 0x2C, "AT45DB161D"},
-    { 8192,  1, 528,  10, 0x34, "AT45DB321D"},
-    { 8192,  1, 1056, 11, 0x3C, "AT45DB642D"},
-    {16384,  1, 1056, 11, 0x10, "AT45DB1282"},
-    {16384,  1, 2112, 12, 0x18, "AT45DB2562"},
-    {32768,  1, 2112, 12, 0x20, "AT45DB5122"}
-};
+    {512, 1, 264, 9, 0x0C, "AT45DB011D"},
+    {1024, 1, 264, 9, 0x14, "AT45DB021D"},
+    {2048, 1, 264, 9, 0x1C, "AT45DB041D"},
+    {4096, 1, 264, 9, 0x24, "AT45DB081D"},
+    {4096, 1, 528, 10, 0x2C, "AT45DB161D"},
+    {8192, 1, 528, 10, 0x34, "AT45DB321D"},
+    {8192, 1, 1056, 11, 0x3C, "AT45DB642D"},
+    {16384, 1, 1056, 11, 0x10, "AT45DB1282"},
+    {16384, 1, 2112, 12, 0x18, "AT45DB2562"},
+    {32768, 1, 2112, 12, 0x20, "AT45DB5122"}};
 
 /*----------------------------------------------------------------------------
  *        Exported functions
@@ -202,7 +198,8 @@ uint8_t AT45_SendCommand(
            "AT45_Command: Device has no descriptor, only STATUS_READ command allowed\n\r");
 
     /* Check if the SPI driver is available*/
-    if (AT45_IsBusy(pAt45)) {
+    if (AT45_IsBusy(pAt45))
+    {
 
         return AT45_ERROR_LOCK;
     }
@@ -211,31 +208,36 @@ uint8_t AT45_SendCommand(
     pAt45->pCmdBuffer[0] = cmd;
 
     /* Add address bytes if necessary*/
-    if (cmdSize > 1) {
+    if (cmdSize > 1)
+    {
 
         ASSERT(pDesc, "AT45_Command: No descriptor for dataflash.\n\r");
-        if (!configuredBinaryPage) {
+        if (!configuredBinaryPage)
+        {
             dfAddress =
-                ((address / (pDesc->pageSize)) << pDesc->pageOffset)
-                 + (address % (pDesc->pageSize));
+                ((address / (pDesc->pageSize)) << pDesc->pageOffset) + (address % (pDesc->pageSize));
         }
-        else {
+        else
+        {
             dfAddress = address;
         }
         /* Write address bytes*/
-        if (pDesc->pageNumber >= 16384) {
+        if (pDesc->pageNumber >= 16384)
+        {
 
             pAt45->pCmdBuffer[1] = ((dfAddress & 0x0F000000) >> 24);
             pAt45->pCmdBuffer[2] = ((dfAddress & 0x00FF0000) >> 16);
             pAt45->pCmdBuffer[3] = ((dfAddress & 0x0000FF00) >> 8);
             pAt45->pCmdBuffer[4] = ((dfAddress & 0x000000FF) >> 0);
 
-            if ((cmd != AT45_CONTINUOUS_READ) && (cmd != AT45_PAGE_READ)) {
+            if ((cmd != AT45_CONTINUOUS_READ) && (cmd != AT45_PAGE_READ))
+            {
 
                 cmdSize++;
             }
         }
-        else {
+        else
+        {
 
             pAt45->pCmdBuffer[1] = ((dfAddress & 0x00FF0000) >> 16);
             pAt45->pCmdBuffer[2] = ((dfAddress & 0x0000FF00) >> 8);
@@ -252,7 +254,8 @@ uint8_t AT45_SendCommand(
     pCommand->pArgument = pArgument;
 
     /* Send Command and data through the SPI*/
-    if (SPID_SendCommand(pAt45->pSpid, pCommand)) {
+    if (SPID_SendCommand(pAt45->pSpid, pCommand))
+    {
 
         return AT45_ERROR_SPI;
     }
@@ -269,13 +272,14 @@ uint8_t AT45_SendCommand(
  * \return 0 if successful; Otherwise, returns AT45_ERROR_LOCK if the At45
  * driver is in use or AT45_ERROR_SPI if there was an error with the SPI driver.
  */
-const At45Desc * AT45_FindDevice(At45 *pAt45, uint8_t status)
+const At45Desc *AT45_FindDevice(At45 *pAt45, uint8_t status)
 {
     uint32_t i;
     uint8_t id = AT45_STATUS_ID(status);
 
     /* Check if status is all one; in which case, it is assumed that no device is connected*/
-    if (status == 0xFF) {
+    if (status == 0xFF)
+    {
 
         return 0;
     }
@@ -283,9 +287,11 @@ const At45Desc * AT45_FindDevice(At45 *pAt45, uint8_t status)
     /* Look in device array */
     i = 0;
     pAt45->pDesc = 0;
-    while ((i < NUMDATAFLASH) && !(pAt45->pDesc)) {
+    while ((i < NUMDATAFLASH) && !(pAt45->pDesc))
+    {
 
-        if (at45Devices[i].id == id) {
+        if (at45Devices[i].id == id)
+        {
 
             pAt45->pDesc = &(at45Devices[i]);
         }
@@ -301,10 +307,11 @@ const At45Desc * AT45_FindDevice(At45 *pAt45, uint8_t status)
  * \param status  Device status register value.
  * \return page size.
  */
-uint32_t  AT45_PageSize(At45 *pAt45)
+uint32_t AT45_PageSize(At45 *pAt45)
 {
     uint32_t pagesize = pAt45->pDesc->pageSize;
-    if(((pAt45->pDesc->hasBinaryPage) == 0) || !configuredBinaryPage){
+    if (((pAt45->pDesc->hasBinaryPage) == 0) || !configuredBinaryPage)
+    {
         return pagesize;
     }
     return ((pagesize >> 8) << 8);

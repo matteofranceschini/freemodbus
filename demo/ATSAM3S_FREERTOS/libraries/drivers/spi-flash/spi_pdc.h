@@ -26,7 +26,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
- 
+
 /**
  * \file
  *
@@ -36,7 +36,6 @@
 
 #ifndef SPI_PDC_H
 #define SPI_PDC_H
-
 
 /*----------------------------------------------------------------------------
  *        Headers
@@ -48,20 +47,20 @@
  *----------------------------------------------------------------------------*/
 
 /** An unspecified error has occured.*/
-#define SPID_ERROR          1
+#define SPID_ERROR 1
 
 /** SPI driver is currently in use.*/
-#define SPID_ERROR_LOCK     2
+#define SPID_ERROR_LOCK 2
 
 /*----------------------------------------------------------------------------
  *        Macros
  *----------------------------------------------------------------------------*/
 
 /** Calculates the value of the SCBR field of the Chip Select Register given MCK and SPCK.*/
-#define SPID_CSR_SCBR(mck, spck)    ((((mck) / (spck)) << 8) & SPI_CSR_SCBR)
+#define SPID_CSR_SCBR(mck, spck) ((((mck) / (spck)) << 8) & SPI_CSR_SCBR)
 
 /** Calculates the value of the DLYBS field of the Chip Select Register given delay in ns and MCK.*/
-#define SPID_CSR_DLYBS(mck, delay)  ((((((delay) * ((mck) / 1000000)) / 1000) + 1)  << 16) & SPI_CSR_DLYBS)
+#define SPID_CSR_DLYBS(mck, delay) ((((((delay) * ((mck) / 1000000)) / 1000) + 1) << 16) & SPI_CSR_DLYBS)
 
 /** Calculates the value of the DLYBCT field of the Chip Select Register given delay in ns and MCK.*/
 #define SPID_CSR_DLYBCT(mck, delay) ((((((delay) / 32 * ((mck) / 1000000)) / 1000) + 1) << 24) & SPI_CSR_DLYBCT)
@@ -71,42 +70,44 @@
  *----------------------------------------------------------------------------*/
 
 /** SPI transfer complete callback.*/
-typedef void (*SpidCallback )(uint8_t, void *);
+typedef void (*SpidCallback)(uint8_t, void *);
 
 /** Spi Transfer Request prepared by the application upper layer. This structure
-    is sent to the SPI_SendCommand function to start the transfer. At the end of 
+    is sent to the SPI_SendCommand function to start the transfer. At the end of
     the transfer, the callback is invoked by the interrupt handler.*/
-typedef struct _SpidCmd {
+typedef struct _SpidCmd
+{
 
     /** Pointer to the command data.*/
-	uint8_t *pCmd;
+    uint8_t *pCmd;
     /** Command size in bytes.*/
-	uint8_t cmdSize;
+    uint8_t cmdSize;
     /** Pointer to the data to be sent.*/
-	uint8_t *pData;
+    uint8_t *pData;
     /** Data size in bytes.*/
-	unsigned short dataSize;
+    unsigned short dataSize;
     /** SPI chip select.*/
-	uint8_t spiCs;
+    uint8_t spiCs;
     /** Callback function invoked at the end of transfer.*/
-	SpidCallback callback;
+    SpidCallback callback;
     /** Callback arguments.*/
-	void *pArgument;
+    void *pArgument;
 
 } SpidCmd;
 
 /** Constant structure associated with SPI port. This structure prevents
     client applications to have access in the same time.*/
-typedef struct {
+typedef struct
+{
 
     /** Pointer to SPI Hardware registers*/
-	Spi *pSpiHw;
+    Spi *pSpiHw;
     /** SPI Id as defined in the product datasheet*/
-	char spiId;
+    char spiId;
     /** Current SpiCommand being processed*/
-	SpidCmd *pCurrentCommand;
+    SpidCmd *pCurrentCommand;
     /** Mutual exclusion semaphore.*/
-	volatile char semaphore;
+    volatile char semaphore;
 
 } Spid;
 
@@ -120,14 +121,13 @@ extern uint8_t SPID_Configure(
     uint8_t spiId);
 
 extern void SPID_ConfigureCS(Spid *pSpid, uint8_t cs, uint32_t csr);
-	
+
 extern uint8_t SPID_SendCommand(
-	Spid *pSpid,
-	SpidCmd *pCommand);
+    Spid *pSpid,
+    SpidCmd *pCommand);
 
 extern void SPID_Handler(Spid *pSpid);
 
 extern uint8_t SPID_IsBusy(const Spid *pSpid);
 
 #endif // #ifndef SPI_PDC_H
-

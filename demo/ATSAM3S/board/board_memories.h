@@ -43,7 +43,6 @@
 //         Exported functions
 //------------------------------------------------------------------------------
 
-extern void BOARD_ConfigureNandFlash( void ) ;
+extern void BOARD_ConfigureNandFlash(void);
 
 #endif //#ifndef BOARD_MEMORIES_H
-

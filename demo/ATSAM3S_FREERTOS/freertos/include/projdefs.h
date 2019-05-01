@@ -33,9 +33,9 @@
     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-    more details. You should have received a copy of the GNU General Public 
-    License and the FreeRTOS license exception along with FreeRTOS; if not it 
-    can be viewed here: http://www.freertos.org/a00114.html and also obtained 
+    more details. You should have received a copy of the GNU General Public
+    License and the FreeRTOS license exception along with FreeRTOS; if not it
+    can be viewed here: http://www.freertos.org/a00114.html and also obtained
     by writing to Richard Barry, contact details for whom are available on the
     FreeRTOS WEB site.
 
@@ -55,23 +55,20 @@
 #define PROJDEFS_H
 
 /* Defines the prototype to which task functions must conform. */
-typedef void (*pdTASK_CODE)( void * );
+typedef void (*pdTASK_CODE)(void *);
 
-#define pdTRUE		( 1 )
-#define pdFALSE		( 0 )
+#define pdTRUE (1)
+#define pdFALSE (0)
 
-#define pdPASS									( 1 )
-#define pdFAIL									( 0 )
-#define errQUEUE_EMPTY							( 0 )
-#define errQUEUE_FULL							( 0 )
+#define pdPASS (1)
+#define pdFAIL (0)
+#define errQUEUE_EMPTY (0)
+#define errQUEUE_FULL (0)
 
 /* Error definitions. */
-#define errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY	( -1 )
-#define errNO_TASK_TO_RUN						( -2 )
-#define errQUEUE_BLOCKED						( -4 )
-#define errQUEUE_YIELD							( -5 )
+#define errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY (-1)
+#define errNO_TASK_TO_RUN (-2)
+#define errQUEUE_BLOCKED (-4)
+#define errQUEUE_YIELD (-5)
 
 #endif /* PROJDEFS_H */
-
-
-

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -38,4 +38,3 @@ extern unsigned int min(unsigned int a, unsigned int b);
 extern unsigned int absv(signed int value);
 extern unsigned int power(unsigned int x, unsigned int y);
 #endif //#ifndef MATH_H
-

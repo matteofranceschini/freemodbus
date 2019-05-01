@@ -58,26 +58,27 @@
  *----------------------------------------------------------------------------*/
 
 /** Delay for pushbutton debouncing (the time-base is 10 ms). */
-#define DEBOUNCE_TIME       6               /* 10 * 6 = 60 ms */
+#define DEBOUNCE_TIME 6 /* 10 * 6 = 60 ms */
 
 /** Color of calibration points. */
-#define POINTS_COLOR        0x0000FF
+#define POINTS_COLOR 0x0000FF
 
 /** Size in pixels of calibration points. */
-#define POINTS_SIZE         4
+#define POINTS_SIZE 4
 
 /** Maximum difference in pixels between the test point and the measured point. */
-#define POINTS_MAX_ERROR    5
+#define POINTS_MAX_ERROR 5
 
 /*----------------------------------------------------------------------------
  *        Types
  *----------------------------------------------------------------------------*/
 
 /** pen state */
-typedef enum {
-    STATE_PEN_RELEASED  = 0,
-    STATE_PEN_PRESSED   = 1,
-    STATE_PEN_DEBOUNCE  = 2
+typedef enum
+{
+    STATE_PEN_RELEASED = 0,
+    STATE_PEN_PRESSED = 1,
+    STATE_PEN_DEBOUNCE = 2
 } e_pen_state;
 
 /*----------------------------------------------------------------------------
@@ -85,7 +86,7 @@ typedef enum {
  *----------------------------------------------------------------------------*/
 
 /** Pins used by Interrupt Signal for Touch Screen Controller */
-static const Pin pinPenIRQ  = PIN_TCS_IRQ;
+static const Pin pinPenIRQ = PIN_TCS_IRQ;
 
 /** Global timestamp in milliseconds since start of application. */
 static volatile uint32_t timestamp = 0;
@@ -113,56 +114,69 @@ static uint32_t tsInitFlag = 0;
  *
  * \note External timer interrupt should call it per 10ms.
  */
-extern void TSD_TimerHandler( void )
+extern void TSD_TimerHandler(void)
 {
     uint32_t data[2];
     static uint32_t point[2];
 
-    if (!tsInitFlag) return;
+    if (!tsInitFlag)
+        return;
 
     timestamp++;
     /* Get the current position of the pen if penIRQ has low value (pen pressed) */
-    if (PIO_Get(&pinPenIRQ) == 0) {
+    if (PIO_Get(&pinPenIRQ) == 0)
+    {
         /* Get the current position of the pressed pen */
-        if(TSDCom_IsCalibrationOk()) {
+        if (TSDCom_IsCalibrationOk())
+        {
             TSD_GetRawMeasurement(data);
             TSDCom_InterpolateMeasurement(data, point);
         }
 
         /* call the callback function */
-        if(penState == STATE_PEN_PRESSED) {
-            if(TSDCom_IsCalibrationOk()) {
+        if (penState == STATE_PEN_PRESSED)
+        {
+            if (TSDCom_IsCalibrationOk())
+            {
                 TSD_PenMoved(point[0], point[1]);
             }
         }
     }
 
     /* Determine the pen state */
-    if (PIO_Get(&pinPenIRQ) == 0) {
+    if (PIO_Get(&pinPenIRQ) == 0)
+    {
 
         /* reinit the last time when release */
         timeRelease = timestamp;
-        if(penState == STATE_PEN_DEBOUNCE) {
-            if( (timestamp - timePress) > DEBOUNCE_TIME) {
+        if (penState == STATE_PEN_DEBOUNCE)
+        {
+            if ((timestamp - timePress) > DEBOUNCE_TIME)
+            {
                 /* pen is pressed during an enough time : the state change */
                 penState = STATE_PEN_PRESSED;
                 /* call the callback function */
-                if(TSDCom_IsCalibrationOk()) {
+                if (TSDCom_IsCalibrationOk())
+                {
                     TSD_PenPressed(point[0], point[1]);
                 }
             }
         }
     }
-    else {
+    else
+    {
         /* reinit the last time when release */
         timePress = timestamp;
 
-        if(penState == STATE_PEN_DEBOUNCE) {
-            if( (timestamp - timeRelease) > DEBOUNCE_TIME) {
+        if (penState == STATE_PEN_DEBOUNCE)
+        {
+            if ((timestamp - timeRelease) > DEBOUNCE_TIME)
+            {
                 /* pen is released during an enough time : the state change */
                 penState = STATE_PEN_RELEASED;
                 /* call the callback function */
-                if(TSDCom_IsCalibrationOk()) {
+                if (TSDCom_IsCalibrationOk())
+                {
                     TSD_PenReleased(point[0], point[1]);
                 }
             }
@@ -176,15 +190,19 @@ extern void TSD_TimerHandler( void )
 static void ISR_PenIRQ(void)
 {
     /* Check if the pen has been pressed */
-    if (!PIO_Get(&pinPenIRQ)) {
-        if(penState == STATE_PEN_RELEASED) {
+    if (!PIO_Get(&pinPenIRQ))
+    {
+        if (penState == STATE_PEN_RELEASED)
+        {
 
             timePress = timestamp;
             penState = STATE_PEN_DEBOUNCE;
         }
     }
-    else {
-        if(penState == STATE_PEN_PRESSED) {
+    else
+    {
+        if (penState == STATE_PEN_PRESSED)
+        {
 
             timeRelease = timestamp;
             penState = STATE_PEN_DEBOUNCE;
@@ -202,7 +220,7 @@ static void ConfigurePenIRQ(void)
 
     /* Initialize interrupts */
     PIO_InitializeInterrupts(0);
-    PIO_ConfigureIt(&pinPenIRQ, (void (*)(const Pin *)) ISR_PenIRQ);
+    PIO_ConfigureIt(&pinPenIRQ, (void (*)(const Pin *))ISR_PenIRQ);
 
     /* Enable the interrupt */
     PIO_EnableIt(&pinPenIRQ);
@@ -228,23 +246,27 @@ extern void TSD_GetRawMeasurement(uint32_t *pData)
 /**
  * \brief Wait pen pressed.
  */
-extern void TSD_WaitPenPressed( void )
+extern void TSD_WaitPenPressed(void)
 {
     /* Wait for touch & end of conversion */
-    while (penState != STATE_PEN_RELEASED);
+    while (penState != STATE_PEN_RELEASED)
+        ;
     /*while (penState != STATE_PEN_PRESSED); */
-    while (penState != STATE_PEN_PRESSED) {
+    while (penState != STATE_PEN_PRESSED)
+    {
     }
 }
 
 /**
  * \brief Wait pen released.
  */
-extern void TSD_WaitPenReleased( void )
+extern void TSD_WaitPenReleased(void)
 {
     /* Wait for contact loss */
-    while (penState != STATE_PEN_PRESSED);
-    while (penState != STATE_PEN_RELEASED);
+    while (penState != STATE_PEN_PRESSED)
+        ;
+    while (penState != STATE_PEN_RELEASED)
+        ;
 }
 
 /**
@@ -257,7 +279,8 @@ uint8_t TSD_Calibrate(void)
     uint8_t ret = 0;
 
     /* Calibration is done only once */
-    if(TSDCom_IsCalibrationOk()) {
+    if (TSDCom_IsCalibrationOk())
+    {
         return 1;
     }
 
@@ -274,7 +297,7 @@ uint8_t TSD_Calibrate(void)
  * \note Important: the LCD driver must have been initialized prior to calling this
  * function.
  */
-extern void TSD_Initialize( int8_t calEn )
+extern void TSD_Initialize(int8_t calEn)
 {
     ADS7843_Initialize();
     ConfigurePenIRQ();
@@ -282,8 +305,10 @@ extern void TSD_Initialize( int8_t calEn )
     tsInitFlag = 1;
 
     /* Calibration */
-    if(calEn) {
-       while (!TSD_Calibrate());
+    if (calEn)
+    {
+        while (!TSD_Calibrate())
+            ;
     }
 }
 

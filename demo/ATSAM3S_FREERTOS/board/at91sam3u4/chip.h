@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -26,9 +26,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
- 
- 
-#ifndef CHIP_H 
+
+#ifndef CHIP_H
 #define CHIP_H
 
 //------------------------------------------------------------------------------
@@ -38,7 +37,6 @@
 //------------------------------------------------------------------------------
 //         Definitions
 //------------------------------------------------------------------------------
-
 
 //ARM core features
 
@@ -55,23 +53,21 @@
 //IP FEATURES
 
 // EFC GPNVM number
-#define CHIP_EFC_NUM_GPNVMS    3
+#define CHIP_EFC_NUM_GPNVMS 3
 
-// Indicates chip has an Enhanced EFC. 
-#define CHIP_FLASH_EEFC 
+// Indicates chip has an Enhanced EFC.
+#define CHIP_FLASH_EEFC
 
 // DMA channels number
-#define CHIP_DMA_CHANNEL_NUM   4
+#define CHIP_DMA_CHANNEL_NUM 4
 
-// Indicate chip has a nandflash controller. 
+// Indicate chip has a nandflash controller.
 #define CHIP_NAND_CTRL
- 
+
 //------------------------------------------------------------------------------
 
-
-//Misc 
+//Misc
 
 //------------------------------------------------------------------------------
 
 #endif //#ifndef CHIP_H
-

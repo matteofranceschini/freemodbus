@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2009, Atmel Corporation
  *
@@ -144,9 +144,11 @@ void SPI_ConfigureNPCS(Spi *spi,
 void SPI_Write(Spi *spi, uint32_t npcs, uint16_t data)
 {
     /* Send data */
-    while ((spi->SPI_SR & SPI_SR_TXEMPTY) == 0);
+    while ((spi->SPI_SR & SPI_SR_TXEMPTY) == 0)
+        ;
     spi->SPI_TDR = data | SPI_PCS(npcs);
-    while ((spi->SPI_SR & SPI_SR_TDRE) == 0);
+    while ((spi->SPI_SR & SPI_SR_TDRE) == 0)
+        ;
 }
 
 /**
@@ -158,21 +160,23 @@ void SPI_Write(Spi *spi, uint32_t npcs, uint16_t data)
  * \param length  Length of the data buffer.
  */
 uint8_t SPI_WriteBuffer(Spi *spi,
-                              void *buffer,
-                              uint32_t length)
+                        void *buffer,
+                        uint32_t length)
 {
     /* Check if first bank is free */
-    if (spi->SPI_TCR == 0) {
+    if (spi->SPI_TCR == 0)
+    {
 
-        spi->SPI_TPR = (uint32_t) buffer;
+        spi->SPI_TPR = (uint32_t)buffer;
         spi->SPI_TCR = length;
         spi->SPI_PTCR = PERIPH_PTCR_TXTEN;
         return 1;
     }
     /* Check if second bank is free */
-    else if (spi->SPI_TNCR == 0) {
+    else if (spi->SPI_TNCR == 0)
+    {
 
-        spi->SPI_TNPR = (uint32_t) buffer;
+        spi->SPI_TNPR = (uint32_t)buffer;
         spi->SPI_TNCR = length;
         return 1;
     }
@@ -204,7 +208,8 @@ uint8_t SPI_IsFinished(Spi *spi)
  */
 uint16_t SPI_Read(Spi *spi)
 {
-    while ((spi->SPI_SR & SPI_SR_RDRF) == 0);
+    while ((spi->SPI_SR & SPI_SR_RDRF) == 0)
+        ;
     return spi->SPI_RDR & 0xFFFF;
 }
 
@@ -217,21 +222,23 @@ uint16_t SPI_Read(Spi *spi)
  * \param length  Length in bytes of the data buffer.
  */
 uint8_t SPI_ReadBuffer(Spi *spi,
-                             void *buffer,
-                             uint32_t length)
+                       void *buffer,
+                       uint32_t length)
 {
     /* Check if the first bank is free */
-    if (spi->SPI_RCR == 0) {
+    if (spi->SPI_RCR == 0)
+    {
 
-        spi->SPI_RPR = (uint32_t) buffer;
+        spi->SPI_RPR = (uint32_t)buffer;
         spi->SPI_RCR = length;
         spi->SPI_PTCR = PERIPH_PTCR_RXTEN;
         return 1;
     }
     /* Check if second bank is free */
-    else if (spi->SPI_RNCR == 0) {
+    else if (spi->SPI_RNCR == 0)
+    {
 
-        spi->SPI_RNPR = (uint32_t) buffer;
+        spi->SPI_RNPR = (uint32_t)buffer;
         spi->SPI_RNCR = length;
         return 1;
     }

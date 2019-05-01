@@ -32,7 +32,7 @@
  * peripheral.
  *
  * \usage
- * <ul>  
+ * <ul>
  * <li> Configures a TWI peripheral to operate in master mode, at the given
  * frequency (in Hz) using TWI_Configure(). </li>
  * <li> Sends a STOP condition on the TWI using TWI_Stop().</li>
@@ -56,7 +56,7 @@
  * TWI_GetStatus(). Get current status register of the given TWI peripheral, but
  * masking interrupt sources which are not currently enabled using
  * TWI_GetMaskedStatus().</li>
- * </ul>  
+ * </ul>
  * For more accurate information, please look at the TWI section of the
  * Datasheet.
  *
@@ -67,14 +67,12 @@
 /*@{*/
 /*@}*/
 
-
 /**
  * \file
  *
  * Implementation of Two Wire Interface (TWI).
  *
  */
-
 
 /*----------------------------------------------------------------------------
  *        Headers
@@ -120,12 +118,15 @@ void TWI_ConfigureMaster(Twi *pTwi, uint32_t twck, uint32_t mck)
     pTwi->TWI_CR = TWI_CR_MSEN;
 
     /* Configure clock */
-    while (!ok) {
+    while (!ok)
+    {
         cldiv = ((mck / (2 * twck)) - 3) / power(2, ckdiv);
-        if (cldiv <= 255) {
+        if (cldiv <= 255)
+        {
             ok = 1;
         }
-        else {
+        else
+        {
             ckdiv++;
         }
     }
@@ -149,7 +150,8 @@ void TWI_ConfigureSlave(Twi *pTwi, uint8_t slaveAddress)
     pTwi->TWI_RHR;
 
     /* Wait at least 10 ms */
-    for (i=0; i < 1000000; i++);
+    for (i = 0; i < 1000000; i++)
+        ;
 
     /* TWI Slave Mode Disabled, TWI Master Mode Disabled*/
     pTwi->TWI_CR = TWI_CR_SVDIS | TWI_CR_MSDIS;
@@ -162,8 +164,9 @@ void TWI_ConfigureSlave(Twi *pTwi, uint8_t slaveAddress)
     pTwi->TWI_CR = TWI_CR_SVEN;
 
     /* Wait at least 10 ms */
-    for (i=0; i < 1000000; i++);
-    ASSERT( (pTwi->TWI_CR & TWI_CR_SVDIS)!= TWI_CR_SVDIS, "Can't configure TWI slave mode");
+    for (i = 0; i < 1000000; i++)
+        ;
+    ASSERT((pTwi->TWI_CR & TWI_CR_SVDIS) != TWI_CR_SVDIS, "Can't configure TWI slave mode");
 }
 
 /**
@@ -223,8 +226,8 @@ uint8_t TWI_ReadByte(Twi *pTwi)
 
 /**
  * \brief Sends a byte of data to one of the TWI slaves on the bus.
- * \note This function must be called once before TWI_StartWrite() with 
- * the first byte of data  to send, then it shall be called repeatedly 
+ * \note This function must be called once before TWI_StartWrite() with
+ * the first byte of data  to send, then it shall be called repeatedly
  * after that to send the remaining bytes.
  * \param pTwi  Pointer to an Twi instance.
  * \param byte  Byte to send.
@@ -332,7 +335,7 @@ void TWI_DisableIt(Twi *pTwi, uint32_t sources)
 
 /**
  * \brief Get the current status register of the given TWI peripheral.
- * \note This resets the internal value of the status register, so further 
+ * \note This resets the internal value of the status register, so further
  * read may yield different values.
  * \param pTwi  Pointer to an Twi instance.
  * \return  TWI status register.
@@ -347,7 +350,7 @@ uint32_t TWI_GetStatus(Twi *pTwi)
 /**
  * \brief Returns the current status register of the given TWI peripheral, but
  * masking interrupt sources which are not currently enabled.
- * \note This resets the internal value of the status register, so further 
+ * \note This resets the internal value of the status register, so further
  * read may yield different values.
  * \param pTwi  Pointer to an Twi instance.
  */
@@ -374,4 +377,3 @@ void TWI_SendSTOPCondition(Twi *pTwi)
 
     pTwi->TWI_CR |= TWI_CR_STOP;
 }
-

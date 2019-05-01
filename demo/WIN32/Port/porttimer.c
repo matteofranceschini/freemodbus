@@ -29,55 +29,50 @@
 /* ----------------------- Defines ------------------------------------------*/
 
 /* ----------------------- Static variables ---------------------------------*/
-DWORD           dwTimeOut;
-BOOL            bTimeoutEnable;
-DWORD           dwTimeLast;
-extern HANDLE   g_hSerial;
+DWORD dwTimeOut;
+BOOL bTimeoutEnable;
+DWORD dwTimeLast;
+extern HANDLE g_hSerial;
 
 /* ----------------------- Start implementation -----------------------------*/
-BOOL
-xMBPortTimersInit( USHORT usTim1Timerout50us )
+BOOL xMBPortTimersInit(USHORT usTim1Timerout50us)
 {
     dwTimeOut = usTim1Timerout50us / 20U;
-    if( dwTimeOut == 0 )
+    if (dwTimeOut == 0)
         dwTimeOut = 1;
 
-    return xMBPortSerialSetTimeout( dwTimeOut );
+    return xMBPortSerialSetTimeout(dwTimeOut);
 }
 
-void
-xMBPortTimersClose(  )
+void xMBPortTimersClose()
 {
     /* Does not use any hardware resources. */
 }
 
-void
-vMBPortTimerPoll(  )
+void vMBPortTimerPoll()
 {
 
     /* Timers are called from the serial layer because we have no high
      * res timer in Win32. */
-    if( bTimeoutEnable )
+    if (bTimeoutEnable)
     {
-        DWORD           dwTimeCurrent = GetTickCount(  );
+        DWORD dwTimeCurrent = GetTickCount();
 
-        if( ( dwTimeCurrent - dwTimeLast ) > dwTimeOut )
+        if ((dwTimeCurrent - dwTimeLast) > dwTimeOut)
         {
             bTimeoutEnable = FALSE;
-            ( void )pxMBPortCBTimerExpired(  );
+            (void)pxMBPortCBTimerExpired();
         }
     }
 }
 
-void
-vMBPortTimersEnable(  )
+void vMBPortTimersEnable()
 {
     bTimeoutEnable = TRUE;
-    dwTimeLast = GetTickCount(  );
+    dwTimeLast = GetTickCount();
 }
 
-void
-vMBPortTimersDisable(  )
+void vMBPortTimersDisable()
 {
     bTimeoutEnable = FALSE;
 }

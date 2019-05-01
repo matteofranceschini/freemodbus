@@ -43,7 +43,7 @@
 /* Include the macro file relevant to the port being used. */
 
 #ifdef SAM7_GCC
-	#include "FreeRTOS/portable/GCC/ARM7_AT91SAM7S/portmacro.h"
+#include "FreeRTOS/portable/GCC/ARM7_AT91SAM7S/portmacro.h"
 #endif
 
 /*
@@ -51,27 +51,26 @@
  * scheduler control.  The registers have to be placed on the stack in
  * the order that the port expects to find them.
  */
-portSTACK_TYPE *pxPortInitialiseStack( portSTACK_TYPE *pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters );
+portSTACK_TYPE *pxPortInitialiseStack(portSTACK_TYPE *pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters);
 
 /*
  * Map to the memory management routines required for the port.
  */
-void *pvPortMalloc( size_t xSize );
-void vPortFree( void *pv );
-void vPortInitialiseBlocks( void );
+void *pvPortMalloc(size_t xSize);
+void vPortFree(void *pv);
+void vPortInitialiseBlocks(void);
 
 /*
  * Setup the hardware ready for the scheduler to take control.  This generally
  * sets up a tick interrupt and sets timers for the correct tick frequency.
  */
-portBASE_TYPE xPortStartScheduler( void );
+portBASE_TYPE xPortStartScheduler(void);
 
 /*
  * Undo any hardware/ISR setup that was performed by xPortStartScheduler() so
  * the hardware is left in its original condition after the scheduler stops
  * executing.
  */
-void vPortEndScheduler( void );
+void vPortEndScheduler(void);
 
 #endif /* PORTABLE_H */
-

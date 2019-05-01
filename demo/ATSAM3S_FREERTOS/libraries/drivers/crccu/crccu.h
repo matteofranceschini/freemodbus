@@ -47,7 +47,8 @@
  *        Types
  *----------------------------------------------------------------------------*/
 
-typedef struct {
+typedef struct
+{
     unsigned int TR_ADDR;
     unsigned int TR_CTRL;
     unsigned int reserved[2];
@@ -63,4 +64,3 @@ uint32_t CRCCU_ComputeCrc(void);
 uint32_t CRCCU_CompareCrc(void);
 
 #endif /* #ifndef CRCCU_H */
-

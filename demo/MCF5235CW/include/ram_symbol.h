@@ -30,7 +30,7 @@
 */
 
 /* Defining DEBUG turns on debug print information */
-#define DEBUG	1
+#define DEBUG 1
 
 /* CodeWarrior looks for an underscore prepended to C function names */
 #define _UNDERSCORE_
@@ -41,8 +41,8 @@
 #endif
 
 /* Modify the interrupt type to work with CodeWarrior */
-#define __interrupt__	__declspec(interrupt)
+#define __interrupt__ __declspec(interrupt)
 
 #define CODEWARRIOR_MCF5235
-#define FCPU                    ( 150000000UL )
-#define FSYS_2                  ( 75000000UL )
+#define FCPU (150000000UL)
+#define FSYS_2 (75000000UL)

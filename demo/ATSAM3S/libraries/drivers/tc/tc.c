@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2009, Atmel Corporation
  *
@@ -107,26 +107,30 @@ unsigned char TC_FindMckDivisor(
     unsigned int *div,
     unsigned int *tcclks)
 {
-    const unsigned int divisors[5] = {2, 8, 32, 128,BOARD_MCK / 32768};
+    const unsigned int divisors[5] = {2, 8, 32, 128, BOARD_MCK / 32768};
 
     unsigned int index = 0;
 
     /*  Satisfy lower bound */
-    while (freq < ((mck / divisors[index]) / 65536)) {
+    while (freq < ((mck / divisors[index]) / 65536))
+    {
 
         index++;
 
         /*  If no divisor can be found, return 0 */
-        if (index == 5) {
+        if (index == 5)
+        {
 
             return 0;
         }
     }
 
     /*  Try to maximize DIV while satisfying upper bound */
-    while (index < 4) {
+    while (index < 4)
+    {
 
-        if (freq > (mck / divisors[index + 1])) {
+        if (freq > (mck / divisors[index + 1]))
+        {
 
             break;
         }
@@ -134,15 +138,16 @@ unsigned char TC_FindMckDivisor(
     }
 
     /*  Store results */
-    if (div) {
+    if (div)
+    {
 
         *div = divisors[index];
     }
-    if (tcclks) {
+    if (tcclks)
+    {
 
         *tcclks = index;
     }
 
     return 1;
 }
-

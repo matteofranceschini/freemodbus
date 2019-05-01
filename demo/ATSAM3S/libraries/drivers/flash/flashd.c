@@ -28,9 +28,9 @@
  */
 
 /** \addtogroup flashd_module Flash Memory Interface
- * The flash driver manages the programming, erasing, locking and unlocking sequences 
+ * The flash driver manages the programming, erasing, locking and unlocking sequences
  * with dedicated commands.
- * 
+ *
  * To implement flash programing operation, the user has to follow these few steps :
  * <ul>
  * <li>Configue flash wait states to initializes the flash. </li>
@@ -43,13 +43,13 @@
  *
  * Writing 8-bit and 16-bit data is not allowed and may lead to unpredictable data corruption.
  * A check of this validity and padding for 32-bit alignment should be done in write algorithm.
- 
+
  * Lock/unlock range associated with the user address range is automatically translated.
  *
  * This security bit can be enabled through the command "Set General Purpose NVM Bit 0".
  *
- * A 128-bit factory programmed unique ID could be read to serve several purposes. 
- * 
+ * A 128-bit factory programmed unique ID could be read to serve several purposes.
+ *
  * The driver accesses the flash memory by calling the lowlevel module provided in \ref efc_module.
  * For more accurate information, please look at the EEFC section of the Datasheet.
  *
@@ -61,7 +61,6 @@
 */
 /*@{*/
 /*@}*/
-
 
 /**
  * \file
@@ -82,7 +81,6 @@
 #include <utility/trace.h>
 
 #include <string.h>
-
 
 /*----------------------------------------------------------------------------
  *        Local functions
@@ -115,7 +113,8 @@ static void ComputeLockRange(
     numPagesInRegion = AT91C_IFLASH_LOCK_REGION_SIZE / AT91C_IFLASH_PAGE_SIZE;
     actualStartPage = startPage - (startPage % numPagesInRegion);
     actualEndPage = endPage;
-    if ((endPage % numPagesInRegion) != 0) {
+    if ((endPage % numPagesInRegion) != 0)
+    {
 
         actualEndPage += numPagesInRegion - (endPage % numPagesInRegion);
     }
@@ -124,7 +123,6 @@ static void ComputeLockRange(
     EFC_ComputeAddress(pEndEfc, actualEndPage, 0, pActualEnd);
     TRACE_DEBUG("Actual lock range is 0x%06X - 0x%06X\n\r", *pActualStart, *pActualEnd);
 }
-
 
 /*----------------------------------------------------------------------------
  *        Exported functions
@@ -139,13 +137,16 @@ static void ComputeLockRange(
 void FLASHD_Initialize(uint32_t mck)
 {
     EFC_DisableFrdyIt(EFC);
-    if ((mck/1000000) >= 64) {
+    if ((mck / 1000000) >= 64)
+    {
         EFC_SetWaitState(EFC, 2);
     }
-    else if ((mck/1000000) >= 50) {
+    else if ((mck / 1000000) >= 50)
+    {
         EFC_SetWaitState(EFC, 1);
     }
-    else {
+    else
+    {
         EFC_SetWaitState(EFC, 0);
     }
 }
@@ -162,19 +163,18 @@ uint8_t FLASHD_Erase(uint32_t address)
     uint16_t page;
     uint16_t offset;
     uint8_t error;
-    SANITY_CHECK((address >=AT91C_IFLASH) || (address <= (AT91C_IFLASH + AT91C_IFLASH_SIZE)));
+    SANITY_CHECK((address >= AT91C_IFLASH) || (address <= (AT91C_IFLASH + AT91C_IFLASH_SIZE)));
     // Translate write address
     EFC_TranslateAddress(&pEfc, address, &page, &offset);
     error = EFC_PerformCommand(pEfc, EFC_FCMD_EA, 0);
     return error;
 }
 
-    
 static uint8_t pPageBuffer[AT91C_IFLASH_PAGE_SIZE];
 /**
  * \brief Writes a data buffer in the internal flash
  *
- * \note This function works in polling mode, and thus only returns when the 
+ * \note This function works in polling mode, and thus only returns when the
  * data has been effectively written.
  * \param address  Write address.
  * \param pBuffer  Data buffer.
@@ -195,17 +195,18 @@ uint8_t FLASHD_Write(
     uint8_t error;
 
     uint32_t sizeTmp;
-    uint32_t *pAlignedDestination; 
+    uint32_t *pAlignedDestination;
     uint32_t *pAlignedSource;
-    
+
     SANITY_CHECK(pBuffer);
-    SANITY_CHECK(address >=AT91C_IFLASH);
+    SANITY_CHECK(address >= AT91C_IFLASH);
     SANITY_CHECK((address + size) <= (AT91C_IFLASH + AT91C_IFLASH_SIZE));
     // Translate write address
     EFC_TranslateAddress(&pEfc, address, &page, &offset);
 
     // Write all pages
-    while (size > 0) {
+    while (size > 0)
+    {
 
         // Copy data in temporary buffer to avoid alignment problems
         writeSize = min(AT91C_IFLASH_PAGE_SIZE - offset, size);
@@ -213,36 +214,38 @@ uint8_t FLASHD_Write(
         padding = AT91C_IFLASH_PAGE_SIZE - offset - writeSize;
 
         // Pre-buffer data
-        memcpy(pPageBuffer, (void *) pageAddress, offset);
+        memcpy(pPageBuffer, (void *)pageAddress, offset);
 
         // Buffer data
         memcpy(pPageBuffer + offset, pBuffer, writeSize);
 
         // Post-buffer data
-        memcpy(pPageBuffer + offset + writeSize, (void *) (pageAddress + offset + writeSize), padding);
+        memcpy(pPageBuffer + offset + writeSize, (void *)(pageAddress + offset + writeSize), padding);
 
         // Write page
-        // Writing 8-bit and 16-bit data is not allowed 
+        // Writing 8-bit and 16-bit data is not allowed
         // and may lead to unpredictable data corruption
-        pAlignedDestination = (uint32_t*)pageAddress;
-        pAlignedSource = (uint32_t*)pPageBuffer;        
+        pAlignedDestination = (uint32_t *)pageAddress;
+        pAlignedSource = (uint32_t *)pPageBuffer;
         sizeTmp = AT91C_IFLASH_PAGE_SIZE;
-        while (sizeTmp >= 4) {
+        while (sizeTmp >= 4)
+        {
 
             *pAlignedDestination++ = *pAlignedSource++;
             sizeTmp -= 4;
-        }        
-               
+        }
+
         // Send writing command
         error = EFC_PerformCommand(pEfc, EFC_FCMD_EWP, page);
-        if (error) {
+        if (error)
+        {
 
             return error;
         }
 
         // Progression
         address += AT91C_IFLASH_PAGE_SIZE;
-        pBuffer = (void *) ((uint32_t) pBuffer + writeSize);
+        pBuffer = (void *)((uint32_t)pBuffer + writeSize);
         size -= writeSize;
         page++;
         offset = 0;
@@ -273,11 +276,13 @@ uint8_t FLASHD_Lock(
 
     // Compute actual lock range and store it
     ComputeLockRange(start, end, &actualStart, &actualEnd);
-    if (pActualStart) {
+    if (pActualStart)
+    {
 
         *pActualStart = actualStart;
     }
-    if (pActualEnd) {
+    if (pActualEnd)
+    {
 
         *pActualEnd = actualEnd;
     }
@@ -287,10 +292,12 @@ uint8_t FLASHD_Lock(
     EFC_TranslateAddress(0, actualEnd, &endPage, 0);
 
     // Lock all pages
-    while (startPage < endPage) {
+    while (startPage < endPage)
+    {
 
         error = EFC_PerformCommand(pEfc, EFC_FCMD_SLB, startPage);
-        if (error) {
+        if (error)
+        {
 
             return error;
         }
@@ -323,11 +330,13 @@ uint8_t FLASHD_Unlock(
 
     // Compute actual unlock range and store it
     ComputeLockRange(start, end, &actualStart, &actualEnd);
-    if (pActualStart) {
+    if (pActualStart)
+    {
 
         *pActualStart = actualStart;
     }
-    if (pActualEnd) {
+    if (pActualEnd)
+    {
 
         *pActualEnd = actualEnd;
     }
@@ -337,10 +346,12 @@ uint8_t FLASHD_Unlock(
     EFC_TranslateAddress(0, actualEnd, &endPage, 0);
 
     // Unlock all pages
-    while (startPage < endPage) {
+    while (startPage < endPage)
+    {
 
         error = EFC_PerformCommand(pEfc, EFC_FCMD_CLB, startPage);
-        if (error) {
+        if (error)
+        {
 
             return error;
         }
@@ -366,7 +377,7 @@ uint8_t FLASHD_IsLocked(uint32_t start, uint32_t end)
     uint32_t numLockedRegions = 0;
 
     SANITY_CHECK(end >= start);
-    SANITY_CHECK((start >=AT91C_IFLASH) && (end <= AT91C_IFLASH + AT91C_IFLASH_SIZE)); 
+    SANITY_CHECK((start >= AT91C_IFLASH) && (end <= AT91C_IFLASH + AT91C_IFLASH_SIZE));
 
     // Compute page numbers
     EFC_TranslateAddress(&pEfc, start, &startPage, 0);
@@ -376,7 +387,8 @@ uint8_t FLASHD_IsLocked(uint32_t start, uint32_t end)
     numPagesInRegion = AT91C_IFLASH_LOCK_REGION_SIZE / AT91C_IFLASH_PAGE_SIZE;
     startRegion = startPage / numPagesInRegion;
     endRegion = endPage / numPagesInRegion;
-    if ((endPage % numPagesInRegion) != 0) {
+    if ((endPage % numPagesInRegion) != 0)
+    {
 
         endRegion++;
     }
@@ -387,9 +399,11 @@ uint8_t FLASHD_IsLocked(uint32_t start, uint32_t end)
     status = EFC_GetResult(pEfc);
 
     // Check status of each involved region
-    while (startRegion < endRegion) {
+    while (startRegion < endRegion)
+    {
 
-        if ((status & (1 << startRegion)) != 0) {
+        if ((status & (1 << startRegion)) != 0)
+        {
 
             numLockedRegions++;
         }
@@ -418,10 +432,12 @@ uint8_t FLASHD_IsGPNVMSet(uint8_t gpnvm)
     status = EFC_GetResult(EFC);
 
     // Check if GPNVM is set
-    if ((status & (1 << gpnvm)) != 0) {
+    if ((status & (1 << gpnvm)) != 0)
+    {
         return 1;
     }
-    else {
+    else
+    {
         return 0;
     }
 }
@@ -435,11 +451,13 @@ uint8_t FLASHD_SetGPNVM(uint8_t gpnvm)
 {
     SANITY_CHECK(gpnvm < 2);
 
-    if (!FLASHD_IsGPNVMSet(gpnvm)) {
+    if (!FLASHD_IsGPNVMSet(gpnvm))
+    {
 
         return EFC_PerformCommand(EFC, EFC_FCMD_SFB, gpnvm);
     }
-    else {
+    else
+    {
 
         return 0;
     }
@@ -455,11 +473,13 @@ uint8_t FLASHD_ClearGPNVM(uint8_t gpnvm)
 {
     SANITY_CHECK(gpnvm < 2);
 
-    if (FLASHD_IsGPNVMSet(gpnvm)) {
+    if (FLASHD_IsGPNVMSet(gpnvm))
+    {
 
         return EFC_PerformCommand(EFC, EFC_FCMD_CFB, gpnvm);
     }
-    else {
+    else
+    {
 
         return 0;
     }
@@ -470,7 +490,7 @@ uint8_t FLASHD_ClearGPNVM(uint8_t gpnvm)
  * \param uniqueID pointer on a 4bytes char containing the unique ID value.
  * \returns 0 if successful; otherwise returns an error code.
  */
-uint8_t FLASHD_ReadUniqueID (uint32_t * uniqueID)
+uint8_t FLASHD_ReadUniqueID(uint32_t *uniqueID)
 {
     uint8_t error;
     SANITY_CHECK(uniqueID != NULL);
@@ -488,7 +508,8 @@ uint8_t FLASHD_ReadUniqueID (uint32_t * uniqueID)
     uniqueID[3] = *(uint32_t *)(AT91C_IFLASH + 12);
 
     error = EFC_PerformCommand(EFC, EFC_FCMD_SPUI, 0);
-    if (error) return error;
+    if (error)
+        return error;
 
     return 0;
 }

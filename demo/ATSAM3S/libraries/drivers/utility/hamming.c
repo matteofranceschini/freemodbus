@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -46,9 +46,11 @@
 static unsigned char CountBitsInByte(unsigned char byte)
 {
     unsigned char count = 0;
-    while (byte > 0) {
+    while (byte > 0)
+    {
 
-        if (byte & 1) {
+        if (byte & 1)
+        {
 
             count++;
         }
@@ -64,9 +66,7 @@ static unsigned char CountBitsInByte(unsigned char byte)
 //------------------------------------------------------------------------------
 static unsigned char CountBitsInCode256(unsigned char *code)
 {
-    return CountBitsInByte(code[0])
-           + CountBitsInByte(code[1])
-           + CountBitsInByte(code[2]);
+    return CountBitsInByte(code[0]) + CountBitsInByte(code[1]) + CountBitsInByte(code[2]);
 }
 
 //------------------------------------------------------------------------------
@@ -85,20 +85,22 @@ static void Compute256(const unsigned char *data, unsigned char *code)
 
     // Xor all bytes together to get the column sum;
     // At the same time, calculate the even and odd line codes
-    for (i=0; i < 256; i++) {
+    for (i = 0; i < 256; i++)
+    {
 
         columnSum ^= data[i];
 
         // If the xor sum of the byte is 0, then this byte has no incidence on
         // the computed code; so check if the sum is 1.
-        if ((CountBitsInByte(data[i]) & 1) == 1) {
+        if ((CountBitsInByte(data[i]) & 1) == 1)
+        {
 
             // Parity groups are formed by forcing a particular index bit to 0
             // (even) or 1 (odd).
             // Example on one byte:
-            // 
-            // bits (dec)  7   6   5   4   3   2   1   0    
-            //      (bin) 111 110 101 100 011 010 001 000    
+            //
+            // bits (dec)  7   6   5   4   3   2   1   0
+            //      (bin) 111 110 101 100 011 010 001 000
             //                            '---'---'---'----------.
             //                                                   |
             // groups P4' ooooooooooooooo eeeeeeeeeeeeeee P4     |
@@ -115,12 +117,12 @@ static void Compute256(const unsigned char *data, unsigned char *code)
             //     ex: log2(4) = 2, bit2 of the index must be 0 (-> 0 1 2 3)
             // and on all odd Px' if the log2(x)nth bit of its index is 1
             //     ex: log2(2) = 1, bit1 of the index must be 1 (-> 0 1 4 5)
-            // 
+            //
             // As such, we calculate all the possible Px and Px' values at the
             // same time in two variables, evenLineCode and oddLineCode, such as
             //     evenLineCode bits: P128  P64  P32  P16  P8  P4  P2  P1
             //     oddLineCode  bits: P128' P64' P32' P16' P8' P4' P2' P1'
-            // 
+            //
             evenLineCode ^= (255 - i);
             oddLineCode ^= i;
         }
@@ -128,9 +130,11 @@ static void Compute256(const unsigned char *data, unsigned char *code)
 
     // At this point, we have the line parities, and the column sum. First, We
     // must caculate the parity group values on the column sum.
-    for (i=0; i < 8; i++) {
+    for (i = 0; i < 8; i++)
+    {
 
-        if (columnSum & 1) {
+        if (columnSum & 1)
+        {
 
             evenColumnCode ^= (7 - i);
             oddColumnCode ^= i;
@@ -143,43 +147,50 @@ static void Compute256(const unsigned char *data, unsigned char *code)
     // Code[1] = Line2
     // Code[2] = Column
     // Line = Px' Px P(x-1)- P(x-1) ...
-    // Column = P4' P4 P2' P2 P1' P1 PadBit PadBit 
+    // Column = P4' P4 P2' P2 P1' P1 PadBit PadBit
     code[0] = 0;
     code[1] = 0;
     code[2] = 0;
 
-    for (i=0; i < 4; i++) {
+    for (i = 0; i < 4; i++)
+    {
 
         code[0] <<= 2;
         code[1] <<= 2;
         code[2] <<= 2;
 
         // Line 1
-        if ((oddLineCode & 0x80) != 0) {
+        if ((oddLineCode & 0x80) != 0)
+        {
 
             code[0] |= 2;
         }
-        if ((evenLineCode & 0x80) != 0) {
+        if ((evenLineCode & 0x80) != 0)
+        {
 
             code[0] |= 1;
         }
 
         // Line 2
-        if ((oddLineCode & 0x08) != 0) {
+        if ((oddLineCode & 0x08) != 0)
+        {
 
             code[1] |= 2;
         }
-        if ((evenLineCode & 0x08) != 0) {
+        if ((evenLineCode & 0x08) != 0)
+        {
 
             code[1] |= 1;
         }
 
         // Column
-        if ((oddColumnCode & 0x04) != 0) {
+        if ((oddColumnCode & 0x04) != 0)
+        {
 
             code[2] |= 2;
         }
-        if ((evenColumnCode & 0x04) != 0) {
+        if ((evenColumnCode & 0x04) != 0)
+        {
 
             code[2] |= 1;
         }
@@ -196,7 +207,7 @@ static void Compute256(const unsigned char *data, unsigned char *code)
     code[2] = ~code[2];
 
     TRACE_DEBUG("Computed code = %02X %02X %02X\n\r",
-              code[0], code[1], code[2]);
+                code[0], code[1], code[2]);
 }
 
 //------------------------------------------------------------------------------
@@ -221,17 +232,17 @@ static unsigned char Verify256(
     correctionCode[2] = computedCode[2] ^ originalCode[2];
 
     TRACE_DEBUG("Correction code = %02X %02X %02X\n\r",
-              correctionCode[0], correctionCode[1], correctionCode[2]);
+                correctionCode[0], correctionCode[1], correctionCode[2]);
 
     // If all bytes are 0, there is no error
-    if ((correctionCode[0] == 0)
-        && (correctionCode[1] == 0)
-        && (correctionCode[2] == 0)) {
+    if ((correctionCode[0] == 0) && (correctionCode[1] == 0) && (correctionCode[2] == 0))
+    {
 
         return 0;
     }
     // If there is a single bit error, there are 11 bits set to 1
-    if (CountBitsInCode256(correctionCode) == 11) {
+    if (CountBitsInCode256(correctionCode) == 11)
+    {
 
         // Get byte and bit indexes
         unsigned char byte = correctionCode[0] & 0x80;
@@ -255,12 +266,14 @@ static unsigned char Verify256(
         return Hamming_ERROR_SINGLEBIT;
     }
     // Check if ECC has been corrupted
-    if (CountBitsInCode256(correctionCode) == 1) {
+    if (CountBitsInCode256(correctionCode) == 1)
+    {
 
         return Hamming_ERROR_ECC;
     }
     // Otherwise, this is a multi-bit error
-    else {
+    else
+    {
 
         return Hamming_ERROR_MULTIPLEBITS;
     }
@@ -284,7 +297,8 @@ void Hamming_Compute256x(
 {
     TRACE_DEBUG("Hamming_Compute256x()\n\r");
 
-    while (size > 0) {
+    while (size > 0)
+    {
 
         Compute256(data, code);
         data += 256;
@@ -313,14 +327,17 @@ unsigned char Hamming_Verify256x(
 
     TRACE_DEBUG("Hamming_Verify256x()\n\r");
 
-    while (size > 0) {
+    while (size > 0)
+    {
 
         error = Verify256(data, code);
-        if (error == Hamming_ERROR_SINGLEBIT) {
+        if (error == Hamming_ERROR_SINGLEBIT)
+        {
 
             result = Hamming_ERROR_SINGLEBIT;
         }
-        else if (error) {
+        else if (error)
+        {
 
             return error;
         }
@@ -332,4 +349,3 @@ unsigned char Hamming_Verify256x(
 
     return result;
 }
-

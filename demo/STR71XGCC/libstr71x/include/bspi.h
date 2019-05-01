@@ -25,31 +25,35 @@
 
 #include "71x_map.h"
 
-typedef enum {
+typedef enum
+{
   BSPI_BERIT = 0x80,
-  BSPI_RCIT  = 0x10,
-  BSPI_ALL   = 0x90
+  BSPI_RCIT = 0x10,
+  BSPI_ALL = 0x90
 } BSPI_ITS;
 
-typedef enum {
+typedef enum
+{
   BSPI_BERR = 0x004,
   BSPI_RFNE = 0x008,
-  BSPI_RFF  = 0x010,
+  BSPI_RFF = 0x010,
   BSPI_ROFL = 0x020,
-  BSPI_TFE  = 0x040,
+  BSPI_TFE = 0x040,
   BSPI_TUFL = 0x080,
-  BSPI_TFF  = 0x100,
+  BSPI_TFF = 0x100,
   BSPI_TFNE = 0x200
 } BSPI_Flags;
 
-typedef enum {
+typedef enum
+{
   BSPI_TR_FE,
   BSPI_TR_UFL,
   BSPI_TR_FF,
   BSPI_TR_DIS
 } BSPI_TR_IT_SRCS;
 
-typedef enum {
+typedef enum
+{
   BSPI_RC_FNE,
   BSPI_RC_FF,
   BSPI_RC_DIS
@@ -57,11 +61,10 @@ typedef enum {
 
 #define BSPI_PESET_Mask 0x01
 #define BSPI_DFIFO_Mask 0xFFFE
-#define BSPI_CPHA_Mask  0x200
-#define BSPI_CPOL_Mask  0x100
+#define BSPI_CPHA_Mask 0x200
+#define BSPI_CPOL_Mask 0x100
 #define BSPI_BSPI0_Base 0xA000
 #define BSPI_BSPI1_Base 0xB000
-
 
 /*******************************************************************************
 * Function Name  : BSPI_BSPI0Conf
@@ -75,7 +78,10 @@ typedef enum {
 *******************************************************************************/
 inline void BSPI_BSPI0Conf(FunctionalState NewState)
 {
-  if (NewState == ENABLE) PCU->BOOTCR |= 0x04; else PCU->BOOTCR &= ~0x04;
+  if (NewState == ENABLE)
+    PCU->BOOTCR |= 0x04;
+  else
+    PCU->BOOTCR &= ~0x04;
 }
 
 /*******************************************************************************
@@ -85,7 +91,7 @@ inline void BSPI_BSPI0Conf(FunctionalState NewState)
 * Output         : BSPI peripheral registers and BSPI global variables are initialized.
 * Return         : None.
 *******************************************************************************/
-void BSPI_Init( BSPI_TypeDef *BSPIx);
+void BSPI_Init(BSPI_TypeDef *BSPIx);
 
 /*******************************************************************************
 * Function Name  : BSPI_Enable
@@ -98,10 +104,12 @@ void BSPI_Init( BSPI_TypeDef *BSPIx);
 * Output         : BSPE bit  in BSPCSR1.
 * Return         : None.
 *******************************************************************************/
-inline void BSPI_Enable( BSPI_TypeDef *BSPIx, FunctionalState NewState)
+inline void BSPI_Enable(BSPI_TypeDef *BSPIx, FunctionalState NewState)
 {
-  if (NewState == ENABLE) BSPIx->CSR1 |= BSPI_PESET_Mask;
-    else BSPIx->CSR1 &= ~BSPI_PESET_Mask;
+  if (NewState == ENABLE)
+    BSPIx->CSR1 |= BSPI_PESET_Mask;
+  else
+    BSPIx->CSR1 &= ~BSPI_PESET_Mask;
 }
 
 /*******************************************************************************
@@ -116,7 +124,10 @@ inline void BSPI_Enable( BSPI_TypeDef *BSPIx, FunctionalState NewState)
 *******************************************************************************/
 inline void BSPI_MasterEnable(BSPI_TypeDef *BSPIx, FunctionalState NewState)
 {
-  if (NewState == ENABLE) BSPIx->CSR1 |= 0x02; else BSPIx->CSR1 &= ~0x02;
+  if (NewState == ENABLE)
+    BSPIx->CSR1 |= 0x02;
+  else
+    BSPIx->CSR1 &= ~0x02;
 }
 
 /*******************************************************************************
@@ -176,7 +187,10 @@ void BSPI_RcFifoDepth(BSPI_TypeDef *BSPIx, u8 RDepth);
 *******************************************************************************/
 inline void BSPI_8bLEn(BSPI_TypeDef *BSPIx, FunctionalState NewState)
 {
-  if (NewState == DISABLE) BSPIx->CSR1 |= 0x0400; else BSPIx->CSR1 &= ~0x0C00;
+  if (NewState == DISABLE)
+    BSPIx->CSR1 |= 0x0400;
+  else
+    BSPIx->CSR1 &= ~0x0C00;
 }
 
 /*******************************************************************************
@@ -192,8 +206,10 @@ inline void BSPI_8bLEn(BSPI_TypeDef *BSPIx, FunctionalState NewState)
 *******************************************************************************/
 inline void BSPI_ClkFEdge(BSPI_TypeDef *BSPIx, FunctionalState NewState)
 {
-  if (NewState == ENABLE) BSPIx->CSR1 |= BSPI_CPHA_Mask;
-  else BSPIx->CSR1&=~BSPI_CPHA_Mask;
+  if (NewState == ENABLE)
+    BSPIx->CSR1 |= BSPI_CPHA_Mask;
+  else
+    BSPIx->CSR1 &= ~BSPI_CPHA_Mask;
 }
 
 /*******************************************************************************
@@ -209,8 +225,10 @@ inline void BSPI_ClkFEdge(BSPI_TypeDef *BSPIx, FunctionalState NewState)
 *******************************************************************************/
 inline void BSPI_ClkActiveHigh(BSPI_TypeDef *BSPIx, FunctionalState NewState)
 {
-  if (NewState == ENABLE) BSPIx->CSR1 |= BSPI_CPOL_Mask;
-  else BSPIx->CSR1 &= ~BSPI_CPOL_Mask;
+  if (NewState == ENABLE)
+    BSPIx->CSR1 |= BSPI_CPOL_Mask;
+  else
+    BSPIx->CSR1 &= ~BSPI_CPOL_Mask;
 }
 
 /*******************************************************************************
@@ -264,7 +282,8 @@ inline FlagStatus BSPI_FlagStatus(BSPI_TypeDef *BSPIx, BSPI_Flags flag)
 *******************************************************************************/
 inline void BSPI_WordSend(BSPI_TypeDef *BSPIx, u16 Data)
 {
-  if ((BSPIx->CSR1 & 0x0400) == 0) Data <<= 8;
+  if ((BSPIx->CSR1 & 0x0400) == 0)
+    Data <<= 8;
   BSPIx->TXR = Data;
 }
 
@@ -317,7 +336,10 @@ void BSPI_BufferReceive(BSPI_TypeDef *BSPIx, u8 *PtrToBuffer, u8 NbOfWords);
 *******************************************************************************/
 inline void BSPI_ItEnable(BSPI_TypeDef *BSPIx, BSPI_ITS BSPI_IE, FunctionalState NewState)
 {
-  if (NewState == ENABLE) BSPIx->CSR1 |= BSPI_IE; else BSPIx->CSR1 &= ~BSPI_IE;
+  if (NewState == ENABLE)
+    BSPIx->CSR1 |= BSPI_IE;
+  else
+    BSPIx->CSR1 &= ~BSPI_IE;
 }
 
 #endif /* __BSPI_H */

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -27,7 +27,6 @@
  * ----------------------------------------------------------------------------
  */
 
-
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
@@ -40,6 +39,5 @@
 
 /// Trace level can be set at applet initialization
 #if !defined(NOTRACE) && (DYN_TRACES == 1)
-    unsigned int traceLevel = TRACE_LEVEL;
+unsigned int traceLevel = TRACE_LEVEL;
 #endif
-  

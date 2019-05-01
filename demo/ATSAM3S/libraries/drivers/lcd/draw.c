@@ -63,7 +63,8 @@ void LCDD_Fill(uint32_t color)
 
     LCD_SetCursor(0, 0);
     LCD_WriteRAM_Prepare();
-    for (i = 0; i < (BOARD_LCD_WIDTH * BOARD_LCD_HEIGHT); i++) {
+    for (i = 0; i < (BOARD_LCD_WIDTH * BOARD_LCD_HEIGHT); i++)
+    {
 
         LCD_WriteRAM(color);
     }
@@ -127,14 +128,18 @@ void LCDD_DrawLine(
 
     LCD_SetCursor(x, y);
 
-    if(direction == DIRECTION_HLINE) {
+    if (direction == DIRECTION_HLINE)
+    {
         LCD_WriteRAM_Prepare();
-        for(i = 0; i < length; i++) {
+        for (i = 0; i < length; i++)
+        {
             LCD_WriteRAM(color);
         }
     }
-    else {
-        for(i = 0; i < length; i++) {
+    else
+    {
+        for (i = 0; i < length; i++)
+        {
             LCD_WriteRAM_Prepare();
             LCD_WriteRAM(color);
             y++;
@@ -184,8 +189,9 @@ void LCDD_DrawRectangleWithFill(
 {
     uint32_t i;
 
-    for (i = 0; i < height; i++) {
-        LCDD_DrawLine(x, y+i, width, DIRECTION_HLINE, color);
+    for (i = 0; i < height; i++)
+    {
+        LCDD_DrawLine(x, y + i, width, DIRECTION_HLINE, color);
     }
 }
 
@@ -198,14 +204,14 @@ void LCDD_DrawRectangleWithFill(
  * \param color  circle color.
  */
 void LCDD_DrawCircle(
-        uint32_t x,
-        uint32_t y,
-        uint32_t r,
-        uint32_t color)
+    uint32_t x,
+    uint32_t y,
+    uint32_t r,
+    uint32_t color)
 {
-    signed int    d;    /* Decision Variable */
-    uint32_t  curX; /* Current X Value */
-    uint32_t  curY; /* Current Y Value */
+    signed int d;  /* Decision Variable */
+    uint32_t curX; /* Current X Value */
+    uint32_t curY; /* Current Y Value */
 
     d = 3 - (r << 1);
     curX = 0;
@@ -222,10 +228,12 @@ void LCDD_DrawCircle(
         LCDD_DrawPixel(x - curY, y + curX, color);
         LCDD_DrawPixel(x - curY, y - curX, color);
 
-        if (d < 0) {
+        if (d < 0)
+        {
             d += (curX << 2) + 6;
         }
-        else {
+        else
+        {
             d += ((curX - curY) << 2) + 10;
             curY--;
         }
@@ -250,13 +258,16 @@ void LCDD_DrawString(
 {
     unsigned xorg = x;
 
-    while (*pString != 0) {
-        if (*pString == '\n') {
+    while (*pString != 0)
+    {
+        if (*pString == '\n')
+        {
 
             y += gFont.height + 2;
             x = xorg;
         }
-        else {
+        else
+        {
 
             LCDD_DrawChar(x, y, *pString, color);
             x += gFont.width + 2;
@@ -283,23 +294,29 @@ void LCDD_GetStringSize(
     uint32_t width = 0;
     uint32_t height = gFont.height;
 
-    while (*pString != 0) {
+    while (*pString != 0)
+    {
 
-        if (*pString == '\n') {
+        if (*pString == '\n')
+        {
 
             height += gFont.height + 2;
         }
-        else {
+        else
+        {
 
             width += gFont.width + 2;
         }
         pString++;
     }
 
-    if (width > 0) width -= 2;
+    if (width > 0)
+        width -= 2;
 
-    if (pWidth) *pWidth = width;
-    if (pHeight) *pHeight = height;
+    if (pWidth)
+        *pWidth = width;
+    if (pHeight)
+        *pHeight = height;
 }
 
 /*
@@ -320,14 +337,15 @@ void LCDD_DrawImage(
 {
     uint32_t row, col;
 
-    for(row = y; row < (y + height); row++) {
+    for (row = y; row < (y + height); row++)
+    {
         LCD_SetCursor(x, row);
         LCD_WriteRAM_Prepare();
-        for(col = x; col < (x + width); col++) {
+        for (col = x; col < (x + width); col++)
+        {
             LCD_D() = *pImage++;
             LCD_D() = *pImage++;
             LCD_D() = *pImage++;
         }
     }
 }
-

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -53,13 +53,12 @@
 #include "boxes-ref.dat"
 
 static unsigned char shifts[3][2][4] = {
-    {{0,1,2,3}, {0,3,2,1}},
-    {{0,1,2,3}, {0,5,4,3}},
-    {{0,7,5,5}, {0,1,3,4}}
-};
+    {{0, 1, 2, 3}, {0, 3, 2, 1}},
+    {{0, 1, 2, 3}, {0, 5, 4, 3}},
+    {{0, 7, 5, 5}, {0, 1, 3, 4}}};
 
 static unsigned char key[KC][4];
-static unsigned char expandedKey[ROUNDS+1][BC][4];
+static unsigned char expandedKey[ROUNDS + 1][BC][4];
 static unsigned int T0[256], T1[256], T2[256], T3[256], TF[256];
 
 #if defined(ENCRYPTION_CBC) || defined(ENCRYPTION_CTR)
@@ -78,10 +77,12 @@ static unsigned char IV[BC][4];
 //------------------------------------------------------------------------------
 static unsigned char mul(unsigned char a, unsigned char b)
 {
-    if (a && b) {
-        return Alogtable[(Logtable[a] + Logtable[b])%255];
+    if (a && b)
+    {
+        return Alogtable[(Logtable[a] + Logtable[b]) % 255];
     }
-    else {
+    else
+    {
         return 0;
     }
 }
@@ -95,10 +96,12 @@ static unsigned char mul(unsigned char a, unsigned char b)
 #if defined(ENCRYPTION_CTR)
 static unsigned int min(unsigned int number1, unsigned int number2)
 {
-    if (number1 > number2) {
+    if (number1 > number2)
+    {
         return number2;
     }
-    else {
+    else
+    {
         return number1;
     }
 }
@@ -113,8 +116,9 @@ static inline void addRoundKey(unsigned char a[BC][4], const unsigned char rk[BC
 {
     unsigned int i;
 
-    for (i=0; i < BC; i++) {
-        ((int *) a)[i] ^= ((int *) rk)[i];
+    for (i = 0; i < BC; i++)
+    {
+        ((int *)a)[i] ^= ((int *)rk)[i];
     }
 }
 
@@ -123,52 +127,61 @@ static inline void addRoundKey(unsigned char a[BC][4], const unsigned char rk[BC
 /// \param Key to use
 /// \param Buffer to store expanded key schedule
 //------------------------------------------------------------------------------
-static inline void keySchedule(unsigned char k[KC][4], unsigned char W[ROUNDS+1][BC][4])
+static inline void keySchedule(unsigned char k[KC][4], unsigned char W[ROUNDS + 1][BC][4])
 {
     int t;
     int rconpointer = 0;
     unsigned int j;
     unsigned char tk[KC][4];
 
-    for(j=0; j < KC; j++) {
-        ((int *) tk)[j] = ((int *) k)[j];
+    for (j = 0; j < KC; j++)
+    {
+        ((int *)tk)[j] = ((int *)k)[j];
     }
-  
+
     t = 0;
     /* copy values into round key array */
-    for(j=0; (j < KC) && (t < (ROUNDS+1)*BC); j++, t++) {
-        ((int *) W[t / BC])[t%BC] = ((int *) tk)[j];
+    for (j = 0; (j < KC) && (t < (ROUNDS + 1) * BC); j++, t++)
+    {
+        ((int *)W[t / BC])[t % BC] = ((int *)tk)[j];
     }
-  
-    while (t < (ROUNDS+1)*BC) { 
 
-        tk[0][0] ^= S[tk[KC-1][1]] ^ rcon[rconpointer++];
-        tk[0][1] ^= S[tk[KC-1][2]];
-        tk[0][2] ^= S[tk[KC-1][3]];
-        tk[0][3] ^= S[tk[KC-1][0]];
+    while (t < (ROUNDS + 1) * BC)
+    {
 
-        if (KC != 8) {
-            for(j=1; j < KC; j++) {
-                ((int *) tk)[j] ^= ((int *) tk)[j-1];
+        tk[0][0] ^= S[tk[KC - 1][1]] ^ rcon[rconpointer++];
+        tk[0][1] ^= S[tk[KC - 1][2]];
+        tk[0][2] ^= S[tk[KC - 1][3]];
+        tk[0][3] ^= S[tk[KC - 1][0]];
+
+        if (KC != 8)
+        {
+            for (j = 1; j < KC; j++)
+            {
+                ((int *)tk)[j] ^= ((int *)tk)[j - 1];
             }
         }
-        else {
-            for(j=1; j < KC/2; j++) {
-                ((int *) tk)[j] ^= ((int *) tk)[j-1];
+        else
+        {
+            for (j = 1; j < KC / 2; j++)
+            {
+                ((int *)tk)[j] ^= ((int *)tk)[j - 1];
             }
-            tk[KC/2][0] ^= S[tk[KC/2 - 1][0]];
-            tk[KC/2][1] ^= S[tk[KC/2 - 1][1]];
-            tk[KC/2][2] ^= S[tk[KC/2 - 1][2]];
-            tk[KC/2][3] ^= S[tk[KC/2 - 1][3]];
+            tk[KC / 2][0] ^= S[tk[KC / 2 - 1][0]];
+            tk[KC / 2][1] ^= S[tk[KC / 2 - 1][1]];
+            tk[KC / 2][2] ^= S[tk[KC / 2 - 1][2]];
+            tk[KC / 2][3] ^= S[tk[KC / 2 - 1][3]];
 
-            for(j=KC/2+1; j < KC; j++) {
-                ((int *) tk)[j] ^= ((int *) tk)[j-1];
+            for (j = KC / 2 + 1; j < KC; j++)
+            {
+                ((int *)tk)[j] ^= ((int *)tk)[j - 1];
             }
         }
 
         // copy values into round key array
-        for(j=0; (j < KC) && (t < (ROUNDS+1)*BC); j++, t++) {
-            ((int *) W[t/BC])[t%BC] = ((int *) tk)[j];
+        for (j = 0; (j < KC) && (t < (ROUNDS + 1) * BC); j++, t++)
+        {
+            ((int *)W[t / BC])[t % BC] = ((int *)tk)[j];
         }
     }
 }
@@ -179,19 +192,21 @@ static inline void keySchedule(unsigned char k[KC][4], unsigned char W[ROUNDS+1]
 /// \param Buffer to store expanded key schedule
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_ECB) || defined(ENCRYPTION_CBC)
-static inline void invKeySchedule(unsigned char k[KC][4], 
-                                  unsigned char W[ROUNDS+1][BC][4]) 
+static inline void invKeySchedule(unsigned char k[KC][4],
+                                  unsigned char W[ROUNDS + 1][BC][4])
 {
     unsigned int r;
     unsigned int j;
     unsigned char tmp[4];
-  
+
     // Expand key normally
     keySchedule(k, W);
-  
+
     // Apply invMixColumns to all rounds except first and last one
-    for (r=1; r < ROUNDS; r++) {
-        for (j=0; j < BC; j++) {
+    for (r = 1; r < ROUNDS; r++)
+    {
+        for (j = 0; j < BC; j++)
+        {
             tmp[0] = mul(0x0E, W[r][j][0]) ^ mul(0x0B, W[r][j][1]) ^
                      mul(0x0D, W[r][j][2]) ^ mul(0x09, W[r][j][3]);
             tmp[1] = mul(0x0E, W[r][j][1]) ^ mul(0x0B, W[r][j][2]) ^
@@ -214,7 +229,7 @@ static inline void invKeySchedule(unsigned char k[KC][4],
 /// \param input to rotate
 /// \return Rotated word
 //------------------------------------------------------------------------------
-static inline unsigned int rotBytes(unsigned int input) 
+static inline unsigned int rotBytes(unsigned int input)
 {
     return ((input << 8) | (input >> 24));
 }
@@ -229,27 +244,28 @@ static inline unsigned int rotBytes(unsigned int input)
 /// \param Box
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_CTR)
-static inline void generateEncryptionLUTs(unsigned int * t0,
-                                          unsigned int * t1,
-                                          unsigned int * t2,
-                                          unsigned int * t3,
-                                          unsigned int * tf,
+static inline void generateEncryptionLUTs(unsigned int *t0,
+                                          unsigned int *t1,
+                                          unsigned int *t2,
+                                          unsigned int *t3,
+                                          unsigned int *tf,
                                           unsigned char box[256])
 {
     unsigned int a;
 
-    for (a=0; a <= 255; a++) {
+    for (a = 0; a <= 255; a++)
+    {
         // Calc t0
         t0[a] = (mul(2, box[a])) |
                 (box[a] << 8) |
                 (box[a] << 16) |
                 (mul(3, box[a]) << 24);
-        
+
         // Calc t1, t2, t3
         t1[a] = rotBytes(t0[a]);
         t2[a] = rotBytes(t1[a]);
         t3[a] = rotBytes(t2[a]);
-        
+
         // Calc tf
         tf[a] = box[a] | (box[a] << 8) | (box[a] << 16) | (box[a] << 24);
     }
@@ -266,28 +282,29 @@ static inline void generateEncryptionLUTs(unsigned int * t0,
 /// \param Box
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_ECB) || defined(ENCRYPTION_CBC)
-static inline void generateDecryptionLUTs(unsigned int * t0,
-                                          unsigned int * t1,
-                                          unsigned int * t2,
-                                          unsigned int * t3,
-                                          unsigned int * tf,
+static inline void generateDecryptionLUTs(unsigned int *t0,
+                                          unsigned int *t1,
+                                          unsigned int *t2,
+                                          unsigned int *t3,
+                                          unsigned int *tf,
                                           unsigned char box[256])
 {
     unsigned int a;
 
-    for (a=0; a <= 255; a++) {
-   
+    for (a = 0; a <= 255; a++)
+    {
+
         // Calc t0
         t0[a] = (mul(0x0E, box[a])) |
                 (mul(0x09, box[a]) << 8) |
                 (mul(0x0D, box[a]) << 16) |
                 (mul(0x0B, box[a]) << 24);
-        
+
         // Calc t1, t2, t3
         t1[a] = rotBytes(t0[a]);
         t2[a] = rotBytes(t1[a]);
         t3[a] = rotBytes(t2[a]);
-        
+
         // Calc tf
         tf[a] = box[a] | (box[a] << 8) | (box[a] << 16) | (box[a] << 24);
     }
@@ -302,10 +319,11 @@ static inline void generateDecryptionLUTs(unsigned int * t0,
 #if defined(ENCRYPTION_CTR)
 static void copyBlock(unsigned char input[BC][4], unsigned char output[BC][4])
 {
-    unsigned int j; 
+    unsigned int j;
 
-    for (j=0; j < BC; j++) {
-        ((int *) output)[j] = ((int *) input)[j];
+    for (j = 0; j < BC; j++)
+    {
+        ((int *)output)[j] = ((int *)input)[j];
     }
 }
 #endif
@@ -322,49 +340,54 @@ static void copyBlock(unsigned char input[BC][4], unsigned char output[BC][4])
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_CTR)
 static inline void encrypt(unsigned char a[BC][4],
-                           const unsigned char rk[ROUNDS+1][BC][4],
-                           unsigned int * t0,
-                           unsigned int * t1,
-                           unsigned int * t2,
-                           unsigned int * t3,
-                           unsigned int * tf) 
+                           const unsigned char rk[ROUNDS + 1][BC][4],
+                           unsigned int *t0,
+                           unsigned int *t1,
+                           unsigned int *t2,
+                           unsigned int *t3,
+                           unsigned int *tf)
 {
     unsigned char b[BC][4];
     unsigned int r;
     unsigned int j;
-                            
+
     // First key addition
     addRoundKey(a, rk[0]);
 
     // ROUNDS-1 ordinary rounds
-    for(r=1; r < ROUNDS; r++) {
-        for (j=0; j < BC; j++) {
-     
-            ((int *) b)[j] = t0[a[j][0]] ^
-                           t1[a[(j+shifts[SC][0][1])%BC][1]] ^
-                           t2[a[(j+shifts[SC][0][2])%BC][2]] ^
-                           t3[a[(j+shifts[SC][0][3])%BC][3]] ^
-                           ((int *) rk[r])[j];
+    for (r = 1; r < ROUNDS; r++)
+    {
+        for (j = 0; j < BC; j++)
+        {
+
+            ((int *)b)[j] = t0[a[j][0]] ^
+                            t1[a[(j + shifts[SC][0][1]) % BC][1]] ^
+                            t2[a[(j + shifts[SC][0][2]) % BC][2]] ^
+                            t3[a[(j + shifts[SC][0][3]) % BC][3]] ^
+                            ((int *)rk[r])[j];
         }
-        if ((++r) == ROUNDS) {          
+        if ((++r) == ROUNDS)
+        {
             break;
         }
-        for (j=0; j < BC; j++) {
-            ((int *) a)[j] = t0[b[j][0]] ^
-                           t1[b[(j+shifts[SC][0][1])%BC][1]] ^
-                           t2[b[(j+shifts[SC][0][2])%BC][2]] ^
-                           t3[b[(j+shifts[SC][0][3])%BC][3]] ^
-                           ((int *) rk[r])[j];
+        for (j = 0; j < BC; j++)
+        {
+            ((int *)a)[j] = t0[b[j][0]] ^
+                            t1[b[(j + shifts[SC][0][1]) % BC][1]] ^
+                            t2[b[(j + shifts[SC][0][2]) % BC][2]] ^
+                            t3[b[(j + shifts[SC][0][3]) % BC][3]] ^
+                            ((int *)rk[r])[j];
         }
     }
-  
+
     // Last round (no MixColumns)
-    for (j=0; j < BC; j++) {
-        ((int *) a)[j] = (t0f[b[j][0]]) ^
-                         (t1f[b[(j+shifts[SC][0][1])%BC][1]]) ^
-                         (t2f[b[(j+shifts[SC][0][2])%BC][2]]) ^
-                         (t3f[b[(j+shifts[SC][0][3])%BC][3]]) ^
-                         ((int *) rk[ROUNDS])[j];
+    for (j = 0; j < BC; j++)
+    {
+        ((int *)a)[j] = (t0f[b[j][0]]) ^
+                        (t1f[b[(j + shifts[SC][0][1]) % BC][1]]) ^
+                        (t2f[b[(j + shifts[SC][0][2]) % BC][2]]) ^
+                        (t3f[b[(j + shifts[SC][0][3]) % BC][3]]) ^
+                        ((int *)rk[ROUNDS])[j];
     }
 }
 #endif
@@ -381,47 +404,52 @@ static inline void encrypt(unsigned char a[BC][4],
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_ECB) || defined(ENCRYPTION_CBC)
 static inline void decrypt(unsigned char a[BC][4],
-                           const unsigned char rk[ROUNDS+1][BC][4],
-                           unsigned int * t0,
-                           unsigned int * t1,
-                           unsigned int * t2,
-                           unsigned int * t3,
-                           unsigned int * tf)
+                           const unsigned char rk[ROUNDS + 1][BC][4],
+                           unsigned int *t0,
+                           unsigned int *t1,
+                           unsigned int *t2,
+                           unsigned int *t3,
+                           unsigned int *tf)
 {
     unsigned char b[BC][4];
     unsigned int r;
     unsigned int j;
-                            
+
     // First key addition
     addRoundKey(a, rk[ROUNDS]);
 
     // ROUNDS-1 ordinary rounds
-    for(r=ROUNDS-1; r > 0; r--) {
-        for (j=0; j < BC; j++) {
-            ((int *) b)[j] = t0[a[j][0]] ^
-                           t1[a[(j+shifts[SC][1][1])%BC][1]] ^
-                           t2[a[(j+shifts[SC][1][2])%BC][2]] ^
-                           t3[a[(j+shifts[SC][1][3])%BC][3]] ^
-                           ((int *) rk[r])[j];
+    for (r = ROUNDS - 1; r > 0; r--)
+    {
+        for (j = 0; j < BC; j++)
+        {
+            ((int *)b)[j] = t0[a[j][0]] ^
+                            t1[a[(j + shifts[SC][1][1]) % BC][1]] ^
+                            t2[a[(j + shifts[SC][1][2]) % BC][2]] ^
+                            t3[a[(j + shifts[SC][1][3]) % BC][3]] ^
+                            ((int *)rk[r])[j];
         }
-        if ((--r) == 0) {
+        if ((--r) == 0)
+        {
             break;
         }
-        for (j=0; j < BC; j++) {
-            ((int *) a)[j] = t0[b[j][0]] ^
-                           t1[b[(j+shifts[SC][1][1])%BC][1]] ^
-                           t2[b[(j+shifts[SC][1][2])%BC][2]] ^
-                           t3[b[(j+shifts[SC][1][3])%BC][3]] ^
-                           ((int *) rk[r])[j];
+        for (j = 0; j < BC; j++)
+        {
+            ((int *)a)[j] = t0[b[j][0]] ^
+                            t1[b[(j + shifts[SC][1][1]) % BC][1]] ^
+                            t2[b[(j + shifts[SC][1][2]) % BC][2]] ^
+                            t3[b[(j + shifts[SC][1][3]) % BC][3]] ^
+                            ((int *)rk[r])[j];
         }
     }
     // Last round (no MixColumns)
-    for (j=0; j < BC; j++) {
-        ((int *) a)[j] = (t0f[b[j][0]]) ^
-                         (t1f[b[(j+shifts[SC][1][1])%BC][1]]) ^
-                         (t2f[b[(j+shifts[SC][1][2])%BC][2]]) ^
-                         (t3f[b[(j+shifts[SC][1][3])%BC][3]]) ^
-                         ((int *) rk[0])[j];
+    for (j = 0; j < BC; j++)
+    {
+        ((int *)a)[j] = (t0f[b[j][0]]) ^
+                        (t1f[b[(j + shifts[SC][1][1]) % BC][1]]) ^
+                        (t2f[b[(j + shifts[SC][1][2]) % BC][2]]) ^
+                        (t3f[b[(j + shifts[SC][1][3]) % BC][3]]) ^
+                        ((int *)rk[0])[j];
     }
 }
 #endif
@@ -432,27 +460,32 @@ static inline void decrypt(unsigned char a[BC][4],
 /// \param Buffer to store binary value
 /// \param Size of value
 //------------------------------------------------------------------------------
-static void ASCII2RawHex(const unsigned char * ascii, 
-                         unsigned char * binary, 
-                         unsigned int length) 
+static void ASCII2RawHex(const unsigned char *ascii,
+                         unsigned char *binary,
+                         unsigned int length)
 {
-    unsigned char * ptr;
+    unsigned char *ptr;
     unsigned int i;
 
-    ptr = (unsigned char *) binary;
-    for (i=0; i < length; i++, ptr++, ascii++) {
-        if (*ascii >= 'A') {
+    ptr = (unsigned char *)binary;
+    for (i = 0; i < length; i++, ptr++, ascii++)
+    {
+        if (*ascii >= 'A')
+        {
             *ptr = *ascii - 'A' + 10;
         }
-        else {
+        else
+        {
             *ptr = *ascii - '0';
         }
         *ptr <<= 4;
         ascii++;
-        if (*ascii >= 'A') {
+        if (*ascii >= 'A')
+        {
             *ptr += *ascii - 'A' + 10;
         }
-        else {
+        else
+        {
             *ptr += *ascii - '0';
         }
     }
@@ -467,33 +500,38 @@ static void ASCII2RawHex(const unsigned char * ascii,
 /// \return 0 if successful, 0 otherwise
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_ECB)
-static unsigned int ecb_decrypt(const unsigned char * cipherText,
-                         unsigned char * plainText,
-                         unsigned int length,
-                         unsigned char expandedKey[ROUNDS+1][BC][4])
+static unsigned int ecb_decrypt(const unsigned char *cipherText,
+                                unsigned char *plainText,
+                                unsigned int length,
+                                unsigned char expandedKey[ROUNDS + 1][BC][4])
 {
     unsigned char block[BC][4];
     unsigned int i;
     unsigned int l;
 
     // Check input parameters
-    if ((cipherText == NULL) || (plainText == NULL) || (expandedKey == NULL)) {
+    if ((cipherText == NULL) || (plainText == NULL) || (expandedKey == NULL))
+    {
         TRACE_DEBUG("AES/REF: NULL parameter(s).\n\r");
         return 0;
     }
-    if (length%ENCRYPTION_BLOCK_LENGTH != 0) {
+    if (length % ENCRYPTION_BLOCK_LENGTH != 0)
+    {
         TRACE_DEBUG("AES/REF: Data length must be a multiple of the cipher block size.\n\r");
         return 0;
     }
     // ECB decryption
-    for (l=0; l < length;) {
+    for (l = 0; l < length;)
+    {
         // Copy cipher text block, decrypt it and copy result
-        for (i=0; i < ENCRYPTION_BLOCK_LENGTH; i++) {
-            ((char *) block)[i] = cipherText[l+i];
+        for (i = 0; i < ENCRYPTION_BLOCK_LENGTH; i++)
+        {
+            ((char *)block)[i] = cipherText[l + i];
         }
         decrypt(block, expandedKey, T0, T1, T2, T3, TF);
-        for (i=0; i < ENCRYPTION_BLOCK_LENGTH; i++) {
-            plainText[l+i] = ((char *) block)[i];
+        for (i = 0; i < ENCRYPTION_BLOCK_LENGTH; i++)
+        {
+            plainText[l + i] = ((char *)block)[i];
         }
         l += ENCRYPTION_BLOCK_LENGTH;
     }
@@ -512,37 +550,42 @@ static unsigned int ecb_decrypt(const unsigned char * cipherText,
 /// \return 1 if successful, 0 otherwise */
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_CBC)
-static unsigned int cbc_decrypt(const unsigned char * cipherText,
-                                       unsigned char * plainText,
-                                       unsigned int length,
-                                       const unsigned char expandedKey[ROUNDS+1][BC][4],
-                                       unsigned char IV[BC][4])
-{             
+static unsigned int cbc_decrypt(const unsigned char *cipherText,
+                                unsigned char *plainText,
+                                unsigned int length,
+                                const unsigned char expandedKey[ROUNDS + 1][BC][4],
+                                unsigned char IV[BC][4])
+{
     unsigned char block[BC][4];
     unsigned int i;
     unsigned int l;
 
     // Check input parameters
-    if ((cipherText == NULL) || (plainText == NULL)) {
+    if ((cipherText == NULL) || (plainText == NULL))
+    {
         TRACE_DEBUG("AES/REF: NULL parameter(s).\n\r");
         return 0;
     }
-    if (length%ENCRYPTION_BLOCK_LENGTH != 0) {
+    if (length % ENCRYPTION_BLOCK_LENGTH != 0)
+    {
         TRACE_DEBUG("AES/REF: Cipher text length must be a multiple of the cipher block length.\n\r");
         return 0;
     }
     // Decrypt data
-    for (l=0; l < length;) {
+    for (l = 0; l < length;)
+    {
         // Copy and decrypt a block of cipher text
-        for (i=0; i < BC; i++) {
-            ((int *) block)[i] = ((int *) &cipherText[l])[i];
+        for (i = 0; i < BC; i++)
+        {
+            ((int *)block)[i] = ((int *)&cipherText[l])[i];
         }
         decrypt(block, expandedKey, T0, T1, T2, T3, TF);
         // Xor decrypted text & IV, copy new IV
-        for (i=0; i < BC; i++) {
-            unsigned int tmp = ((int *) block)[i] ^ ((int *) IV)[i];
-            ((int *) IV)[i] = ((int *) &cipherText[l])[i];
-            ((int *) &plainText[l])[i] = tmp;
+        for (i = 0; i < BC; i++)
+        {
+            unsigned int tmp = ((int *)block)[i] ^ ((int *)IV)[i];
+            ((int *)IV)[i] = ((int *)&cipherText[l])[i];
+            ((int *)&plainText[l])[i] = tmp;
         }
 
         // Loop progression
@@ -562,11 +605,11 @@ static unsigned int cbc_decrypt(const unsigned char * cipherText,
 /// \return 1 if successful, 0 otherwise
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_CTR)
-static unsigned int ctr_decrypt(const unsigned char * cipherText,
-                                       unsigned char * plainText,
-                                       unsigned int length,
-                                       const unsigned char expandedKey[ROUNDS+1][BC][4],
-                                       unsigned char IV[BC][4])
+static unsigned int ctr_decrypt(const unsigned char *cipherText,
+                                unsigned char *plainText,
+                                unsigned int length,
+                                const unsigned char expandedKey[ROUNDS + 1][BC][4],
+                                unsigned char IV[BC][4])
 {
     unsigned char block[BC][4];
     unsigned int bytes;
@@ -575,10 +618,12 @@ static unsigned int ctr_decrypt(const unsigned char * cipherText,
     int k;
 
     // Check input parameters
-    if ((cipherText == NULL) || (plainText == NULL)) {
+    if ((cipherText == NULL) || (plainText == NULL))
+    {
         return 0;
     }
-    for (l=0; l < length;) {
+    for (l = 0; l < length;)
+    {
         // Copy counter and encrypt it
         copyBlock(IV, block);
         encrypt(block, expandedKey, T0, T1, T2, T3, TF);
@@ -586,12 +631,15 @@ static unsigned int ctr_decrypt(const unsigned char * cipherText,
         // XOR current plain text block with encrypted counter
         bytes = min(length - l, ENCRYPTION_BLOCK_LENGTH);
 
-        for (i=0; i < bytes; i++) {
-            plainText[l+i] = cipherText[l+i] ^ ((char *) block)[i];
+        for (i = 0; i < bytes; i++)
+        {
+            plainText[l + i] = cipherText[l + i] ^ ((char *)block)[i];
         }
         // Increment counter (big-endian) and number of encrypted bytes
-        for (k=ENCRYPTION_BLOCK_LENGTH-1; k >= 0; k--) {
-            if (++((char *) IV)[k] != 0) {
+        for (k = ENCRYPTION_BLOCK_LENGTH - 1; k >= 0; k--)
+        {
+            if (++((char *)IV)[k] != 0)
+            {
                 break;
             }
         }
@@ -613,7 +661,7 @@ void aes_ref_init(void)
 {
     TRACE_DEBUG("AES/REF: Initializing ...\n\r");
 
-    ASCII2RawHex((unsigned char*)ENCRYPTION_KEY, (unsigned char*)key, ENCRYPTION_KEY_LENGTH);
+    ASCII2RawHex((unsigned char *)ENCRYPTION_KEY, (unsigned char *)key, ENCRYPTION_KEY_LENGTH);
 
 #if defined(ENCRYPTION_ECB) || defined(ENCRYPTION_CBC)
 
@@ -631,10 +679,10 @@ void aes_ref_init(void)
     // Generate lookup tables
     generateEncryptionLUTs(T0, T1, T2, T3, TF, S);
 #endif
-  
+
 #if defined(ENCRYPTION_CBC) || defined(ENCRYPTION_CTR)
     // Initialize counter
-    ASCII2RawHex((unsigned char*)ENCRYPTION_IV, (unsigned char*)IV, ENCRYPTION_BLOCK_LENGTH);
+    ASCII2RawHex((unsigned char *)ENCRYPTION_IV, (unsigned char *)IV, ENCRYPTION_BLOCK_LENGTH);
 #endif
 
     TRACE_DEBUG("AES/REF: Initialization done.\n\r");
@@ -650,7 +698,7 @@ void aes_ref_init_CBC(void)
 {
     TRACE_DEBUG("aes_ref_init_CBC\n\r");
 
-    ASCII2RawHex((unsigned char*)ENCRYPTION_KEY, (unsigned char*)key, ENCRYPTION_KEY_LENGTH);
+    ASCII2RawHex((unsigned char *)ENCRYPTION_KEY, (unsigned char *)key, ENCRYPTION_KEY_LENGTH);
 
     // Initialize key schedule
     invKeySchedule(key, expandedKey);
@@ -659,7 +707,7 @@ void aes_ref_init_CBC(void)
     generateDecryptionLUTs(T0, T1, T2, T3, TF, Si);
 
     // Initialize counter
-    ASCII2RawHex((unsigned char*)ENCRYPTION_IV, (unsigned char*)IV, ENCRYPTION_BLOCK_LENGTH);
+    ASCII2RawHex((unsigned char *)ENCRYPTION_IV, (unsigned char *)IV, ENCRYPTION_BLOCK_LENGTH);
 
     TRACE_DEBUG("AES/REF: Initialization done.\n\r");
 }
@@ -673,7 +721,7 @@ void aes_ref_init_ECB(void)
 {
     TRACE_DEBUG("aes_ref_init_ECB\n\r");
 
-    ASCII2RawHex((unsigned char*)ENCRYPTION_KEY, (unsigned char*)key, ENCRYPTION_KEY_LENGTH);
+    ASCII2RawHex((unsigned char *)ENCRYPTION_KEY, (unsigned char *)key, ENCRYPTION_KEY_LENGTH);
 
     // Initialize key schedule
     invKeySchedule(key, expandedKey);
@@ -693,7 +741,7 @@ void aes_ref_init_CTR(void)
 {
     TRACE_DEBUG("aes_ref_init_CTR\n\r");
 
-    ASCII2RawHex((unsigned char*)ENCRYPTION_KEY, (unsigned char*)key, ENCRYPTION_KEY_LENGTH);
+    ASCII2RawHex((unsigned char *)ENCRYPTION_KEY, (unsigned char *)key, ENCRYPTION_KEY_LENGTH);
 
     // Initialize key schedule
     keySchedule(key, expandedKey);
@@ -702,7 +750,7 @@ void aes_ref_init_CTR(void)
     generateEncryptionLUTs(T0, T1, T2, T3, TF, S);
 
     // Initialize counter
-    ASCII2RawHex((unsigned char*)ENCRYPTION_IV, (unsigned char*)IV, ENCRYPTION_BLOCK_LENGTH);
+    ASCII2RawHex((unsigned char *)ENCRYPTION_IV, (unsigned char *)IV, ENCRYPTION_BLOCK_LENGTH);
 
     TRACE_DEBUG("AES/REF: Initialization done.\n\r");
 }
@@ -726,15 +774,16 @@ void aes_ref_cleanup(void)
 /// \return 1 if decryption was successful, 0 otherwise.
 //------------------------------------------------------------------------------
 #ifdef ONLY_ONE_ENCRYPTION
-int aes_ref_decrypt(const unsigned char * cipherText,
-                    unsigned char * plainText,
+int aes_ref_decrypt(const unsigned char *cipherText,
+                    unsigned char *plainText,
                     unsigned int length)
 {
     TRACE_DEBUG("aes_ref_decrypt\n\r");
 #if defined(ENCRYPTION_ECB)
     return ecb_decrypt(cipherText, plainText, length, expandedKey);
 #elif defined(ENCRYPTION_CBC)
-    return cbc_decrypt(cipherText, plainText, length, expandedKey, IV);;
+    return cbc_decrypt(cipherText, plainText, length, expandedKey, IV);
+    ;
 #elif defined(ENCRYPTION_CTR)
     return ctr_decrypt(cipherText, plainText, length, expandedKey, IV);
 #endif
@@ -750,12 +799,13 @@ int aes_ref_decrypt(const unsigned char * cipherText,
 //------------------------------------------------------------------------------
 #ifndef ONLY_ONE_ENCRYPTION
 #if defined(ENCRYPTION_CBC)
-int aes_ref_decrypt_CBC(const unsigned char * cipherText,
-                    unsigned char * plainText,
-                    unsigned int length)
+int aes_ref_decrypt_CBC(const unsigned char *cipherText,
+                        unsigned char *plainText,
+                        unsigned int length)
 {
     TRACE_DEBUG("aes_ref_decrypt_CBC\n\r");
-    return cbc_decrypt(cipherText, plainText, length, expandedKey, IV);;
+    return cbc_decrypt(cipherText, plainText, length, expandedKey, IV);
+    ;
 }
 #endif
 
@@ -767,9 +817,9 @@ int aes_ref_decrypt_CBC(const unsigned char * cipherText,
 /// \return 1 if decryption was successful, 0 otherwise.
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_ECB)
-int aes_ref_decrypt_ECB(const unsigned char * cipherText,
-                    unsigned char * plainText,
-                    unsigned int length)
+int aes_ref_decrypt_ECB(const unsigned char *cipherText,
+                        unsigned char *plainText,
+                        unsigned int length)
 {
     TRACE_DEBUG("aes_ref_decrypt_ECB\n\r");
     return ecb_decrypt(cipherText, plainText, length, expandedKey);
@@ -784,9 +834,9 @@ int aes_ref_decrypt_ECB(const unsigned char * cipherText,
 /// \return 1 if decryption was successful, 0 otherwise.
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_CTR)
-int aes_ref_decrypt_CTR(const unsigned char * cipherText,
-                    unsigned char * plainText,
-                    unsigned int length)
+int aes_ref_decrypt_CTR(const unsigned char *cipherText,
+                        unsigned char *plainText,
+                        unsigned int length)
 {
     TRACE_DEBUG("aes_ref_decrypt_CTR\n\r");
     return ctr_decrypt(cipherText, plainText, length, expandedKey, IV);
@@ -796,6 +846,3 @@ int aes_ref_decrypt_CTR(const unsigned char * cipherText,
 #endif // ONLY_ONE_ENCRYPTION
 
 #endif // defined(USE_ENCRYPTION) && defined(ENCRYPTION_AES_REF)
-
-
-

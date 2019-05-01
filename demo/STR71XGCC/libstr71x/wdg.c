@@ -22,7 +22,7 @@
 #include "wdg.h"
 
 #ifndef abs
-	#define abs(x) ((x)>0 ? (x) : -(x))
+#define abs(x) ((x) > 0 ? (x) : -(x))
 #endif
 
 /*******************************************************************************
@@ -38,9 +38,9 @@ static void FindFactors(u32 n, u16 *a, u32 *b)
 {
 	u32 b0;
 	u16 a0;
-	long err, err_min=n;
+	long err, err_min = n;
 
-	*a = a0 = ((n-1)/65536ul) + 1;
+	*a = a0 = ((n - 1) / 65536ul) + 1;
 	*b = b0 = n / *a;
 
 	for (; *a <= 256; (*a)++)
@@ -57,7 +57,8 @@ static void FindFactors(u32 n, u16 *a, u32 *b)
 			err_min = err;
 			a0 = *a;
 			b0 = *b;
-			if (err == 0) break;
+			if (err == 0)
+				break;
 		}
 	}
 
@@ -71,15 +72,15 @@ static void FindFactors(u32 n, u16 *a, u32 *b)
 * Input          : Amount of time (us) needed
 * Return         : None
 *******************************************************************************/
-void WDG_PeriodValueConfig ( u32 Time )
+void WDG_PeriodValueConfig(u32 Time)
 {
 	u16 a;
 	u32 n, b;
 
 	n = Time * (RCCU_FrequencyValue(RCCU_PCLK) / 1000000);
 	FindFactors(n, &a, &b);
-    WDG->PR = a - 1;
-    WDG->VR = b - 1;
+	WDG->PR = a - 1;
+	WDG->VR = b - 1;
 }
 
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

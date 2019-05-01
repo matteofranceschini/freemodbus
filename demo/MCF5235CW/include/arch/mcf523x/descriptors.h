@@ -13,9 +13,8 @@
  *                                                                                  *
  *                                                                                  *
  * HISTORY                                                                          *
- *                                                                                  *	
+ *                                                                                  *
  ************************************************************************************/
-
 
 #ifndef DESCRIPTOR_H
 #define DESCRIPTOR_H
@@ -23,53 +22,54 @@
 /********************************************************************/
 
 /* USB descriptor types */
-#define DEVICE					1
-#define CONFIGURATION			2
-#define STRING					3
-#define INTERFACE				4
-#define ENDPOINT				5
+#define DEVICE 1
+#define CONFIGURATION 2
+#define STRING 3
+#define INTERFACE 4
+#define ENDPOINT 5
 
 /* USB Standard Request Types - bRequestType */
-#define IN						0x80
-#define OUT						0x00
-#define STANDARD				0x00
-#define CLASS					0x20
-#define VENDOR					0x40
-#define RQ_DEVICE				0x00
-#define RQ_INTERFACE			0x01
-#define RQ_ENDPOINT			0x02
+#define IN 0x80
+#define OUT 0x00
+#define STANDARD 0x00
+#define CLASS 0x20
+#define VENDOR 0x40
+#define RQ_DEVICE 0x00
+#define RQ_INTERFACE 0x01
+#define RQ_ENDPOINT 0x02
 
 /* USB Standard Request Codes - bRequest */
-#define GET_STATUS			0
-#define CLEAR_FEATURE		1
-#define SET_FEATURE			3
-#define SET_ADDRESS			5
-#define GET_DESCRIPTOR		6
-#define SET_DESCRIPTOR		7
-#define GET_CONFIGURATION	8
-#define SET_CONFIGURATION	9
-#define GET_INTERFACE		10
-#define SET_INTERFACE		11
-#define SYNCH_FRAME			12
+#define GET_STATUS 0
+#define CLEAR_FEATURE 1
+#define SET_FEATURE 3
+#define SET_ADDRESS 5
+#define GET_DESCRIPTOR 6
+#define SET_DESCRIPTOR 7
+#define GET_CONFIGURATION 8
+#define SET_CONFIGURATION 9
+#define GET_INTERFACE 10
+#define SET_INTERFACE 11
+#define SYNCH_FRAME 12
 
 /* Configuration bmAttributes fields */
-#define BUS_POWERED			0x80
-#define SELF_POWERED			0xC0
-#define REMOTE_WAKEUP		0xA0
+#define BUS_POWERED 0x80
+#define SELF_POWERED 0xC0
+#define REMOTE_WAKEUP 0xA0
 
 /* Endpoint bmAttributes fields */
-#define CONTROL				0x00
-#define ISOCHRONOUS			0x01
-#define BULK					0x02
-#define INTERRUPT				0x03
-#define DISABLED				0xFF
+#define CONTROL 0x00
+#define ISOCHRONOUS 0x01
+#define BULK 0x02
+#define INTERRUPT 0x03
+#define DISABLED 0xFF
 
 /* Standard Feature Selectors */
-#define DEVICE_REMOTE_WAKEUP	1
-#define ENDPOINT_HALT			0
+#define DEVICE_REMOTE_WAKEUP 1
+#define ENDPOINT_HALT 0
 
 /* Structure for USB Device Descriptors */
-typedef struct {
+typedef struct
+{
 	uint8 bLength;
 	uint8 bDescriptorType;
 	uint8 bcdUSBL;
@@ -91,7 +91,8 @@ typedef struct {
 } USB_DEVICE_DESC;
 
 /* Structure for USB Configuration Descriptors */
-typedef struct {
+typedef struct
+{
 	uint8 bLength;
 	uint8 bDescriptorType;
 	uint8 wTotalLengthL;
@@ -104,7 +105,8 @@ typedef struct {
 } USB_CONFIG_DESC;
 
 /* Structure for USB Interface Descriptors */
-typedef struct {
+typedef struct
+{
 	uint8 bLength;
 	uint8 bDescriptorType;
 	uint8 bInterfaceNumber;
@@ -117,7 +119,8 @@ typedef struct {
 } USB_INTERFACE_DESC;
 
 /* Structure for USB Endpoint Descriptors */
-typedef struct {
+typedef struct
+{
 	uint8 bLength;
 	uint8 bDescriptorType;
 	uint8 bEndpointAddress;
@@ -128,13 +131,13 @@ typedef struct {
 } USB_ENDPOINT_DESC;
 
 /* Structure for USB String Descriptors */
-typedef struct {
+typedef struct
+{
 	uint8 bLength;
 	uint8 bDescriptorType;
-	uint8 * bString;
+	uint8 *bString;
 } USB_STRING_DESC;
 
 /********************************************************************/
 
 #endif /* DESCRIPTOR_H */
-

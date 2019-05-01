@@ -1,4 +1,4 @@
- /*
+/*
   * FreeModbus Libary: MCF5235 Port
   * Copyright (C) 2006 Christian Walter <wolti@sil.at>
   * Parts of crt0.S Copyright (c) 1995, 1996, 1998 Cygnus Support
@@ -24,39 +24,40 @@
 #define _PORT_H
 
 /* ----------------------- Defines ----------------------------------------- */
-#define	INLINE
-#define PR_BEGIN_EXTERN_C         extern "C" {
-#define	PR_END_EXTERN_C           }
+#define INLINE
+#define PR_BEGIN_EXTERN_C \
+  extern "C"              \
+  {
+#define PR_END_EXTERN_C }
 
 #undef assert
-#define assert( x )
+#define assert(x)
 
-#define ENTER_CRITICAL_SECTION( ) prvvPortEnterCritical()
-#define EXIT_CRITICAL_SECTION( )  prvvPortExitCritical()
+#define ENTER_CRITICAL_SECTION() prvvPortEnterCritical()
+#define EXIT_CRITICAL_SECTION() prvvPortExitCritical()
 
 #ifndef TRUE
-#define TRUE            1
+#define TRUE 1
 #endif
 
 #ifndef FALSE
-#define FALSE           0
+#define FALSE 0
 #endif
 
 /* ----------------------- Type definitions -------------------------------- */
-typedef char    BOOL;
+typedef char BOOL;
 
 typedef unsigned char UCHAR;
-typedef char    CHAR;
+typedef char CHAR;
 
 typedef unsigned short USHORT;
-typedef short   SHORT;
+typedef short SHORT;
 
 typedef unsigned long ULONG;
-typedef long    LONG;
+typedef long LONG;
 
 /* ----------------------- Defines ----------------------------------------- */
-void            prvvPortEnterCritical(  );
-void            prvvPortExitCritical(  );
-
+void prvvPortEnterCritical();
+void prvvPortExitCritical();
 
 #endif

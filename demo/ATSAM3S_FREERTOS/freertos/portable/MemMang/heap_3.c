@@ -51,7 +51,6 @@
     licensing and training services.
 */
 
-
 /*
  * Implementation of pvPortMalloc() and vPortFree() that relies on the
  * compilers own malloc() and free() implementations.
@@ -77,53 +76,51 @@ task.h is included from an application file. */
 
 /*-----------------------------------------------------------*/
 
-void *pvPortMalloc( size_t xWantedSize )
+void *pvPortMalloc(size_t xWantedSize)
 {
-void *pvReturn;
+    void *pvReturn;
 
-	vTaskSuspendAll();
-	{
-		pvReturn = malloc( xWantedSize );
-	}
-	xTaskResumeAll();
+    vTaskSuspendAll();
+    {
+        pvReturn = malloc(xWantedSize);
+    }
+    xTaskResumeAll();
 
-	#if( configUSE_MALLOC_FAILED_HOOK == 1 )
-	{
-		if( pvReturn == NULL )
-		{
-			extern void vApplicationMallocFailedHook( void );
-			vApplicationMallocFailedHook();
-		}
-	}
-	#endif
-	
-	return pvReturn;
+#if (configUSE_MALLOC_FAILED_HOOK == 1)
+    {
+        if (pvReturn == NULL)
+        {
+            extern void vApplicationMallocFailedHook(void);
+            vApplicationMallocFailedHook();
+        }
+    }
+#endif
+
+    return pvReturn;
 }
 /*-----------------------------------------------------------*/
 
-void vPortFree( void *pv )
+void vPortFree(void *pv)
 {
-	if( pv )
-	{
-		vTaskSuspendAll();
-		{
-			free( pv );
-		}
-		xTaskResumeAll();
-	}
+    if (pv)
+    {
+        vTaskSuspendAll();
+        {
+            free(pv);
+        }
+        xTaskResumeAll();
+    }
 }
 
 /*-----------------------------------------------------------*/
 
-size_t xPortGetFreeHeapSize( void )
+size_t xPortGetFreeHeapSize(void)
 {
-	return 0 ;
+    return 0;
 }
 /*-----------------------------------------------------------*/
 
-void vPortInitialiseBlocks( void )
+void vPortInitialiseBlocks(void)
 {
-	/* This just exists to keep the linker quiet. */
+    /* This just exists to keep the linker quiet. */
 }
-
-

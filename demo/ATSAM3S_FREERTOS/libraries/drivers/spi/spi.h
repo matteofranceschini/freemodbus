@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2009, Atmel Corporation
  *
@@ -61,19 +61,19 @@
  */
 
 /** Calculate the PCS field value given the chip select NPCS value */
-#define SPI_PCS(npcs)       ((~(1 << npcs) & 0xF) << 16)
+#define SPI_PCS(npcs) ((~(1 << npcs) & 0xF) << 16)
 
 /** Calculates the value of the CSR SCBR field given the baudrate and MCK. */
 #define SPI_SCBR(baudrate, masterClock) \
-            ((uint32_t) (masterClock / baudrate) << 8)
+    ((uint32_t)(masterClock / baudrate) << 8)
 
 /** Calculates the value of the CSR DLYBS field given the desired delay (in ns) */
 #define SPI_DLYBS(delay, masterClock) \
-            ((uint32_t) (((masterClock / 1000000) * delay) / 1000) << 16)
+    ((uint32_t)(((masterClock / 1000000) * delay) / 1000) << 16)
 
 /** Calculates the value of the CSR DLYBCT field given the desired delay (in ns) */
 #define SPI_DLYBCT(delay, masterClock) \
-            ((uint32_t) (((masterClock / 1000000) * delay) / 32000) << 24)
+    ((uint32_t)(((masterClock / 1000000) * delay) / 32000) << 24)
 /*------------------------------------------------------------------------------ */
 
 /*----------------------------------------------------------------------------
@@ -90,15 +90,14 @@ extern void SPI_ConfigureNPCS(Spi *spi,
                               uint32_t configuration);
 extern void SPI_Write(Spi *spi, uint32_t npcs, uint16_t data);
 extern uint8_t SPI_WriteBuffer(Spi *spi,
-                                     void *buffer,
-                                     uint32_t length);
+                               void *buffer,
+                               uint32_t length);
 
 extern uint8_t SPI_IsFinished(Spi *pSpi);
 
 extern uint16_t SPI_Read(Spi *spi);
 extern uint8_t SPI_ReadBuffer(Spi *spi,
-                                    void *buffer,
-                                    uint32_t length);
+                              void *buffer,
+                              uint32_t length);
 
 #endif /* #ifndef SPI_H */
-

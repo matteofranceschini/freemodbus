@@ -48,28 +48,28 @@ typedef enum
   ADC12_DA1 = 0x0002,
   ADC12_DA2 = 0x0004,
   ADC12_DA3 = 0x0008,
-  ADC12_OR  = 0x2000
+  ADC12_OR = 0x2000
 } ADC12_Flags;
 
 /* Masks for the update of interrupt bit for channel n */
-#define ADC12_IT0_Mask   0x0100
-#define ADC12_IT1_Mask   0x0200
-#define ADC12_IT2_Mask   0x0400
-#define ADC12_IT3_Mask   0x0800
+#define ADC12_IT0_Mask 0x0100
+#define ADC12_IT1_Mask 0x0200
+#define ADC12_IT2_Mask 0x0400
+#define ADC12_IT3_Mask 0x0800
 
 /* Mask for the update of all the interrupt bit in the CSR */
-#define ADC12_IT_Mask    0x0F00
+#define ADC12_IT_Mask 0x0F00
 
 /* Mask for Selecting mode */
-#define ADC12_Mode_Mask  0x0040
+#define ADC12_Mode_Mask 0x0040
 
 /* Mask for configuring the converter */
 #define ADC12_Start_Mask 0x0020
 
 /*******************************************************************************
 * Function Name      : ADC12_Init
-* Description        : This routine is used to intialize the ADC12 registers to 
-*                      their reset values 
+* Description        : This routine is used to intialize the ADC12 registers to
+*                      their reset values
 * Input              : None.
 * Return             : None.
 *******************************************************************************/
@@ -81,7 +81,7 @@ void ADC12_Init(void);
 * Input              : None
 * Return             : None
 *******************************************************************************/
-inline void ADC12_ConversionStart (void)
+inline void ADC12_ConversionStart(void)
 {
   /* Set the ADCen bit of the BOOTCR register */
   PCU->BOOTCR |= ADC12_Start_Mask;
@@ -106,11 +106,10 @@ inline void ADC12_ConversionStop(void)
 *                      ADC12_ROUND : Round robin mode
 * Return             : None
 *******************************************************************************/
-inline void ADC12_ModeConfig (ADC12_Modes ConversionMode)
+inline void ADC12_ModeConfig(ADC12_Modes ConversionMode)
 {
   /* Select the mode of conversion and update the CSR */
-  ADC12->CSR= ConversionMode == ADC12_SINGLE ? ADC12->CSR | ADC12_Mode_Mask :\
-                                               ADC12->CSR & ~ADC12_Mode_Mask;
+  ADC12->CSR = ConversionMode == ADC12_SINGLE ? ADC12->CSR | ADC12_Mode_Mask : ADC12->CSR & ~ADC12_Mode_Mask;
 }
 
 /*******************************************************************************
@@ -123,7 +122,7 @@ void ADC12_PrescalerConfig(u32 Adc12_clk);
 
 /*******************************************************************************
 * Function Name      : ADC12_ChannelSelect
-* Description        : This routine is used to select the channel passed as 
+* Description        : This routine is used to select the channel passed as
 *                      parameter to be converted.
 * Input              : ADC12_Channel: channel selected to be converted it may be
 *                      ADC12_CHANNEL0 : select channel 0
@@ -149,7 +148,7 @@ inline void ADC12_ChannelSelect(ADC12_Channels ADC12_Channel)
 * Return             : SET: if the flag is set
 *                      RESET: if the flag is cleared
 *******************************************************************************/
-inline FlagStatus ADC12_FlagStatus (ADC12_Flags flag)
+inline FlagStatus ADC12_FlagStatus(ADC12_Flags flag)
 {
   /* Test on the flag status and return set or RESET */
   return ADC12->CSR & flag ? SET : RESET;
@@ -165,10 +164,10 @@ inline FlagStatus ADC12_FlagStatus (ADC12_Flags flag)
 *                      ADC12_CHANNEL3 : read the DATA3 register
 * Return             : the register value of the channel converted
 *******************************************************************************/
-inline u16 ADC12_ConversionValue( ADC12_Channels ADC12_Channel)
+inline u16 ADC12_ConversionValue(ADC12_Channels ADC12_Channel)
 {
   /* Clear the corespondent DA bit */
-  ADC12->CSR &= ~(1<<(ADC12_Channel >> 4));
+  ADC12->CSR &= ~(1 << (ADC12_Channel >> 4));
 
   /* Only the 12 MSB of the DATAn Register are taken */
   return *(u16 *)(ADC12_BASE + (ADC12_Channel >> 1)) >> 4;
@@ -181,6 +180,6 @@ inline u16 ADC12_ConversionValue( ADC12_Channels ADC12_Channel)
 *                      status=DISABLE=>disable interrupt
 * Return             : None
 *******************************************************************************/
-void ADC12_ITConfig (FunctionalState NewState);
+void ADC12_ITConfig(FunctionalState NewState);
 
 #endif /* _ADC12_H */

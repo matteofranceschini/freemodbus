@@ -32,18 +32,18 @@ void EIC_Init(void)
 {
   extern u32 T0TIMI_Addr;
   u8 bCounter;
-  u32 dOffset=((u32)&T0TIMI_Addr);
-  EIC->ICR = 0x00000000; // Disable FIQ and IRQ interrupts
-  EIC->IER = 0x00000000; // Disable all channels interrupts
-  EIC->IPR = 0xFFFFFFFF; // Clear all pending bits
-  EIC->FIR = 0x0000000C; // Disable all FIQ channels interrupts and clear FIQ
-                         // channels pending bits
+  u32 dOffset = ((u32)&T0TIMI_Addr);
+  EIC->ICR = 0x00000000;  // Disable FIQ and IRQ interrupts
+  EIC->IER = 0x00000000;  // Disable all channels interrupts
+  EIC->IPR = 0xFFFFFFFF;  // Clear all pending bits
+  EIC->FIR = 0x0000000C;  // Disable all FIQ channels interrupts and clear FIQ
+                          // channels pending bits
   EIC->CIPR = 0x00000000; // Ste the current priority level to zero
-  EIC->IVR  = 0xE59F0000; // IVR = high half of load PC instruction
-  dOffset = (dOffset+0x00007E0)<<16;
-  for(bCounter=0; bCounter<32; bCounter++) // Initialize SIRn registers
+  EIC->IVR = 0xE59F0000;  // IVR = high half of load PC instruction
+  dOffset = (dOffset + 0x00007E0) << 16;
+  for (bCounter = 0; bCounter < 32; bCounter++) // Initialize SIRn registers
   {
-    EIC->SIR[bCounter] = dOffset|0xF0000000;
+    EIC->SIR[bCounter] = dOffset | 0xF0000000;
     dOffset += 0x00000004 << 16;
   }
 }

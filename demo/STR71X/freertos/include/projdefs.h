@@ -19,13 +19,13 @@
 
 	A special exception to the GPL can be applied should you wish to distribute
 	a combined work that includes FreeRTOS, without being obliged to provide
-	the source code for any proprietary components.  See the licensing section 
+	the source code for any proprietary components.  See the licensing section
 	of http://www.FreeRTOS.org for full details of how and when the exception
 	can be applied.
 
 	***************************************************************************
-	See http://www.FreeRTOS.org for documentation, latest information, license 
-	and contact details.  Please ensure to read the configuration and relevant 
+	See http://www.FreeRTOS.org for documentation, latest information, license
+	and contact details.  Please ensure to read the configuration and relevant
 	port sections of the online documentation.
 	***************************************************************************
 */
@@ -33,20 +33,17 @@
 #ifndef PROJDEFS_H
 #define PROJDEFS_H
 
-typedef void (*pdTASK_CODE)( void * );
+typedef void (*pdTASK_CODE)(void *);
 
-#define pdTRUE		( 1 )
-#define pdFALSE		( 0 )
+#define pdTRUE (1)
+#define pdFALSE (0)
 
-#define pdPASS		( 1 )
-#define pdFAIL		( 0 )
+#define pdPASS (1)
+#define pdFAIL (0)
 
 /* Error definitions. */
-#define errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY	( -1 )
-#define errNO_TASK_TO_RUN						( -2 )
-#define errQUEUE_FULL							( -3 )
-
+#define errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY (-1)
+#define errNO_TASK_TO_RUN (-2)
+#define errQUEUE_FULL (-3)
 
 #endif
-
-

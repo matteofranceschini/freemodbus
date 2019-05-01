@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -45,7 +45,6 @@
 //         Exported functions
 //------------------------------------------------------------------------------
 
-extern unsigned long IAP_PerformCmd (unsigned long FlashCmd);
+extern unsigned long IAP_PerformCmd(unsigned long FlashCmd);
 
 #endif //#ifndef IAP_H
-

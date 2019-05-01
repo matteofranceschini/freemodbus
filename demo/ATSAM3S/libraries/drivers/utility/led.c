@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -60,7 +60,8 @@ unsigned char LED_Configure(unsigned int led)
 {
 #ifdef PINS_LEDS
     // Check that LED exists
-    if (led >= numLeds) {
+    if (led >= numLeds)
+    {
 
         return 0;
     }
@@ -81,17 +82,20 @@ unsigned char LED_Set(unsigned int led)
 {
 #ifdef PINS_LEDS
     // Check if LED exists
-    if (led >= numLeds) {
+    if (led >= numLeds)
+    {
 
         return 0;
     }
 
     // Turn LED on
-    if (pinsLeds[led].type == PIO_OUTPUT_0) {
+    if (pinsLeds[led].type == PIO_OUTPUT_0)
+    {
 
         PIO_Set(&pinsLeds[led]);
     }
-    else {
+    else
+    {
 
         PIO_Clear(&pinsLeds[led]);
     }
@@ -111,17 +115,20 @@ unsigned char LED_Clear(unsigned int led)
 {
 #ifdef PINS_LEDS
     // Check if LED exists
-    if (led >= numLeds) {
+    if (led >= numLeds)
+    {
 
         return 0;
     }
 
     // Turn LED off
-    if (pinsLeds[led].type == PIO_OUTPUT_0) {
+    if (pinsLeds[led].type == PIO_OUTPUT_0)
+    {
 
         PIO_Clear(&pinsLeds[led]);
     }
-    else {
+    else
+    {
 
         PIO_Set(&pinsLeds[led]);
     }
@@ -141,17 +148,20 @@ unsigned char LED_Toggle(unsigned int led)
 {
 #ifdef PINS_LEDS
     // Check if LED exists
-    if (led >= numLeds) {
+    if (led >= numLeds)
+    {
 
         return 0;
     }
 
     // Toggle LED
-    if (PIO_GetOutputDataStatus(&pinsLeds[led])) {
+    if (PIO_GetOutputDataStatus(&pinsLeds[led]))
+    {
 
         PIO_Clear(&pinsLeds[led]);
     }
-    else {
+    else
+    {
 
         PIO_Set(&pinsLeds[led]);
     }
@@ -161,4 +171,3 @@ unsigned char LED_Toggle(unsigned int led)
     return 0;
 #endif
 }
-

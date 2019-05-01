@@ -42,9 +42,7 @@
 
 #include "lwip/stats.h"
 
-
-void
-icmp_input(struct pbuf *p, struct netif *inp)
+void icmp_input(struct pbuf *p, struct netif *inp)
 {
   u8_t type;
   struct icmp_echo_hdr *iecho;
@@ -59,11 +57,13 @@ icmp_input(struct pbuf *p, struct netif *inp)
 
   type = ((u8_t *)p->payload)[0];
 
-  switch (type) {
+  switch (type)
+  {
   case ICMP6_ECHO:
     LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: ping\n"));
 
-    if (p->tot_len < sizeof(struct icmp_echo_hdr)) {
+    if (p->tot_len < sizeof(struct icmp_echo_hdr))
+    {
       LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: bad ICMP echo received\n"));
 
       pbuf_free(p);
@@ -75,36 +75,40 @@ icmp_input(struct pbuf *p, struct netif *inp)
     }
     iecho = p->payload;
     iphdr = (struct ip_hdr *)((u8_t *)p->payload - IP_HLEN);
-    if (inet_chksum_pbuf(p) != 0) {
-      LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: checksum failed for received ICMP echo (%"X16_F")\n", inet_chksum_pseudo(p, &(iphdr->src), &(iphdr->dest), IP_PROTO_ICMP, p->tot_len)));
+    if (inet_chksum_pbuf(p) != 0)
+    {
+      LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: checksum failed for received ICMP echo (%" X16_F ")\n", inet_chksum_pseudo(p, &(iphdr->src), &(iphdr->dest), IP_PROTO_ICMP, p->tot_len)));
 
 #ifdef ICMP_STATS
       ++lwip_stats.icmp.chkerr;
 #endif /* ICMP_STATS */
-    /*      return;*/
+      /*      return;*/
     }
-    LWIP_DEBUGF(ICMP_DEBUG, ("icmp: p->len %"S16_F" p->tot_len %"S16_F"\n", p->len, p->tot_len));
+    LWIP_DEBUGF(ICMP_DEBUG, ("icmp: p->len %" S16_F " p->tot_len %" S16_F "\n", p->len, p->tot_len));
     ip_addr_set(&tmpaddr, &(iphdr->src));
     ip_addr_set(&(iphdr->src), &(iphdr->dest));
     ip_addr_set(&(iphdr->dest), &tmpaddr);
     iecho->type = ICMP6_ER;
     /* adjust the checksum */
-    if (iecho->chksum >= htons(0xffff - (ICMP6_ECHO << 8))) {
+    if (iecho->chksum >= htons(0xffff - (ICMP6_ECHO << 8)))
+    {
       iecho->chksum += htons(ICMP6_ECHO << 8) + 1;
-    } else {
+    }
+    else
+    {
       iecho->chksum += htons(ICMP6_ECHO << 8);
     }
-    LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: checksum failed for received ICMP echo (%"X16_F")\n", inet_chksum_pseudo(p, &(iphdr->src), &(iphdr->dest), IP_PROTO_ICMP, p->tot_len)));
+    LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: checksum failed for received ICMP echo (%" X16_F ")\n", inet_chksum_pseudo(p, &(iphdr->src), &(iphdr->dest), IP_PROTO_ICMP, p->tot_len)));
 #ifdef ICMP_STATS
     ++lwip_stats.icmp.xmit;
 #endif /* ICMP_STATS */
 
     /*    LWIP_DEBUGF("icmp: p->len %"U16_F" p->tot_len %"U16_F"\n", p->len, p->tot_len);*/
-    ip_output_if (p, &(iphdr->src), IP_HDRINCL,
-     iphdr->hoplim, IP_PROTO_ICMP, inp);
+    ip_output_if(p, &(iphdr->src), IP_HDRINCL,
+                 iphdr->hoplim, IP_PROTO_ICMP, inp);
     break;
   default:
-    LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: ICMP type %"S16_F" not supported.\n", (s16_t)type));
+    LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: ICMP type %" S16_F " not supported.\n", (s16_t)type));
 #ifdef ICMP_STATS
     ++lwip_stats.icmp.proterr;
     ++lwip_stats.icmp.drop;
@@ -114,8 +118,7 @@ icmp_input(struct pbuf *p, struct netif *inp)
   pbuf_free(p);
 }
 
-void
-icmp_dest_unreach(struct pbuf *p, enum icmp_dur_type t)
+void icmp_dest_unreach(struct pbuf *p, enum icmp_dur_type t)
 {
   struct pbuf *q;
   struct ip_hdr *iphdr;
@@ -140,12 +143,11 @@ icmp_dest_unreach(struct pbuf *p, enum icmp_dur_type t)
 #endif /* ICMP_STATS */
 
   ip_output(q, NULL,
-      (struct ip_addr *)&(iphdr->src), ICMP_TTL, IP_PROTO_ICMP);
+            (struct ip_addr *)&(iphdr->src), ICMP_TTL, IP_PROTO_ICMP);
   pbuf_free(q);
 }
 
-void
-icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t)
+void icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t)
 {
   struct pbuf *q;
   struct ip_hdr *iphdr;
@@ -171,14 +173,6 @@ icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t)
   ++lwip_stats.icmp.xmit;
 #endif /* ICMP_STATS */
   ip_output(q, NULL,
-      (struct ip_addr *)&(iphdr->src), ICMP_TTL, IP_PROTO_ICMP);
+            (struct ip_addr *)&(iphdr->src), ICMP_TTL, IP_PROTO_ICMP);
   pbuf_free(q);
 }
-
-
-
-
-
-
-
-

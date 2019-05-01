@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -31,12 +31,12 @@
 /// \unit
 ///
 /// !Purpose
-/// 
+///
 /// Firmware encryption using TDES hardware acceleration
-/// 
+///
 /// !Usage
-/// 
-/// -# tdes_hard_init: Initialize TDES hardware 
+///
+/// -# tdes_hard_init: Initialize TDES hardware
 /// -# tdes_hard_init_CBC: for the CBC mode
 /// -# tdes_hard_init_ECB: for the CTR mode
 /// -# tdes_hard_init_CTR: for the ECB mode
@@ -63,35 +63,35 @@
 
 #ifdef ONLY_ONE_ENCRYPTION
 #if (ENCRYPTION_KEY_LENGTH != 16) && (ENCRYPTION_KEY_LENGTH != 24)
-  #error Triple-DES hardware acceleration only supports 128 and 192 bits keys.
+#error Triple-DES hardware acceleration only supports 128 and 192 bits keys.
 #endif
 
 #if (ENCRYPTION_BLOCK_LENGTH != 8)
-  #error Triple-DES hardware acceleration only supports 64 bits blocks.
+#error Triple-DES hardware acceleration only supports 64 bits blocks.
 #endif
 
 #if !defined(ENCRYPTION_ECB) && \
     !defined(ENCRYPTION_CBC) && \
     !defined(ENCRYPTION_CTR)
-  #error Only ECB, CBC & CTR mode are supported.
+#error Only ECB, CBC & CTR mode are supported.
 #endif
 
 //------------------------------------------------------------------------------
 // Definitions
 //------------------------------------------------------------------------------
-#define ENCRYPTION_INIT     tdes_hard_init
-#define ENCRYPTION_CLEANUP  tdes_hard_cleanup
-#define ENCRYPTION_DECRYPT  tdes_hard_decrypt
+#define ENCRYPTION_INIT tdes_hard_init
+#define ENCRYPTION_CLEANUP tdes_hard_cleanup
+#define ENCRYPTION_DECRYPT tdes_hard_decrypt
 
 #if defined(ENCRYPTION_ECB)
-  #define TDES_MODE         AT91C_TDES_OPMOD_ECB
-  #define TDES_CIPHER       0
+#define TDES_MODE AT91C_TDES_OPMOD_ECB
+#define TDES_CIPHER 0
 #elif defined(ENCRYPTION_CBC)
-  #define TDES_MODE         AT91C_TDES_OPMOD_CBC
-  #define TDES_CIPHER       0
+#define TDES_MODE AT91C_TDES_OPMOD_CBC
+#define TDES_CIPHER 0
 #elif defined(ENCRYPTION_CTR)
-  #define TDES_MODE         AT91C_TDES_OPMOD_ECB
-  #define TDES_CIPHER       AT91C_TDES_CIPHER
+#define TDES_MODE AT91C_TDES_OPMOD_ECB
+#define TDES_CIPHER AT91C_TDES_CIPHER
 #endif
 
 #endif // ONLY_ONE_ENCRYPTION
@@ -106,20 +106,18 @@ extern void tdes_hard_init_CBC(void);
 extern void tdes_hard_init_CTR(void);
 extern void tdes_hard_init_ECB(void);
 extern void tdes_hard_cleanup(void);
-extern int tdes_hard_decrypt(const unsigned char * cipherText,
-                     unsigned char * plainText,
-                     unsigned int length);
-extern int tdes_hard_decrypt_CBC(const unsigned char * cipherText,
-                     unsigned char * plainText,
-                     unsigned int length);
-extern int tdes_hard_decrypt_CTR(const unsigned char * cipherText,
-                     unsigned char * plainText,
-                     unsigned int length);
-extern int tdes_hard_decrypt_ECB(const unsigned char * cipherText,
-                     unsigned char * plainText,
-                     unsigned int length);
-
+extern int tdes_hard_decrypt(const unsigned char *cipherText,
+                             unsigned char *plainText,
+                             unsigned int length);
+extern int tdes_hard_decrypt_CBC(const unsigned char *cipherText,
+                                 unsigned char *plainText,
+                                 unsigned int length);
+extern int tdes_hard_decrypt_CTR(const unsigned char *cipherText,
+                                 unsigned char *plainText,
+                                 unsigned int length);
+extern int tdes_hard_decrypt_ECB(const unsigned char *cipherText,
+                                 unsigned char *plainText,
+                                 unsigned int length);
 
 #endif // defined(USE_ENCRYPTION) && defined(ENCRYPTION_3DES_HARD)
 #endif // BOOTLOADER_DES_HARDWARE_H
-

@@ -1,5 +1,5 @@
 /*
-	FreeRTOS V4.1.0 - Copyright (C) 2003-2006 Richard Barry. 
+	FreeRTOS V4.1.0 - Copyright (C) 2003-2006 Richard Barry.
     Modification for STR71X/GCC -  Copyright (C) 2006 Christian Walter.
 
 	This file is part of the FreeRTOS distribution.
@@ -20,13 +20,13 @@
 
 	A special exception to the GPL can be applied should you wish to distribute
 	a combined work that includes FreeRTOS, without being obliged to provide
-	the source code for any proprietary components.  See the licensing section 
+	the source code for any proprietary components.  See the licensing section
 	of http://www.FreeRTOS.org for full details of how and when the exception
 	can be applied.
 
 	***************************************************************************
-	See http://www.FreeRTOS.org for documentation, latest information, license 
-	and contact details.  Please ensure to read the configuration and relevant 
+	See http://www.FreeRTOS.org for documentation, latest information, license
+	and contact details.  Please ensure to read the configuration and relevant
 	port sections of the online documentation.
 	***************************************************************************
 */
@@ -45,80 +45,80 @@
 /* ----------------------- Defines ------------------------------------------*/
 
 /* System mode, ARM mode, interrupts enabled. */
-#define portINITIAL_SPSR                ( ( portSTACK_TYPE ) 0x1F )
-#define portTHUMB_MODE_BIT				( ( portSTACK_TYPE ) 0x20 )
-#define portINSTRUCTION_SIZE			( ( portSTACK_TYPE ) 4 )
-#define portNO_CRITICAL_SECTION_NESTING	( ( portSTACK_TYPE ) 0 )
+#define portINITIAL_SPSR ((portSTACK_TYPE)0x1F)
+#define portTHUMB_MODE_BIT ((portSTACK_TYPE)0x20)
+#define portINSTRUCTION_SIZE ((portSTACK_TYPE)4)
+#define portNO_CRITICAL_SECTION_NESTING ((portSTACK_TYPE)0)
 
 /* ----------------------- Static functions ---------------------------------*/
 
 /* Setup the timer to generate the tick interrupts. */
-static void     prvSetupTimerInterrupt( void );
+static void prvSetupTimerInterrupt(void);
 
 /* Scheduler can only be started from ARM mode, so vPortISRStartFirstSTask()
- * is defined in portISR.c. 
+ * is defined in portISR.c.
  */
-extern void     vPortISRStartFirstTask( void );
+extern void vPortISRStartFirstTask(void);
 
 /* ----------------------- Start implementation -----------------------------*/
 
-/* 
- * Initialise the stack of a task to look exactly as if a call to 
+/*
+ * Initialise the stack of a task to look exactly as if a call to
  * portSAVE_CONTEXT had been called.
  */
 portSTACK_TYPE *
-pxPortInitialiseStack( portSTACK_TYPE * pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters )
+pxPortInitialiseStack(portSTACK_TYPE *pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters)
 {
     portSTACK_TYPE *pxOriginalTOS;
 
     pxOriginalTOS = pxTopOfStack;
 
-    /* Setup the initial stack of the task.  The stack is set exactly as 
+    /* Setup the initial stack of the task.  The stack is set exactly as
        expected by the portRESTORE_CONTEXT() macro. */
 
     /* First on the stack is the return address - which in this case is the
        start of the task.  The offset is added to make the return address appear
        as it would within an IRQ ISR. */
-    *pxTopOfStack = ( portSTACK_TYPE ) pxCode + portINSTRUCTION_SIZE;
+    *pxTopOfStack = (portSTACK_TYPE)pxCode + portINSTRUCTION_SIZE;
     pxTopOfStack--;
 
-    *pxTopOfStack = ( portSTACK_TYPE ) 0xaaaaaaaa;      /* R14 */
+    *pxTopOfStack = (portSTACK_TYPE)0xaaaaaaaa; /* R14 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) pxOriginalTOS;   /* Stack used when task starts goes in R13. */
+    *pxTopOfStack = (portSTACK_TYPE)pxOriginalTOS; /* Stack used when task starts goes in R13. */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x12121212;      /* R12 */
+    *pxTopOfStack = (portSTACK_TYPE)0x12121212; /* R12 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x11111111;      /* R11 */
+    *pxTopOfStack = (portSTACK_TYPE)0x11111111; /* R11 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x10101010;      /* R10 */
+    *pxTopOfStack = (portSTACK_TYPE)0x10101010; /* R10 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x09090909;      /* R9 */
+    *pxTopOfStack = (portSTACK_TYPE)0x09090909; /* R9 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x08080808;      /* R8 */
+    *pxTopOfStack = (portSTACK_TYPE)0x08080808; /* R8 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x07070707;      /* R7 */
+    *pxTopOfStack = (portSTACK_TYPE)0x07070707; /* R7 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x06060606;      /* R6 */
+    *pxTopOfStack = (portSTACK_TYPE)0x06060606; /* R6 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x05050505;      /* R5 */
+    *pxTopOfStack = (portSTACK_TYPE)0x05050505; /* R5 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x04040404;      /* R4 */
+    *pxTopOfStack = (portSTACK_TYPE)0x04040404; /* R4 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x03030303;      /* R3 */
+    *pxTopOfStack = (portSTACK_TYPE)0x03030303; /* R3 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x02020202;      /* R2 */
+    *pxTopOfStack = (portSTACK_TYPE)0x02020202; /* R2 */
     pxTopOfStack--;
-    *pxTopOfStack = ( portSTACK_TYPE ) 0x01010101;      /* R1 */
+    *pxTopOfStack = (portSTACK_TYPE)0x01010101; /* R1 */
     pxTopOfStack--;
 
     /* When the task starts is will expect to find the function parameter in
        R0. */
-    *pxTopOfStack = ( portSTACK_TYPE ) pvParameters;    /* R0 */
+    *pxTopOfStack = (portSTACK_TYPE)pvParameters; /* R0 */
     pxTopOfStack--;
 
     /* The last thing onto the stack is the status register, which is set for
        system mode, with interrupts enabled. */
-    *pxTopOfStack = ( portSTACK_TYPE ) portINITIAL_SPSR;
+    *pxTopOfStack = (portSTACK_TYPE)portINITIAL_SPSR;
 
 #ifdef THUMB_INTERWORK
     {
@@ -129,7 +129,7 @@ pxPortInitialiseStack( portSTACK_TYPE * pxTopOfStack, pdTASK_CODE pxCode, void *
 
     pxTopOfStack--;
 
-    /* Some optimisation levels use the stack differently to others.  This 
+    /* Some optimisation levels use the stack differently to others.  This
        means the interrupt flags cannot always be stored on the stack and will
        instead be stored in a variable, which is then saved as part of the
        tasks context. */
@@ -139,21 +139,20 @@ pxPortInitialiseStack( portSTACK_TYPE * pxTopOfStack, pdTASK_CODE pxCode, void *
 }
 
 portBASE_TYPE
-xPortStartScheduler( void )
+xPortStartScheduler(void)
 {
     /* Start the timer that generates the tick ISR.  Interrupts are disabled
        here already. */
-    prvSetupTimerInterrupt(  );
+    prvSetupTimerInterrupt();
 
     /* Start the first task. */
-    vPortISRStartFirstTask(  );
+    vPortISRStartFirstTask();
 
     /* Should not get here! */
     return 0;
 }
 
-void
-vPortEndScheduler( void )
+void vPortEndScheduler(void)
 {
     /* It is unlikely that the ARM port will require this function as there
        is nothing to return to.  */
@@ -161,20 +160,20 @@ vPortEndScheduler( void )
 
 /* We use the interal watchdog timer to generate a periodic clock tick. */
 static void
-prvSetupTimerInterrupt( void )
+prvSetupTimerInterrupt(void)
 {
     /* Set the watchdog up to generate a periodic tick. */
-    WDG_ECITConfig( DISABLE );
-    WDG_CntOnOffConfig( DISABLE );
-    WDG_PeriodValueConfig( configTICK_RATE_HZ );
+    WDG_ECITConfig(DISABLE);
+    WDG_CntOnOffConfig(DISABLE);
+    WDG_PeriodValueConfig(configTICK_RATE_HZ);
 
     /* Setup the tick interrupt in the EIC. */
-    EIC_IRQChannelPriorityConfig( WDG_IRQChannel, 1 );
-    EIC_IRQChannelConfig( WDG_IRQChannel, ENABLE );
-    EIC_IRQConfig( ENABLE );
-    WDG_ECITConfig( ENABLE );
+    EIC_IRQChannelPriorityConfig(WDG_IRQChannel, 1);
+    EIC_IRQChannelConfig(WDG_IRQChannel, ENABLE);
+    EIC_IRQConfig(ENABLE);
+    WDG_ECITConfig(ENABLE);
 
     /* Start the timer - interrupts are actually disabled at this point so
        it is safe to do this here. */
-    WDG_CntOnOffConfig( ENABLE );
+    WDG_CntOnOffConfig(ENABLE);
 }

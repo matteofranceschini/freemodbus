@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -67,26 +67,26 @@ void VIDEO_Ycc2Rgb(unsigned char *ycc, unsigned short *rgb, unsigned int len)
     int val5;
     int i;
 
-    for(i=0; i<len; i++)
+    for (i = 0; i < len; i++)
     {
-        cb_i = (int)ycc[4*i];
-        y_i  = (int )ycc[4*i+1];
-        cr_i = (int )ycc[4*i+2];
-        y_i_incr =(int )ycc[4*i+3];
+        cb_i = (int)ycc[4 * i];
+        y_i = (int)ycc[4 * i + 1];
+        cr_i = (int)ycc[4 * i + 2];
+        y_i_incr = (int)ycc[4 * i + 3];
 
-        val  = 1164*(y_i-16);
-        val1 = 1164*(y_i_incr-16);
-        val2 = 1596*(cr_i- 128);
-        val3 =  813*(cb_i-128);
-        val4 =  392*(cr_i-128);
-        val5 = 2017*(cb_i-128);
+        val = 1164 * (y_i - 16);
+        val1 = 1164 * (y_i_incr - 16);
+        val2 = 1596 * (cr_i - 128);
+        val3 = 813 * (cb_i - 128);
+        val4 = 392 * (cr_i - 128);
+        val5 = 2017 * (cb_i - 128);
 
-        r_calc_i = (val + val2)/1000;
-        g_calc_i = (val - val3 - val4)/1000;
-        b_calc_i = (val + val5)/1000;
-        r_calc_i_incr = (val1 + val2)/1000;
-        g_calc_i_incr = (val1 - val3 - val4)/1000;
-        b_calc_i_incr = (val1 + val5)/1000;
+        r_calc_i = (val + val2) / 1000;
+        g_calc_i = (val - val3 - val4) / 1000;
+        b_calc_i = (val + val5) / 1000;
+        r_calc_i_incr = (val1 + val2) / 1000;
+        g_calc_i_incr = (val1 - val3 - val4) / 1000;
+        b_calc_i_incr = (val1 + val5) / 1000;
 
         if (r_calc_i < 0)
             r_calc_i = 0;
@@ -118,13 +118,8 @@ void VIDEO_Ycc2Rgb(unsigned char *ycc, unsigned short *rgb, unsigned int len)
         else if (b_calc_i_incr > 255)
             b_calc_i_incr = 255;
 
-        *rgb++ = (((unsigned short )r_calc_i & 0xF8) >> 3)
-               | ((((unsigned short)g_calc_i & 0xF8) >> 3) << 5)
-               | ((((unsigned short)b_calc_i & 0xF8) >> 3) << 10);
+        *rgb++ = (((unsigned short)r_calc_i & 0xF8) >> 3) | ((((unsigned short)g_calc_i & 0xF8) >> 3) << 5) | ((((unsigned short)b_calc_i & 0xF8) >> 3) << 10);
 
-        *rgb++ = (((unsigned short )r_calc_i_incr & 0xF8) >> 3)
-               | ((((unsigned short)g_calc_i_incr & 0xF8) >> 3) << 5)
-               | ((((unsigned short)b_calc_i_incr & 0xF8) >> 3) << 10);
+        *rgb++ = (((unsigned short)r_calc_i_incr & 0xF8) >> 3) | ((((unsigned short)g_calc_i_incr & 0xF8) >> 3) << 5) | ((((unsigned short)b_calc_i_incr & 0xF8) >> 3) << 10);
     }
 }
-

@@ -53,7 +53,8 @@
  */
 void IrqHandlerNotUsed(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -61,7 +62,8 @@ void IrqHandlerNotUsed(void)
  */
 WEAK void NMI_Handler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -69,7 +71,8 @@ WEAK void NMI_Handler(void)
  */
 WEAK void HardFault_Handler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -77,7 +80,8 @@ WEAK void HardFault_Handler(void)
  */
 WEAK void MemManage_Handler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -85,7 +89,8 @@ WEAK void MemManage_Handler(void)
  */
 WEAK void BusFault_Handler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -93,7 +98,8 @@ WEAK void BusFault_Handler(void)
  */
 WEAK void UsageFault_Handler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -101,7 +107,8 @@ WEAK void UsageFault_Handler(void)
  */
 WEAK void SVC_Handler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -109,7 +116,8 @@ WEAK void SVC_Handler(void)
  */
 WEAK void DebugMon_Handler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -117,7 +125,8 @@ WEAK void DebugMon_Handler(void)
  */
 WEAK void PendSV_Handler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -125,7 +134,8 @@ WEAK void PendSV_Handler(void)
  */
 WEAK void SysTick_Handler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -133,7 +143,8 @@ WEAK void SysTick_Handler(void)
  */
 WEAK void SUPC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -141,7 +152,8 @@ WEAK void SUPC_IrqHandler(void)
  */
 WEAK void RSTC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -149,7 +161,8 @@ WEAK void RSTC_IrqHandler(void)
  */
 WEAK void RTC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -157,7 +170,8 @@ WEAK void RTC_IrqHandler(void)
  */
 WEAK void RTT_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -165,7 +179,8 @@ WEAK void RTT_IrqHandler(void)
  */
 WEAK void WDT_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -173,7 +188,8 @@ WEAK void WDT_IrqHandler(void)
  */
 WEAK void PMC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -181,7 +197,8 @@ WEAK void PMC_IrqHandler(void)
  */
 WEAK void EEFC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -189,7 +206,8 @@ WEAK void EEFC_IrqHandler(void)
  */
 WEAK void UART0_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -197,7 +215,8 @@ WEAK void UART0_IrqHandler(void)
  */
 WEAK void UART1_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -205,7 +224,8 @@ WEAK void UART1_IrqHandler(void)
  */
 WEAK void SMC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -213,7 +233,8 @@ WEAK void SMC_IrqHandler(void)
  */
 WEAK void PIOA_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -221,7 +242,8 @@ WEAK void PIOA_IrqHandler(void)
  */
 WEAK void PIOB_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -229,7 +251,8 @@ WEAK void PIOB_IrqHandler(void)
  */
 WEAK void PIOC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -237,7 +260,8 @@ WEAK void PIOC_IrqHandler(void)
  */
 WEAK void USART0_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -245,7 +269,8 @@ WEAK void USART0_IrqHandler(void)
  */
 WEAK void USART1_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -253,7 +278,8 @@ WEAK void USART1_IrqHandler(void)
  */
 WEAK void MCI_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -261,7 +287,8 @@ WEAK void MCI_IrqHandler(void)
  */
 WEAK void TWI0_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -269,7 +296,8 @@ WEAK void TWI0_IrqHandler(void)
  */
 WEAK void TWI1_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -277,7 +305,8 @@ WEAK void TWI1_IrqHandler(void)
  */
 WEAK void SPI_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -285,7 +314,8 @@ WEAK void SPI_IrqHandler(void)
  */
 WEAK void SSC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -293,7 +323,8 @@ WEAK void SSC_IrqHandler(void)
  */
 WEAK void TC0_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -301,7 +332,8 @@ WEAK void TC0_IrqHandler(void)
  */
 WEAK void TC1_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -309,7 +341,8 @@ WEAK void TC1_IrqHandler(void)
  */
 WEAK void TC2_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -317,7 +350,8 @@ WEAK void TC2_IrqHandler(void)
  */
 WEAK void TC3_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -325,7 +359,8 @@ WEAK void TC3_IrqHandler(void)
  */
 WEAK void TC4_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -333,7 +368,8 @@ WEAK void TC4_IrqHandler(void)
  */
 WEAK void TC5_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -341,7 +377,8 @@ WEAK void TC5_IrqHandler(void)
  */
 WEAK void ADC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -349,7 +386,8 @@ WEAK void ADC_IrqHandler(void)
  */
 WEAK void DAC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -357,7 +395,8 @@ WEAK void DAC_IrqHandler(void)
  */
 WEAK void PWM_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -365,7 +404,8 @@ WEAK void PWM_IrqHandler(void)
  */
 WEAK void CRCCU_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -373,7 +413,8 @@ WEAK void CRCCU_IrqHandler(void)
  */
 WEAK void ACC_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -381,5 +422,6 @@ WEAK void ACC_IrqHandler(void)
  */
 WEAK void USBD_IrqHandler(void)
 {
-    while(1);
+    while (1)
+        ;
 }

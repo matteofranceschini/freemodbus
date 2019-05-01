@@ -23,77 +23,75 @@
 #include "71x_map.h"
 #include "71x_conf.h"
 
-
 #ifdef _ADC12
-  #include "adc12.h"
+#include "adc12.h"
 #endif
 
 #ifdef _APB
-  #include "apb.h"
+#include "apb.h"
 #endif
 
 #ifdef _BSPI
-  #include "bspi.h"
+#include "bspi.h"
 #endif
 
 #ifdef _CAN
-  #include "can.h"
+#include "can.h"
 #endif
 
 #ifdef _EIC
-  #include "eic.h"
+#include "eic.h"
 #endif
 
 #ifdef _EMI
-  #include "emi.h"
+#include "emi.h"
 #endif
 
 #ifdef _FLASH
-  #include "flash.h"
+#include "flash.h"
 #endif
 
 #ifdef _GPIO
-  #include "gpio.h"
+#include "gpio.h"
 #endif
 
 #ifdef _I2C
-  #include "i2c.h"
+#include "i2c.h"
 #endif
 
 #ifdef _PCU
-  #include "pcu.h"
+#include "pcu.h"
 #endif
 
 #ifdef _RCCU
-  #include "rccu.h"
+#include "rccu.h"
 #endif
 
 #ifdef _RTC
-  #include "rtc.h"
+#include "rtc.h"
 #endif
 
 #ifdef _TIM
-  #include "tim.h"
+#include "tim.h"
 #endif
 
 #ifdef _UART
-  #include "uart.h"
+#include "uart.h"
 #endif
 
 #ifdef _USB
 #endif
 
 #ifdef _WDG
-  #include "wdg.h"
+#include "wdg.h"
 #endif
 
 #ifdef _XTI
-  #include "xti.h"
+#include "xti.h"
 #endif
 
-
 #ifdef LIBDEBUG
-  void libdebug(void);
+void libdebug(void);
 #endif
 
 #endif /* __71x_LIB_H */

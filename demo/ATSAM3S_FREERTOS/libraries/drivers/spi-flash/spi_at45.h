@@ -46,11 +46,11 @@
  *        Macros
  *----------------------------------------------------------------------------*/
 /** Returns 1 if the device is ready; otherwise 0.*/
-#define AT45_STATUS_READY(status)       (status & 0x80)
+#define AT45_STATUS_READY(status) (status & 0x80)
 /** Returns the device ID code.*/
-#define AT45_STATUS_ID(status)          (status & 0x3c)
+#define AT45_STATUS_ID(status) (status & 0x3c)
 /** Returns 1 if the device is configured in binary page mode; otherwise 0.*/
-#define AT45_STATUS_BINARY(status)      (status & 0x01)
+#define AT45_STATUS_BINARY(status) (status & 0x01)
 
 #define AT45_PageOffset(pAt45) ((pAt45)->pDesc->pageOffset)
 #define AT45_PageNumber(pAt45) ((pAt45)->pDesc->pageNumber)
@@ -60,83 +60,83 @@
  *----------------------------------------------------------------------------*/
 
 /** The dataflash driver is currently in use.*/
-#define AT45_ERROR_LOCK         1
+#define AT45_ERROR_LOCK 1
 /** There was an error with the SPI driver.*/
-#define AT45_ERROR_SPI          2
+#define AT45_ERROR_SPI 2
 
 /** AT45 dataflash SPI CSR settings given MCK and SPCK.*/
 #define AT45_CSR(mck, spck) (SPI_CSR_NCPHA | SPID_CSR_DLYBCT(mck, 250) | SPID_CSR_DLYBS(mck, 250) | SPID_CSR_SCBR(mck, spck))
 
 /** Main memory page read command code. */
-#define AT45_PAGE_READ              0xD2
+#define AT45_PAGE_READ 0xD2
 /** Continous array read (legacy) command code.*/
-#define AT45_CONTINUOUS_READ_LEG    0xE8
+#define AT45_CONTINUOUS_READ_LEG 0xE8
 /** Continous array read (low frequency) command code.*/
-#define AT45_CONTINUOUS_READ_LF     0x03
+#define AT45_CONTINUOUS_READ_LF 0x03
 /** Continous array read command code.*/
-#define AT45_CONTINUOUS_READ        0x0B
+#define AT45_CONTINUOUS_READ 0x0B
 /** Buffer 1 read (low frequency) command code.*/
-#define AT45_BUF1_READ_LF           0xD1
+#define AT45_BUF1_READ_LF 0xD1
 /** Buffer 2 read (low frequency) command code.*/
-#define AT45_BUF2_READ_LF           0xD3
+#define AT45_BUF2_READ_LF 0xD3
 /** Buffer 1 read (serial) command code.*/
-#define AT45_BUF1_READ_SER          0xD4
+#define AT45_BUF1_READ_SER 0xD4
 /** Buffer 2 read (serial) command code.*/
-#define AT45_BUF2_READ_SER          0xD6
+#define AT45_BUF2_READ_SER 0xD6
 /** Buffer 1 read (8-bit) command code.*/
-#define AT45_BUF1_READ_8B           0x54
+#define AT45_BUF1_READ_8B 0x54
 /** Buffer 2 read (8-bit) command code.*/
-#define AT45_BUF2_READ_8B           0x56
+#define AT45_BUF2_READ_8B 0x56
 
 /** Buffer 1 write command code.*/
-#define AT45_BUF1_WRITE             0x84
+#define AT45_BUF1_WRITE 0x84
 /** Buffer 2 write command code.*/
-#define AT45_BUF2_WRITE             0x87
+#define AT45_BUF2_WRITE 0x87
 /** Buffer 1 to main memory page program with erase command code.*/
-#define AT45_BUF1_MEM_ERASE         0x83
+#define AT45_BUF1_MEM_ERASE 0x83
 /** Buffer 2 to main memory page program with erase command code.*/
-#define AT45_BUF2_MEM_ERASE         0x86
+#define AT45_BUF2_MEM_ERASE 0x86
 /** Buffer 1 to main memory page program without erase command code.*/
-#define AT45_BUF1_MEM_NOERASE       0x88
+#define AT45_BUF1_MEM_NOERASE 0x88
 /** Buffer 2 to main memory page program without erase command code.*/
-#define AT45_BUF2_MEM_NOERASE       0x89
+#define AT45_BUF2_MEM_NOERASE 0x89
 /** Page erase command code.*/
-#define AT45_PAGE_ERASE             0x81
+#define AT45_PAGE_ERASE 0x81
 /** Block erase command code.*/
-#define AT45_BLOCK_ERASE            0x50
+#define AT45_BLOCK_ERASE 0x50
 /** Sector erase command code.*/
-#define AT45_SECTOR_ERASE           0x7C
+#define AT45_SECTOR_ERASE 0x7C
 /** Chip erase command code.*/
-#define AT45_CHIP_ERASE             0xC7, 0x94, 0x80, 0x9A
+#define AT45_CHIP_ERASE 0xC7, 0x94, 0x80, 0x9A
 /** Main memory page program through buffer 1 command code.*/
-#define AT45_PAGE_WRITE_BUF1        0x82
+#define AT45_PAGE_WRITE_BUF1 0x82
 /** Main memory page program through buffer 2 command code.*/
-#define AT45_PAGE_WRITE_BUF2        0x85
+#define AT45_PAGE_WRITE_BUF2 0x85
 
 /** Main memory page to buffer 1 transfer command code.*/
-#define AT45_PAGE_BUF1_TX           0x53
+#define AT45_PAGE_BUF1_TX 0x53
 /** Main memory page to buffer 2 transfer command code.*/
-#define AT45_PAGE_BUF2_TX           0x55
+#define AT45_PAGE_BUF2_TX 0x55
 /** Main memory page to buffer 1 compare command code.*/
-#define AT45_PAGE_BUF1_CMP          0x60
+#define AT45_PAGE_BUF1_CMP 0x60
 /** Main memory page to buffer 2 compare command code.*/
-#define AT45_PAGE_BUF2_CMP          0x61
+#define AT45_PAGE_BUF2_CMP 0x61
 /** Auto page rewrite through buffer 1 command code.*/
-#define AT45_AUTO_REWRITE_BUF1      0x58
+#define AT45_AUTO_REWRITE_BUF1 0x58
 /** Auto page rewrite through buffer 2 command code.*/
-#define AT45_AUTO_REWRITE_BUF2      0x59
+#define AT45_AUTO_REWRITE_BUF2 0x59
 /** Deep power-down command code.*/
-#define AT45_DEEP_PDOWN             0xB9
+#define AT45_DEEP_PDOWN 0xB9
 /** Resume from deep power-down command code.*/
-#define AT45_RES_DEEP_PDOWN         0xAB
+#define AT45_RES_DEEP_PDOWN 0xAB
 /** Status register read command code.*/
-#define AT45_STATUS_READ            0xD7
+#define AT45_STATUS_READ 0xD7
 /** Manufacturer and device ID read command code.*/
-#define AT45_ID_READ                0x9F
+#define AT45_ID_READ 0x9F
 
 /** Power-of-2 binary page size configuration command code.*/
-#define AT45_BINARY_PAGE_FIRST_OPCODE   0x3D
-#define AT45_BINARY_PAGE                0x2A, 0x80, 0xA6
+#define AT45_BINARY_PAGE_FIRST_OPCODE 0x3D
+#define AT45_BINARY_PAGE 0x2A, 0x80, 0xA6
 
 /*----------------------------------------------------------------------------
  *        Types
@@ -146,7 +146,8 @@
    in at45.c. The DF_Scan() function returns the corresponding descriptor according
    to the dataflash ID detected. This description (page_size, page_offset) is used
    to compute the internal dataflash address by the DF_Command() function. */
-typedef struct {
+typedef struct
+{
     /** dataflash page number. */
     uint32_t pageNumber;
     // indicate if power-of-2 binary page supported.*/
@@ -166,7 +167,8 @@ typedef struct {
     pDfDesc field can be initialized by the DF_Scan() function.
     cmdBuffer is a private driver area used to compute the dataflash address to
     be sent to the dataflash.  Beware the PDC master must have access to this area.*/
-typedef struct _Dataflash {
+typedef struct _Dataflash
+{
     /** Pointer to Spi Structure (SPI low level driver).*/
     Spid *pSpid;
     /** Current SPI command sent to the SPI low level driver.*/
@@ -195,8 +197,7 @@ extern uint8_t AT45_SendCommand(
     SpidCallback callback,
     void *pArgument);
 
-extern const At45Desc * AT45_FindDevice(At45 *pAt45, uint8_t status);
+extern const At45Desc *AT45_FindDevice(At45 *pAt45, uint8_t status);
 
-extern uint32_t  AT45_PageSize(At45 *pAt45);
+extern uint32_t AT45_PageSize(At45 *pAt45);
 #endif // #ifndef SPI_AT45_H
-

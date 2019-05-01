@@ -19,9 +19,9 @@
  * File: $Id$
  */
 
- /**********************************************************
+/**********************************************************
  *	Linux TCP support.
- *	Based on Walter's project. 
+ *	Based on Walter's project.
  *	Modified by Steven Guo <gotop167@163.com>
  ***********************************************************/
 
@@ -36,34 +36,31 @@
 #include "mbport.h"
 #include "mbconfig.h"
 
-
-BOOL
-prvMBTCPPortAddressToString( SOCKET xSocket, CHAR * szAddr, USHORT usBufSize )
+BOOL prvMBTCPPortAddressToString(SOCKET xSocket, CHAR *szAddr, USHORT usBufSize)
 {
     return TRUE;
 }
 
-CHAR           *
-prvMBTCPPortFrameToString( UCHAR * pucFrame, USHORT usFrameLen )
+CHAR *
+prvMBTCPPortFrameToString(UCHAR *pucFrame, USHORT usFrameLen)
 {
     return NULL;
 }
 
-CHAR           *
-WsaError2String( int iError )
+CHAR *
+WsaError2String(int iError)
 {
     return NULL;
 }
 
-void
-vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule, const CHAR * szFmt, ... )
+void vMBPortLog(eMBPortLogLevel eLevel, const CHAR *szModule, const CHAR *szFmt, ...)
 {
-    va_list         args;
-    static const CHAR *arszLevel2Str[] = { "DEBUG", "INFO", "WARN", "ERROR" };
+    va_list args;
+    static const CHAR *arszLevel2Str[] = {"DEBUG", "INFO", "WARN", "ERROR"};
 
-    fprintf( stderr, "%s: %s: ", arszLevel2Str[eLevel], szModule );
+    fprintf(stderr, "%s: %s: ", arszLevel2Str[eLevel], szModule);
 
-    va_start( args, szFmt );
-    fprintf( stderr, szFmt, args );
-    va_end( args );
+    va_start(args, szFmt);
+    fprintf(stderr, szFmt, args);
+    va_end(args);
 }

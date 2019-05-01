@@ -30,19 +30,25 @@
                    DISABLE: Disable ( ByPass ) the VR
 * Return         : None
 *******************************************************************************/
-void PCU_VRConfig ( PCU_VR Xvr, FunctionalState NewState )
+void PCU_VRConfig(PCU_VR Xvr, FunctionalState NewState)
 {
   u16 Tmp = PCU->PWRCR;
-  switch ( Xvr )
+  switch (Xvr)
   {
-    case PCU_MVR :
-        // Configure the Main Voltage Regulator
-        if (NewState == DISABLE) Tmp |= PCU_MVR_Mask; else Tmp &= ~PCU_MVR_Mask;
-        break;
-    case PCU_LPR :
-        // Configure the Low power Voltage Regulator
-        if (NewState == DISABLE) Tmp |= PCU_LPR_Mask; else Tmp &= ~PCU_LPR_Mask;
-        break;
+  case PCU_MVR:
+    // Configure the Main Voltage Regulator
+    if (NewState == DISABLE)
+      Tmp |= PCU_MVR_Mask;
+    else
+      Tmp &= ~PCU_MVR_Mask;
+    break;
+  case PCU_LPR:
+    // Configure the Low power Voltage Regulator
+    if (NewState == DISABLE)
+      Tmp |= PCU_LPR_Mask;
+    else
+      Tmp &= ~PCU_LPR_Mask;
+    break;
   }
   // Unlock Power Control Register
   PCU->PWRCR |= PCU_WREN_Mask;
@@ -60,7 +66,7 @@ void PCU_VRConfig ( PCU_VR Xvr, FunctionalState NewState )
 *                  DISABLE: Disable Low Power Mode during Wait For Interrupt Mode
 * Return         : None
 *******************************************************************************/
-void PCU_WFIEnter ( WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlpm )
+void PCU_WFIEnter(WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlpm)
 {
   u32 Tmp;
   // Enable Low Power Regulator in WFI mode
@@ -70,7 +76,7 @@ void PCU_WFIEnter ( WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlp
   PCU->PWRCR = Xlpr == ENABLE ? Tmp & ~PCU_LPRWFI_Mask : Tmp | PCU_LPRWFI_Mask;
   // WFI Clock Selection
   Tmp = RCCU->CCR;
-  RCCU->CCR = Xclock == WFI_CLOCK2_16  ? Tmp & ~PCU_WFI_CKSEL_Mask : Tmp | PCU_WFI_CKSEL_Mask;
+  RCCU->CCR = Xclock == WFI_CLOCK2_16 ? Tmp & ~PCU_WFI_CKSEL_Mask : Tmp | PCU_WFI_CKSEL_Mask;
   // Low Power Mode during WFI mode
   Tmp = RCCU->CCR;
   RCCU->CCR = Xlpm == DISABLE ? Tmp & ~PCU_LPOWFI_Mask : Tmp | PCU_LPOWFI_Mask;
@@ -87,53 +93,51 @@ void PCU_WFIEnter ( WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlp
                    PCU_STANDBY : StandBy Mode
 * Return         : None
 *******************************************************************************/
-void PCU_LPMEnter ( LPM_MODES Xmode  )
+void PCU_LPMEnter(LPM_MODES Xmode)
 {
- u32 temp;
-  switch ( Xmode )
+  u32 temp;
+  switch (Xmode)
   {
-    // Slow Mode
-    case PCU_SLOW:
-    {
-      RCCU->PLL1CR |= 0x87;
-      RCCU_RCLKSourceConfig ( RCCU_PLL1_Output );
-      break;
-    }
+  // Slow Mode
+  case PCU_SLOW:
+  {
+    RCCU->PLL1CR |= 0x87;
+    RCCU_RCLKSourceConfig(RCCU_PLL1_Output);
+    break;
+  }
 
-    // Stop Mode
-    case PCU_STOP:
-    {
-      // Enable Stop EN bit
-      RCCU->CCR |= PCU_STOP_EN_Mask;
+  // Stop Mode
+  case PCU_STOP:
+  {
+    // Enable Stop EN bit
+    RCCU->CCR |= PCU_STOP_EN_Mask;
 
-      // Write '1' to Stop Bit
-      XTI->CTRL |= 0x04;
-      // Write '0' to Stop Bit
-      XTI->CTRL &= 0x03;
-      // Write '1' to Stop Bit
-      XTI->CTRL |= 0x04;
-      // add Delay
-      
-      temp = 0;
-      temp = 1;
-      temp = 2;
-      temp = 3;
-      temp = 4;
-      temp = 5;
-      temp = 6;
-      temp = 7;
-      temp = 8;
+    // Write '1' to Stop Bit
+    XTI->CTRL |= 0x04;
+    // Write '0' to Stop Bit
+    XTI->CTRL &= 0x03;
+    // Write '1' to Stop Bit
+    XTI->CTRL |= 0x04;
+    // add Delay
 
-      break;
+    temp = 0;
+    temp = 1;
+    temp = 2;
+    temp = 3;
+    temp = 4;
+    temp = 5;
+    temp = 6;
+    temp = 7;
+    temp = 8;
 
-    }
-    // PCU_STANDBY Mode
-    case PCU_STANDBY:
-    {
-	  PCU->PWRCR |= PCU_WREN_Mask;	// Unlock Power Control Register
-	  PCU->PWRCR |= PCU_PWRDWN_Mask;	// Set the Power Down flag
-    }
+    break;
+  }
+  // PCU_STANDBY Mode
+  case PCU_STANDBY:
+  {
+    PCU->PWRCR |= PCU_WREN_Mask;   // Unlock Power Control Register
+    PCU->PWRCR |= PCU_PWRDWN_Mask; // Set the Power Down flag
+  }
   }
 }
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/
-

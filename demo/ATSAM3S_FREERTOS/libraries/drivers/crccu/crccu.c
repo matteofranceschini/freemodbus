@@ -71,7 +71,7 @@
 /*----------------------------------------------------------------------------
  *        Definitions
  *----------------------------------------------------------------------------*/
-#define CRCCU_TIMEOUT    0xFFFFFFFF
+#define CRCCU_TIMEOUT 0xFFFFFFFF
 
 /*----------------------------------------------------------------------------
  *        Exported functions
@@ -111,8 +111,8 @@ uint32_t CRCCU_ComputeCrc(void)
     uint32_t timeout = 0;
 
     pCrccu->CRCCU_DMA_EN = CRCCU_DMA_EN_DMAEN;
-    while (((pCrccu->CRCCU_DMA_SR & CRCCU_DMA_SR_DMASR) == CRCCU_DMA_SR_DMASR)
-        && (timeout++ < CRCCU_TIMEOUT));
+    while (((pCrccu->CRCCU_DMA_SR & CRCCU_DMA_SR_DMASR) == CRCCU_DMA_SR_DMASR) && (timeout++ < CRCCU_TIMEOUT))
+        ;
 
     return (pCrccu->CRCCU_SR);
 }
@@ -126,9 +126,12 @@ uint32_t CRCCU_CompareCrc(void)
 {
     Crccu *pCrccu = CRCCU;
 
-    if ((pCrccu->CRCCU_ISR & CRCCU_ISR_ERRISR) == CRCCU_ISR_ERRISR) {
-       return 1;
-    } else {
-       return 0;
+    if ((pCrccu->CRCCU_ISR & CRCCU_ISR_ERRISR) == CRCCU_ISR_ERRISR)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
     }
 }

@@ -52,14 +52,14 @@
  * \page xTaskHandle xTaskHandle
  * \ingroup Tasks
  */
-typedef void * xTaskHandle;
+typedef void *xTaskHandle;
 
 /*
  * Defines the priority used by the idle task.  This must not be modified.
  *
  * \ingroup TaskUtils
  */
-#define tskIDLE_PRIORITY			( ( unsigned portBASE_TYPE ) 0 )
+#define tskIDLE_PRIORITY ((unsigned portBASE_TYPE)0)
 
 /**
  * task. h
@@ -69,7 +69,7 @@ typedef void * xTaskHandle;
  * \page taskYIELD taskYIELD
  * \ingroup SchedulerControl
  */
-#define taskYIELD()					portYIELD()
+#define taskYIELD() portYIELD()
 
 /**
  * task. h
@@ -83,7 +83,7 @@ typedef void * xTaskHandle;
  * \page taskENTER_CRITICAL taskENTER_CRITICAL
  * \ingroup SchedulerControl
  */
-#define taskENTER_CRITICAL()		portENTER_CRITICAL()
+#define taskENTER_CRITICAL() portENTER_CRITICAL()
 
 /**
  * task. h
@@ -97,7 +97,7 @@ typedef void * xTaskHandle;
  * \page taskEXIT_CRITICAL taskEXIT_CRITICAL
  * \ingroup SchedulerControl
  */
-#define taskEXIT_CRITICAL()			portEXIT_CRITICAL()
+#define taskEXIT_CRITICAL() portEXIT_CRITICAL()
 
 /**
  * task. h
@@ -107,7 +107,7 @@ typedef void * xTaskHandle;
  * \page taskDISABLE_INTERRUPTS taskDISABLE_INTERRUPTS
  * \ingroup SchedulerControl
  */
-#define taskDISABLE_INTERRUPTS()	portDISABLE_INTERRUPTS()
+#define taskDISABLE_INTERRUPTS() portDISABLE_INTERRUPTS()
 
 /**
  * task. h
@@ -117,8 +117,7 @@ typedef void * xTaskHandle;
  * \page taskENABLE_INTERRUPTS taskENABLE_INTERRUPTS
  * \ingroup SchedulerControl
  */
-#define taskENABLE_INTERRUPTS()		portENABLE_INTERRUPTS()
-
+#define taskENABLE_INTERRUPTS() portENABLE_INTERRUPTS()
 
 /*-----------------------------------------------------------
  * TASK CREATION API
@@ -177,10 +176,10 @@ typedef void * xTaskHandle;
  {
  unsigned char ucParameterToPass;
  xTaskHandle xHandle;
-		
+
      // Create the task, storing the handle.
      xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
-		
+
      // Use the handle to delete the task.
      vTaskDelete( xHandle );
  }
@@ -188,7 +187,7 @@ typedef void * xTaskHandle;
  * \defgroup xTaskCreate xTaskCreate
  * \ingroup Tasks
  */
-signed portBASE_TYPE xTaskCreate( pdTASK_CODE pvTaskCode, const signed portCHAR * const pcName, unsigned portSHORT usStackDepth, void *pvParameters, unsigned portBASE_TYPE uxPriority, xTaskHandle *pvCreatedTask );
+signed portBASE_TYPE xTaskCreate(pdTASK_CODE pvTaskCode, const signed portCHAR *const pcName, unsigned portSHORT usStackDepth, void *pvParameters, unsigned portBASE_TYPE uxPriority, xTaskHandle *pvCreatedTask);
 
 /**
  * task. h
@@ -218,10 +217,10 @@ signed portBASE_TYPE xTaskCreate( pdTASK_CODE pvTaskCode, const signed portCHAR 
  void vOtherFunction( void )
  {
  xTaskHandle xHandle;
-		
+
      // Create the task, storing the handle.
      xTaskCreate( vTaskCode, "NAME", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle );
-		
+
      // Use the handle to delete the task.
      vTaskDelete( xHandle );
  }
@@ -229,8 +228,7 @@ signed portBASE_TYPE xTaskCreate( pdTASK_CODE pvTaskCode, const signed portCHAR 
  * \defgroup vTaskDelete vTaskDelete
  * \ingroup Tasks
  */
-void vTaskDelete( xTaskHandle pxTask );
-
+void vTaskDelete(xTaskHandle pxTask);
 
 /*-----------------------------------------------------------
  * TASK CONTROL API
@@ -283,7 +281,7 @@ void vTaskDelete( xTaskHandle pxTask );
  * \defgroup vTaskDelay vTaskDelay
  * \ingroup TaskCtrl
  */
-void vTaskDelay( portTickType xTicksToDelay );
+void vTaskDelay(portTickType xTicksToDelay);
 
 /**
  * task. h
@@ -342,7 +340,7 @@ void vTaskDelay( portTickType xTicksToDelay );
  * \defgroup vTaskDelayUntil vTaskDelayUntil
  * \ingroup TaskCtrl
  */
-void vTaskDelayUntil( portTickType *pxPreviousWakeTime, portTickType xTimeIncrement );
+void vTaskDelayUntil(portTickType *pxPreviousWakeTime, portTickType xTimeIncrement);
 
 /**
  * task. h
@@ -363,10 +361,10 @@ void vTaskDelayUntil( portTickType *pxPreviousWakeTime, portTickType xTimeIncrem
  void vAFunction( void )
  {
  xTaskHandle xHandle;
-		
+
      // Create a task, storing the handle.
      xTaskCreate( vTaskCode, "NAME", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle );
-		
+
      // ...
 
      // Use the handle to obtain the priority of the created task.
@@ -389,7 +387,7 @@ void vTaskDelayUntil( portTickType *pxPreviousWakeTime, portTickType xTimeIncrem
  * \defgroup uxTaskPriorityGet uxTaskPriorityGet
  * \ingroup TaskCtrl
  */
-unsigned portBASE_TYPE uxTaskPriorityGet( xTaskHandle pxTask );
+unsigned portBASE_TYPE uxTaskPriorityGet(xTaskHandle pxTask);
 
 /**
  * task. h
@@ -413,7 +411,7 @@ unsigned portBASE_TYPE uxTaskPriorityGet( xTaskHandle pxTask );
  void vAFunction( void )
  {
  xTaskHandle xHandle;
-		
+
      // Create a task, storing the handle.
      xTaskCreate( vTaskCode, "NAME", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle );
 
@@ -431,7 +429,7 @@ unsigned portBASE_TYPE uxTaskPriorityGet( xTaskHandle pxTask );
  * \defgroup vTaskPrioritySet vTaskPrioritySet
  * \ingroup TaskCtrl
  */
-void vTaskPrioritySet( xTaskHandle pxTask, unsigned portBASE_TYPE uxNewPriority );
+void vTaskPrioritySet(xTaskHandle pxTask, unsigned portBASE_TYPE uxNewPriority);
 
 /**
  * task. h
@@ -455,22 +453,22 @@ void vTaskPrioritySet( xTaskHandle pxTask, unsigned portBASE_TYPE uxNewPriority 
  void vAFunction( void )
  {
  xTaskHandle xHandle;
-		
+
      // Create a task, storing the handle.
      xTaskCreate( vTaskCode, "NAME", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle );
-		
+
      // ...
 
      // Use the handle to suspend the created task.
      vTaskSuspend( xHandle );
 
      // ...
-		
+
      // The created task will not run during this period, unless
      // another task calls vTaskResume( xHandle ).
-		
+
      //...
-		
+
 
      // Suspend ourselves.
      vTaskSuspend( NULL );
@@ -482,7 +480,7 @@ void vTaskPrioritySet( xTaskHandle pxTask, unsigned portBASE_TYPE uxNewPriority 
  * \defgroup vTaskSuspend vTaskSuspend
  * \ingroup TaskCtrl
  */
-void vTaskSuspend( xTaskHandle pxTaskToSuspend );
+void vTaskSuspend(xTaskHandle pxTaskToSuspend);
 
 /**
  * task. h
@@ -504,22 +502,22 @@ void vTaskSuspend( xTaskHandle pxTaskToSuspend );
  void vAFunction( void )
  {
  xTaskHandle xHandle;
-		
+
      // Create a task, storing the handle.
      xTaskCreate( vTaskCode, "NAME", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle );
-		
+
      // ...
 
      // Use the handle to suspend the created task.
      vTaskSuspend( xHandle );
 
      // ...
-	
+
      // The created task will not run during this period, unless
      // another task calls vTaskResume( xHandle ).
-		
+
      //...
-		
+
 
      // Resume the suspended task ourselves.
      vTaskResume( xHandle );
@@ -531,7 +529,7 @@ void vTaskSuspend( xTaskHandle pxTaskToSuspend );
  * \defgroup vTaskResume vTaskResume
  * \ingroup TaskCtrl
  */
-void vTaskResume( xTaskHandle pxTaskToResume );
+void vTaskResume(xTaskHandle pxTaskToResume);
 
 /*-----------------------------------------------------------
  * SCHEDULER CONTROL
@@ -569,7 +567,7 @@ void vTaskResume( xTaskHandle pxTaskToResume );
  * \defgroup vTaskStartScheduler vTaskStartScheduler
  * \ingroup SchedulerControl
  */
-void vTaskStartScheduler( void );
+void vTaskStartScheduler(void);
 
 /**
  * task. h
@@ -622,7 +620,7 @@ void vTaskStartScheduler( void );
  * \defgroup vTaskEndScheduler vTaskEndScheduler
  * \ingroup SchedulerControl
  */
-void vTaskEndScheduler( void );
+void vTaskEndScheduler(void);
 
 /**
  * task. h
@@ -669,7 +667,7 @@ void vTaskEndScheduler( void );
  * \defgroup vTaskSuspendAll vTaskSuspendAll
  * \ingroup SchedulerControl
  */
-void vTaskSuspendAll( void );
+void vTaskSuspendAll(void);
 
 /**
  * task. h
@@ -721,8 +719,7 @@ void vTaskSuspendAll( void );
  * \defgroup xTaskResumeAll xTaskResumeAll
  * \ingroup SchedulerControl
  */
-signed portBASE_TYPE xTaskResumeAll( void );
-
+signed portBASE_TYPE xTaskResumeAll(void);
 
 /*-----------------------------------------------------------
  * TASK UTILITIES
@@ -737,7 +734,7 @@ signed portBASE_TYPE xTaskResumeAll( void );
  * \page xTaskGetTickCount xTaskGetTickCount
  * \ingroup TaskUtils
  */
-portTickType xTaskGetTickCount( void );
+portTickType xTaskGetTickCount(void);
 
 /**
  * task. h
@@ -751,7 +748,7 @@ portTickType xTaskGetTickCount( void );
  * \page uxTaskGetNumberOfTasks uxTaskGetNumberOfTasks
  * \ingroup TaskUtils
  */
-unsigned portBASE_TYPE uxTaskGetNumberOfTasks( void );
+unsigned portBASE_TYPE uxTaskGetNumberOfTasks(void);
 
 /**
  * task. h
@@ -778,7 +775,7 @@ unsigned portBASE_TYPE uxTaskGetNumberOfTasks( void );
  * \page vTaskList vTaskList
  * \ingroup TaskUtils
  */
-void vTaskList( signed portCHAR *pcWriteBuffer );
+void vTaskList(signed portCHAR *pcWriteBuffer);
 
 /**
  * task. h
@@ -799,7 +796,7 @@ void vTaskList( signed portCHAR *pcWriteBuffer );
  * \page vTaskStartTrace vTaskStartTrace
  * \ingroup TaskUtils
  */
-void vTaskStartTrace( signed portCHAR * pcBuffer, unsigned portLONG ulBufferSize );
+void vTaskStartTrace(signed portCHAR *pcBuffer, unsigned portLONG ulBufferSize);
 
 /**
  * task. h
@@ -812,8 +809,7 @@ void vTaskStartTrace( signed portCHAR * pcBuffer, unsigned portLONG ulBufferSize
  * \page usTaskEndTrace usTaskEndTrace
  * \ingroup TaskUtils
  */
-unsigned portLONG ulTaskEndTrace( void );
-
+unsigned portLONG ulTaskEndTrace(void);
 
 /*-----------------------------------------------------------
  * SCHEDULER INTERNALS AVAILABLE FOR PORTING PURPOSES
@@ -829,7 +825,7 @@ unsigned portLONG ulTaskEndTrace( void );
  * for a finite period required removing from a blocked list and placing on
  * a ready list.
  */
-inline void vTaskIncrementTick( void );
+inline void vTaskIncrementTick(void);
 
 /*
  * THIS FUNCTION MUST NOT BE USED FROM APPLICATION CODE.  IT IS AN
@@ -852,7 +848,7 @@ inline void vTaskIncrementTick( void );
  * portTICK_RATE_MS can be used to convert kernel ticks into a real time
  * period.
  */
-void vTaskPlaceOnEventList( xList *pxEventList, portTickType xTicksToWait );
+void vTaskPlaceOnEventList(xList *pxEventList, portTickType xTicksToWait);
 
 /*
  * THIS FUNCTION MUST NOT BE USED FROM APPLICATION CODE.  IT IS AN
@@ -869,7 +865,7 @@ void vTaskPlaceOnEventList( xList *pxEventList, portTickType xTicksToWait );
  * @return pdTRUE if the task being removed has a higher priority than the task
  * making the call, otherwise pdFALSE.
  */
-signed portBASE_TYPE xTaskRemoveFromEventList( const xList *pxEventList );
+signed portBASE_TYPE xTaskRemoveFromEventList(const xList *pxEventList);
 
 /*
  * THIS FUNCTION MUST NOT BE USED FROM APPLICATION CODE.  IT IS AN
@@ -882,7 +878,7 @@ signed portBASE_TYPE xTaskRemoveFromEventList( const xList *pxEventList );
  * Empties the ready and delayed queues of task control blocks, freeing the
  * memory allocated for the task control block and task stacks as it goes.
  */
-void vTaskCleanUpResources( void );
+void vTaskCleanUpResources(void);
 
 /*
  * THIS FUNCTION MUST NOT BE USED FROM APPLICATION CODE.  IT IS ONLY
@@ -892,15 +888,11 @@ void vTaskCleanUpResources( void );
  * Sets the pointer to the current TCB to the TCB of the highest priority task
  * that is ready to run.
  */
-inline void vTaskSwitchContext( void );
+inline void vTaskSwitchContext(void);
 
 /*
  * Return the handle of the calling task.
  */
-xTaskHandle xTaskGetCurrentTaskHandle( void );
-
+xTaskHandle xTaskGetCurrentTaskHandle(void);
 
 #endif /* TASK_H */
-
-
-

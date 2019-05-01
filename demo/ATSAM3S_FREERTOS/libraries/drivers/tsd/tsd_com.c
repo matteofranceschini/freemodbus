@@ -55,9 +55,9 @@
  *----------------------------------------------------------------------------*/
 
 /** Size in pixels of calibration points. */
-#define POINTS_SIZE         4
+#define POINTS_SIZE 4
 /** Maximum difference in pixels between the test point and the measured point. */
-#define POINTS_MAX_ERROR    8
+#define POINTS_MAX_ERROR 8
 
 /** Delay at the end of calibartion for result display */
 #define DELAY_RESULT_DISPLAY 4000000
@@ -67,7 +67,8 @@
  *----------------------------------------------------------------------------*/
 
 /** Point used during the touchscreen calibration process. */
-typedef struct _CalibrationPoint {
+typedef struct _CalibrationPoint
+{
 
     /** Coordinate of point along the X-axis of the screen. */
     uint32_t x;
@@ -84,7 +85,7 @@ typedef struct _CalibrationPoint {
 
 /** indicates if the touch screen has been calibrated. */
 /** If not, Callback functions are not called. */
-static volatile uint8_t bCalibrationOk = 1 ; //0;
+static volatile uint8_t bCalibrationOk = 1; //0;
 /** Slope for interpoling touchscreen measurements along the X-axis. */
 static int32_t xSlope;
 /** Slope for interpoling touchscreen measurements along the Y-axis. */
@@ -97,34 +98,28 @@ static CalibrationPoint calibrationPoints[] = {
     {
         BOARD_LCD_WIDTH / 10,
         BOARD_LCD_HEIGHT / 10,
-        {0, 0}
-    },
+        {0, 0}},
     /* Top-right corner calibration point */
     {
         BOARD_LCD_WIDTH - BOARD_LCD_WIDTH / 10,
         BOARD_LCD_HEIGHT / 10,
-        {0, 0}
-    },
+        {0, 0}},
     /* Bottom-right corner calibration point */
     {
         BOARD_LCD_WIDTH - BOARD_LCD_WIDTH / 10,
         BOARD_LCD_HEIGHT - BOARD_LCD_HEIGHT / 10,
-        {0, 0}
-    },
+        {0, 0}},
     /* Bottom-left corner calibration point */
     {
         BOARD_LCD_WIDTH / 10,
         BOARD_LCD_HEIGHT - BOARD_LCD_HEIGHT / 10,
-        {0, 0}
-    }
-};
+        {0, 0}}};
 
 /** Test point */
 static const CalibrationPoint testPoint = {
     BOARD_LCD_WIDTH / 2,
     BOARD_LCD_HEIGHT / 2,
-    {0, 0}
-};
+    {0, 0}};
 
 /*----------------------------------------------------------------------------
  *        External functions
@@ -173,9 +168,12 @@ static void ClearCalibrationPoint(const CalibrationPoint *pPoint)
  */
 uint8_t TSDCom_IsCalibrationOk(void)
 {
-    if (bCalibrationOk == 1) {
+    if (bCalibrationOk == 1)
+    {
         return 1;
-    } else {
+    }
+    else
+    {
         return 0;
     }
 }
@@ -189,30 +187,26 @@ uint8_t TSDCom_IsCalibrationOk(void)
  */
 void TSDCom_InterpolateMeasurement(const uint32_t *pData, uint32_t *pPoint)
 {
-    pPoint[0] = calibrationPoints[0].x
-                - (((int32_t) calibrationPoints[0].data[0] - (int32_t) pData[0]) * 1024)
-                / xSlope;
+    pPoint[0] = calibrationPoints[0].x - (((int32_t)calibrationPoints[0].data[0] - (int32_t)pData[0]) * 1024) / xSlope;
 
-    pPoint[1] = calibrationPoints[0].y
-                - (((int32_t) calibrationPoints[0].data[1] - (int32_t) pData[1]) * 1024)
-                / ySlope;
+    pPoint[1] = calibrationPoints[0].y - (((int32_t)calibrationPoints[0].data[1] - (int32_t)pData[1]) * 1024) / ySlope;
 
-    if(pPoint[0] & 0x80000000) /* Is pPoint[0] negative ? */
+    if (pPoint[0] & 0x80000000) /* Is pPoint[0] negative ? */
     {
         pPoint[0] = 0;
     }
 
-    if(pPoint[0] > BOARD_LCD_WIDTH) /* Is pPoint[0] bigger than the LCD width ? */
+    if (pPoint[0] > BOARD_LCD_WIDTH) /* Is pPoint[0] bigger than the LCD width ? */
     {
         pPoint[0] = BOARD_LCD_WIDTH;
     }
 
-    if(pPoint[1] & 0x80000000) /* Is pPoint[1] negative ? */
+    if (pPoint[1] & 0x80000000) /* Is pPoint[1] negative ? */
     {
         pPoint[1] = 0;
     }
 
-    if(pPoint[1] > BOARD_LCD_HEIGHT) /* Is pPoint[1] bigger than the LCD width ? */
+    if (pPoint[1] > BOARD_LCD_HEIGHT) /* Is pPoint[1] bigger than the LCD width ? */
     {
         pPoint[1] = BOARD_LCD_HEIGHT;
     }
@@ -238,7 +232,8 @@ uint8_t TSDCom_Calibrate(void)
     LCDD_DrawString(1, 140, (uint8_t *)"Touch the dots to\ncalibrate the screen", COLOR_DARKBLUE);
 
     /* Calibration points */
-    for (i=0; i < 4; i++) {
+    for (i = 0; i < 4; i++)
+    {
 
         DrawCalibrationPoint(&calibrationPoints[i]);
 
@@ -272,20 +267,20 @@ uint8_t TSDCom_Calibrate(void)
      *   - Since there are four calibration points, dx and dy can be calculated twice, so we average
      *     the two values.
      */
-    slope1 = ((int32_t) calibrationPoints[0].data[0]) - ((int32_t) calibrationPoints[1].data[0]);
+    slope1 = ((int32_t)calibrationPoints[0].data[0]) - ((int32_t)calibrationPoints[1].data[0]);
     slope1 *= 1024;
-    slope1 /= ((int32_t) calibrationPoints[0].x) - ((int32_t) calibrationPoints[1].x);
-    slope2 = ((int32_t) calibrationPoints[2].data[0]) - ((int32_t) calibrationPoints[3].data[0]);
+    slope1 /= ((int32_t)calibrationPoints[0].x) - ((int32_t)calibrationPoints[1].x);
+    slope2 = ((int32_t)calibrationPoints[2].data[0]) - ((int32_t)calibrationPoints[3].data[0]);
     slope2 *= 1024;
-    slope2 /= ((int32_t) calibrationPoints[2].x) - ((int32_t) calibrationPoints[3].x);
+    slope2 /= ((int32_t)calibrationPoints[2].x) - ((int32_t)calibrationPoints[3].x);
     xSlope = (slope1 + slope2) / 2;
 
-    slope1 = ((int32_t) calibrationPoints[0].data[1]) - ((int32_t) calibrationPoints[2].data[1]);
+    slope1 = ((int32_t)calibrationPoints[0].data[1]) - ((int32_t)calibrationPoints[2].data[1]);
     slope1 *= 1024;
-    slope1 /= ((int32_t) calibrationPoints[0].y) - ((int32_t) calibrationPoints[2].y);
-    slope2 = ((int32_t) calibrationPoints[1].data[1]) - ((int32_t) calibrationPoints[3].data[1]);
+    slope1 /= ((int32_t)calibrationPoints[0].y) - ((int32_t)calibrationPoints[2].y);
+    slope2 = ((int32_t)calibrationPoints[1].data[1]) - ((int32_t)calibrationPoints[3].data[1]);
     slope2 *= 1024;
-    slope2 /= ((int32_t) calibrationPoints[1].y) - ((int32_t) calibrationPoints[3].y);
+    slope2 /= ((int32_t)calibrationPoints[1].y) - ((int32_t)calibrationPoints[3].y);
     ySlope = (slope1 + slope2) / 2;
 
     /* Test point */
@@ -298,12 +293,12 @@ uint8_t TSDCom_Calibrate(void)
     TSD_WaitPenPressed();
 
     TSD_GetRawMeasurement(measuredPoint.data);
-    TSDCom_InterpolateMeasurement(measuredPoint.data, (uint32_t *) &measuredPoint);
+    TSDCom_InterpolateMeasurement(measuredPoint.data, (uint32_t *)&measuredPoint);
     DrawCalibrationPoint(&measuredPoint);
 
     /* Check resulting x and y */
-    xDiff = (int32_t) measuredPoint.x - (int32_t) testPoint.x;
-    yDiff = (int32_t) measuredPoint.y - (int32_t) testPoint.y;
+    xDiff = (int32_t)measuredPoint.x - (int32_t)testPoint.x;
+    yDiff = (int32_t)measuredPoint.y - (int32_t)testPoint.y;
     xOk = (xDiff >= -POINTS_MAX_ERROR) && (xDiff <= POINTS_MAX_ERROR);
     yOk = (yDiff >= -POINTS_MAX_ERROR) && (yDiff <= POINTS_MAX_ERROR);
 
@@ -311,15 +306,16 @@ uint8_t TSDCom_Calibrate(void)
     TSD_WaitPenReleased();
 
     /* Check calibration result */
-    if (xOk && yOk) {
+    if (xOk && yOk)
+    {
 
         bCalibrationOk = 1;
         LCDD_Fill(COLOR_WHITE);
         LCDD_DrawString(30, 50, (uint8_t *)"LCD calibration", COLOR_BLACK);
         LCDD_DrawString(80, 140, (uint8_t *)"Success !", COLOR_GREEN);
-
     }
-    else {
+    else
+    {
 
         bCalibrationOk = 0;
         LCDD_Fill(COLOR_WHITE);
@@ -328,7 +324,8 @@ uint8_t TSDCom_Calibrate(void)
     }
 
     /* Slight delay */
-    for (i = 0; i < DELAY_RESULT_DISPLAY; i++);
+    for (i = 0; i < DELAY_RESULT_DISPLAY; i++)
+        ;
 
     return (xOk && yOk);
 }
@@ -344,7 +341,7 @@ void TSDCom_ReadCalibrateData(void *pBuffer, uint32_t size)
     uint8_t *pDest = (uint8_t *)pBuffer;
 
     SANITY_CHECK((sizeof(bCalibrationOk) + sizeof(xSlope) +
-        sizeof(ySlope) + sizeof(calibrationPoints[0].data)) < size);
+                  sizeof(ySlope) + sizeof(calibrationPoints[0].data)) < size);
 
     memcpy(pDest, (void const *)&bCalibrationOk, sizeof(bCalibrationOk));
     pDest += sizeof(bCalibrationOk);
@@ -367,7 +364,7 @@ void TSDCom_RestoreCalibrateData(void *pBuffer, uint32_t size)
     uint8_t *pSrc = (uint8_t *)pBuffer;
 
     SANITY_CHECK((sizeof(bCalibrationOk) + sizeof(xSlope) +
-        sizeof(ySlope) + sizeof(calibrationPoints[0].data)) < size);
+                  sizeof(ySlope) + sizeof(calibrationPoints[0].data)) < size);
 
     memcpy((void *)&bCalibrationOk, pSrc, sizeof(bCalibrationOk));
     pSrc += sizeof(bCalibrationOk);

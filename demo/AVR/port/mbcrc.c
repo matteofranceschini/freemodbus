@@ -61,8 +61,7 @@ static const PROGMEM UCHAR aucCRCHi[] = {
     0xC0, 0x80, 0x41,
     0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
     0x00, 0xC1, 0x81,
-    0x40
-};
+    0x40};
 
 static const PROGMEM UCHAR aucCRCLo[] = {
     0x00, 0xC0, 0xC1, 0x01, 0xC3, 0x03, 0x02, 0xC2, 0xC6, 0x06, 0x07, 0xC7,
@@ -99,21 +98,21 @@ static const PROGMEM UCHAR aucCRCLo[] = {
     0x4D, 0x4C, 0x8C,
     0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83,
     0x41, 0x81, 0x80,
-    0x40
-};
+    0x40};
 
 USHORT
-usMBCRC16( UCHAR * pucFrame, USHORT usLen )
+usMBCRC16(UCHAR *pucFrame, USHORT usLen)
 {
-    UCHAR           ucCRCHi = 0xFF;
-    UCHAR           ucCRCLo = 0xFF;
-    int             iIndex;
+    UCHAR ucCRCHi = 0xFF;
+    UCHAR ucCRCLo = 0xFF;
+    int iIndex;
 
-    while( usLen-- )
+    while (usLen--)
     {
-        iIndex = ucCRCLo ^ *( pucFrame++ );
-        ucCRCLo = ucCRCHi ^ pgm_read_byte( &aucCRCHi[iIndex] );
-        ucCRCHi = pgm_read_byte( &aucCRCLo[iIndex] );;
+        iIndex = ucCRCLo ^ *(pucFrame++);
+        ucCRCLo = ucCRCHi ^ pgm_read_byte(&aucCRCHi[iIndex]);
+        ucCRCHi = pgm_read_byte(&aucCRCLo[iIndex]);
+        ;
     }
     return ucCRCHi << 8 | ucCRCLo;
 }

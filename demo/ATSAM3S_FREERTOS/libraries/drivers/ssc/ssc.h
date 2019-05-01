@@ -55,4 +55,3 @@ extern uint8_t SSC_WriteBuffer(void *buffer, uint32_t length);
 extern uint8_t SSC_ReadBuffer(void *buffer, uint32_t length);
 
 #endif //#ifndef SSC_H
-

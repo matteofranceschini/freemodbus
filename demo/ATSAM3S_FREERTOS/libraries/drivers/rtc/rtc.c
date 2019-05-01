@@ -66,7 +66,6 @@
 /*@{*/
 /*@}*/
 
-
 /**
  * \file
  *
@@ -109,7 +108,7 @@ void RTC_SetHourMode(uint32_t mode)
  *
  * \return Hour mode.
  */
-uint32_t RTC_GetHourMode( void )
+uint32_t RTC_GetHourMode(void)
 {
     uint32_t hmode;
 
@@ -159,7 +158,7 @@ void RTC_DisableIt(uint32_t sources)
  */
 int RTC_SetTime(uint8_t hour, uint8_t minute, uint8_t second)
 {
-    uint32_t time=0;
+    uint32_t time = 0;
     uint8_t hour_bcd;
     uint8_t min_bcd;
     uint8_t sec_bcd;
@@ -167,30 +166,34 @@ int RTC_SetTime(uint8_t hour, uint8_t minute, uint8_t second)
     TRACE_DEBUG("RTC_SetTime(%02d:%02d:%02d)\n\r", hour, minute, second);
 
     /* if 12-hour mode, set AMPM bit */
-    if ((RTC->RTC_MR & RTC_MR_HRMOD) == RTC_MR_HRMOD) {
+    if ((RTC->RTC_MR & RTC_MR_HRMOD) == RTC_MR_HRMOD)
+    {
 
-        if (hour > 12) {
+        if (hour > 12)
+        {
 
             hour -= 12;
             time |= RTC_TIMR_AMPM;
         }
     }
-    hour_bcd  = (hour%10) | ((hour/10)<<4);
-    min_bcd   = (minute%10) | ((minute/10)<<4);
-    sec_bcd   = (second%10) | ((second/10)<<4);
+    hour_bcd = (hour % 10) | ((hour / 10) << 4);
+    min_bcd = (minute % 10) | ((minute / 10) << 4);
+    sec_bcd = (second % 10) | ((second / 10) << 4);
 
     /* value overflow */
-    if((hour_bcd & (uint8_t)(~RTC_HOUR_BIT_LEN_MASK)) |
-       (min_bcd & (uint8_t)(~RTC_MIN_BIT_LEN_MASK)) |
-         (sec_bcd & (uint8_t)(~RTC_SEC_BIT_LEN_MASK)))
-            return 1;
+    if ((hour_bcd & (uint8_t)(~RTC_HOUR_BIT_LEN_MASK)) |
+        (min_bcd & (uint8_t)(~RTC_MIN_BIT_LEN_MASK)) |
+        (sec_bcd & (uint8_t)(~RTC_SEC_BIT_LEN_MASK)))
+        return 1;
 
-    time = sec_bcd | (min_bcd << 8) | (hour_bcd<<16);
+    time = sec_bcd | (min_bcd << 8) | (hour_bcd << 16);
 
     /* Set time */
-    while ((RTC->RTC_SR & RTC_SR_SEC) != RTC_SR_SEC); /* wait from previous set */
+    while ((RTC->RTC_SR & RTC_SR_SEC) != RTC_SR_SEC)
+        ; /* wait from previous set */
     RTC->RTC_CR |= RTC_CR_UPDTIM;
-    while ((RTC->RTC_SR & RTC_SR_ACKUPD) != RTC_SR_ACKUPD);
+    while ((RTC->RTC_SR & RTC_SR_ACKUPD) != RTC_SR_ACKUPD)
+        ;
     RTC->RTC_SCCR = RTC_SCCR_ACKCLR;
     RTC->RTC_TIMR = time;
     RTC->RTC_CR &= ~RTC_CR_UPDTIM;
@@ -217,34 +220,36 @@ void RTC_GetTime(
 
     /* Get current RTC time */
     time = RTC->RTC_TIMR;
-    while (time != RTC->RTC_TIMR) {
+    while (time != RTC->RTC_TIMR)
+    {
 
         time = RTC->RTC_TIMR;
     }
 
     /* Hour */
-    if (pHour) {
+    if (pHour)
+    {
 
-        *pHour = ((time & 0x00300000) >> 20) * 10
-                 + ((time & 0x000F0000) >> 16);
-        if ((time & RTC_TIMR_AMPM) == RTC_TIMR_AMPM) {
+        *pHour = ((time & 0x00300000) >> 20) * 10 + ((time & 0x000F0000) >> 16);
+        if ((time & RTC_TIMR_AMPM) == RTC_TIMR_AMPM)
+        {
 
             *pHour += 12;
         }
     }
 
     /* Minute */
-    if (pMinute) {
+    if (pMinute)
+    {
 
-        *pMinute = ((time & 0x00007000) >> 12) * 10
-                   + ((time & 0x00000F00) >> 8);
+        *pMinute = ((time & 0x00007000) >> 12) * 10 + ((time & 0x00000F00) >> 8);
     }
 
     /* Second */
-    if (pSecond) {
+    if (pSecond)
+    {
 
-        *pSecond = ((time & 0x00000070) >> 4) * 10
-                   + (time & 0x0000000F);
+        *pSecond = ((time & 0x00000070) >> 4) * 10 + (time & 0x0000000F);
     }
 }
 
@@ -271,19 +276,22 @@ int RTC_SetTimeAlarm(
     TRACE_DEBUG("RTC_SetTimeAlarm()\n\r");
 
     /* Hour */
-    if (pHour) {
+    if (pHour)
+    {
 
         alarm |= RTC_TIMALR_HOUREN | ((*pHour / 10) << 20) | ((*pHour % 10) << 16);
     }
 
     /* Minute */
-    if (pMinute) {
+    if (pMinute)
+    {
 
         alarm |= RTC_TIMALR_MINEN | ((*pMinute / 10) << 12) | ((*pMinute % 10) << 8);
     }
 
     /* Second */
-    if (pSecond) {
+    if (pSecond)
+    {
 
         alarm |= RTC_TIMALR_SECEN | ((*pSecond / 10) << 4) | (*pSecond % 10);
     }
@@ -311,35 +319,36 @@ void RTC_GetDate(
     uint32_t date;
 
     /* Get current date (multiple reads are necessary to insure a stable value) */
-    do {
+    do
+    {
 
         date = RTC->RTC_CALR;
-    }
-    while (date != RTC->RTC_CALR);
+    } while (date != RTC->RTC_CALR);
 
     /* Retrieve year */
-    if (pYear) {
+    if (pYear)
+    {
 
-        *pYear = (((date  >> 4) & 0x7) * 1000)
-                 + ((date & 0xF) * 100)
-                 + (((date >> 12) & 0xF) * 10)
-                 + ((date >> 8) & 0xF);
+        *pYear = (((date >> 4) & 0x7) * 1000) + ((date & 0xF) * 100) + (((date >> 12) & 0xF) * 10) + ((date >> 8) & 0xF);
     }
 
     /* Retrieve month */
-    if (pMonth) {
+    if (pMonth)
+    {
 
         *pMonth = (((date >> 20) & 1) * 10) + ((date >> 16) & 0xF);
     }
 
     /* Retrieve day */
-    if (pDay) {
+    if (pDay)
+    {
 
         *pDay = (((date >> 28) & 0x3) * 10) + ((date >> 24) & 0xF);
     }
 
     /* Retrieve week */
-    if (pWeek) {
+    if (pWeek)
+    {
 
         *pWeek = ((date >> 21) & 0x7);
     }
@@ -368,33 +377,33 @@ int RTC_SetDate(
     uint8_t day_bcd;
     uint8_t week_bcd;
 
-    cent_bcd  = ((year/100)%10) | ((year/1000)<<4);
-    year_bcd  = (year%10) | (((year/10)%10)<<4);
-    month_bcd = ((month%10) | (month/10)<<4);
-    day_bcd   = ((day%10) | (day/10)<<4);
-    week_bcd  = ((week%10) | (week/10)<<4);
+    cent_bcd = ((year / 100) % 10) | ((year / 1000) << 4);
+    year_bcd = (year % 10) | (((year / 10) % 10) << 4);
+    month_bcd = ((month % 10) | (month / 10) << 4);
+    day_bcd = ((day % 10) | (day / 10) << 4);
+    week_bcd = ((week % 10) | (week / 10) << 4);
 
     /* value over flow */
-    if((cent_bcd & (uint8_t)(~RTC_CENT_BIT_LEN_MASK)) |
+    if ((cent_bcd & (uint8_t)(~RTC_CENT_BIT_LEN_MASK)) |
         (year_bcd & (uint8_t)(~RTC_YEAR_BIT_LEN_MASK)) |
-          (month_bcd & (uint8_t)(~RTC_MONTH_BIT_LEN_MASK)) |
-            (week_bcd & (uint8_t)(~RTC_WEEK_BIT_LEN_MASK)) |
-              (day_bcd & (uint8_t)(~RTC_DATE_BIT_LEN_MASK)))
-                return 1;
-
+        (month_bcd & (uint8_t)(~RTC_MONTH_BIT_LEN_MASK)) |
+        (week_bcd & (uint8_t)(~RTC_WEEK_BIT_LEN_MASK)) |
+        (day_bcd & (uint8_t)(~RTC_DATE_BIT_LEN_MASK)))
+        return 1;
 
     /* Convert values to date register value */
     date = cent_bcd |
-            (year_bcd << 8) |
-              (month_bcd << 16) |
-                (week_bcd << 21) |
-                  (day_bcd << 24);
-
+           (year_bcd << 8) |
+           (month_bcd << 16) |
+           (week_bcd << 21) |
+           (day_bcd << 24);
 
     /* Update calendar register  */
-    while ((RTC->RTC_SR & RTC_SR_SEC) != RTC_SR_SEC); /* wait from previous set */
+    while ((RTC->RTC_SR & RTC_SR_SEC) != RTC_SR_SEC)
+        ; /* wait from previous set */
     RTC->RTC_CR |= RTC_CR_UPDCAL;
-    while ((RTC->RTC_SR & RTC_SR_ACKUPD) != RTC_SR_ACKUPD);
+    while ((RTC->RTC_SR & RTC_SR_ACKUPD) != RTC_SR_ACKUPD)
+        ;
     RTC->RTC_SCCR = RTC_SCCR_ACKCLR;
     RTC->RTC_CALR = date;
     RTC->RTC_CR &= ~RTC_CR_UPDCAL;
@@ -421,11 +430,13 @@ int RTC_SetDateAlarm(uint8_t *pMonth, uint8_t *pDay)
     TRACE_DEBUG("RTC_SetDateAlarm()\n\r");
 
     /* Compute alarm field value */
-    if (pMonth) {
+    if (pMonth)
+    {
 
         alarm |= RTC_CALALR_MTHEN | ((*pMonth / 10) << 20) | ((*pMonth % 10) << 16);
     }
-    if (pDay) {
+    if (pDay)
+    {
 
         alarm |= RTC_CALALR_DATEEN | ((*pDay / 10) << 28) | ((*pDay % 10) << 24);
     }
@@ -444,8 +455,8 @@ int RTC_SetDateAlarm(uint8_t *pMonth, uint8_t *pDay)
 void RTC_ClearSCCR(uint32_t mask)
 {
     /* Clear all flag bits in status clear command register */
-    mask &= RTC_SCCR_ACKCLR | RTC_SCCR_ALRCLR | RTC_SCCR_SECCLR | \
-                                    RTC_SCCR_TIMCLR | RTC_SCCR_CALCLR;
+    mask &= RTC_SCCR_ACKCLR | RTC_SCCR_ALRCLR | RTC_SCCR_SECCLR |
+            RTC_SCCR_TIMCLR | RTC_SCCR_CALCLR;
 
     RTC->RTC_SCCR = mask;
 }
@@ -464,4 +475,3 @@ uint32_t RTC_GetSR(uint32_t mask)
 
     return (event & mask);
 }
-

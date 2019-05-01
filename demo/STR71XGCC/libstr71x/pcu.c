@@ -31,27 +31,34 @@
                    DISABLE: Disable ( ByPass ) the VR
 * Return         : None
 *******************************************************************************/
-void PCU_VRConfig ( PCU_VR Xvr, FunctionalState NewState )
+void PCU_VRConfig(PCU_VR Xvr, FunctionalState NewState)
 {
   u16 Tmp = PCU->PWRCR;
-  switch ( Xvr )
+  switch (Xvr)
   {
-    case PCU_MVR :
-        /* Configure the Main Voltage Regulator */
-        if (NewState == DISABLE) Tmp |= PCU_MVR_Mask; else Tmp &= ~PCU_MVR_Mask;
-        break;
-    case PCU_LPR :
-        /* Configure the Low power Voltage Regulator */
-        if (NewState == DISABLE) Tmp |= PCU_LPR_Mask; else Tmp &= ~PCU_LPR_Mask;
-        break;
+  case PCU_MVR:
+    /* Configure the Main Voltage Regulator */
+    if (NewState == DISABLE)
+      Tmp |= PCU_MVR_Mask;
+    else
+      Tmp &= ~PCU_MVR_Mask;
+    break;
+  case PCU_LPR:
+    /* Configure the Low power Voltage Regulator */
+    if (NewState == DISABLE)
+      Tmp |= PCU_LPR_Mask;
+    else
+      Tmp &= ~PCU_LPR_Mask;
+    break;
   }
 
   /* Wait until the previous write operation will be completed */
-  while (( PCU->PWRCR & PCU_BUSY_Mask ) == 1);
+  while ((PCU->PWRCR & PCU_BUSY_Mask) == 1)
+    ;
 
   /*  Unlock Power Control Register */
   PCU->PWRCR |= PCU_WREN_Mask;
-    PCU->PWRCR = Tmp | PCU_WREN_Mask;
+  PCU->PWRCR = Tmp | PCU_WREN_Mask;
 }
 
 /*******************************************************************************
@@ -65,41 +72,43 @@ void PCU_VRConfig ( PCU_VR Xvr, FunctionalState NewState )
 *                  DISABLE: Disable Low Power Mode during Wait For Interrupt Mode
 * Return         : None
 *******************************************************************************/
-void PCU_WFIEnter ( WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlpm )
+void PCU_WFIEnter(WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlpm)
 {
   /* Select the WFI mode */
   /* Clear WFI bit in the RCCU_SMR register to enter in WFI mode */
-  RCCU->SMR &=0xFE ;
+  RCCU->SMR &= 0xFE;
 
-  if (Xlpr == DISABLE )
+  if (Xlpr == DISABLE)
 
-  /* Wait until the previous write operation will be completed */
-  while (( PCU->PWRCR & PCU_BUSY_Mask ) == 1);
+    /* Wait until the previous write operation will be completed */
+    while ((PCU->PWRCR & PCU_BUSY_Mask) == 1)
+      ;
 
   /* Unlock Power Control Register */
   PCU->PWRCR |= PCU_WREN_Mask;
 
   /* switched off the main Voltage Regulator in WFI mode */
-  PCU->PWRCR  |=0x0010;;
+  PCU->PWRCR |= 0x0010;
+  ;
 
   /* Select the LPWFI mode */
-  if (Xlpm == ENABLE )
+  if (Xlpm == ENABLE)
 
-  /* Disable the flash during the LPWFI */
-  FLASHR->CR0|=0x8000;
+    /* Disable the flash during the LPWFI */
+    FLASHR->CR0 |= 0x8000;
 
   if (Xclock == WFI_CLOCK2_16)
-  /* Select the 32KHz as peripherl clock during LPWFI */
-  RCCU->CCR  |=0x2;
-    else
+    /* Select the 32KHz as peripherl clock during LPWFI */
+    RCCU->CCR |= 0x2;
+  else
     /* Select CLK2/15 as peripherals clock during LPWFI */
-    RCCU->CCR  &=~0x2;
+    RCCU->CCR &= ~0x2;
 
-    /* Set bit LOPWFI for selecting LPWFI mode */
-    RCCU->CCR  |=0x1;
+  /* Set bit LOPWFI for selecting LPWFI mode */
+  RCCU->CCR |= 0x1;
 
-    /* Enter the LPWFI mode */
-    RCCU->SMR &=0xFE;
+  /* Enter the LPWFI mode */
+  RCCU->SMR &= 0xFE;
 }
 
 /*******************************************************************************
@@ -111,63 +120,62 @@ void PCU_WFIEnter ( WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlp
                    PCU_STANDBY : StandBy Mode
 * Return         : None
 *******************************************************************************/
-void PCU_LPMEnter ( LPM_MODES Xmode  )
+void PCU_LPMEnter(LPM_MODES Xmode)
 {
   u32 temp;
-  switch ( Xmode )
-    {
-      /* Slow Mode */
-      case PCU_SLOW:
-        {
-          RCCU->PLL1CR |= 0x87;
-          RCCU_RCLKSourceConfig ( RCCU_PLL1_Output );
-          break;
-        }
+  switch (Xmode)
+  {
+  /* Slow Mode */
+  case PCU_SLOW:
+  {
+    RCCU->PLL1CR |= 0x87;
+    RCCU_RCLKSourceConfig(RCCU_PLL1_Output);
+    break;
+  }
 
-      /* Stop Mode */
-      case PCU_STOP:
-        {
-          /* Enable Stop EN bit */
-          RCCU->CCR |= PCU_STOP_EN_Mask;
+  /* Stop Mode */
+  case PCU_STOP:
+  {
+    /* Enable Stop EN bit */
+    RCCU->CCR |= PCU_STOP_EN_Mask;
 
-          /* Write '1' to Stop Bit */
-          XTI->CTRL |= 0x04;
+    /* Write '1' to Stop Bit */
+    XTI->CTRL |= 0x04;
 
-          /* Write '0' to Stop Bit */
-          XTI->CTRL &= 0x03;
+    /* Write '0' to Stop Bit */
+    XTI->CTRL &= 0x03;
 
-          /* Write '1' to Stop Bit */
-          XTI->CTRL |= 0x04;
+    /* Write '1' to Stop Bit */
+    XTI->CTRL |= 0x04;
 
-          /* Aadd Delay */
+    /* Aadd Delay */
 
-          temp = 0;
-          temp = 1;
-          temp = 2;
-          temp = 3;
-          temp = 4;
-          temp = 5;
-          temp = 6;
-          temp = 7;
-          temp = 8;
+    temp = 0;
+    temp = 1;
+    temp = 2;
+    temp = 3;
+    temp = 4;
+    temp = 5;
+    temp = 6;
+    temp = 7;
+    temp = 8;
 
-          break;
+    break;
+  }
 
-        }
+  /* PCU_STANDBY Mode */
+  case PCU_STANDBY:
+  {
+    /* Wait until the previous write operation will be completed */
+    while ((PCU->PWRCR & PCU_BUSY_Mask) == 1)
+      ;
 
-      /* PCU_STANDBY Mode */
-      case PCU_STANDBY:
-        {
-	  /* Wait until the previous write operation will be completed */
-          while (( PCU->PWRCR & PCU_BUSY_Mask ) == 1);
+    /* Unlock Power Control Register */
+    PCU->PWRCR |= PCU_WREN_Mask;
 
-          /* Unlock Power Control Register */
-          PCU->PWRCR |= PCU_WREN_Mask;
-
-	  /* Set the Power Down flag */
-          PCU->PWRCR |= PCU_PWRDWN_Mask;
-        }
-    }
+    /* Set the Power Down flag */
+    PCU->PWRCR |= PCU_PWRDWN_Mask;
+  }
+  }
 }
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/
-

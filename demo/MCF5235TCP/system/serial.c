@@ -42,62 +42,62 @@
 #include "serial.h"
 
 /* ----------------------- Defines ----------------------------------------- */
-#define BAUDRATE_VALUE(fsys, baud)      ( ( fsys )/(32UL * baud) )
-#define MCF_UART_VECTOR                 ( 64 + 13 )
-#define COM_NIFACE                      1
-#define COM_BLOCK_RETRYTIME             10
+#define BAUDRATE_VALUE(fsys, baud) ((fsys) / (32UL * baud))
+#define MCF_UART_VECTOR (64 + 13)
+#define COM_NIFACE 1
+#define COM_BLOCK_RETRYTIME 10
 
 /* ------------------------ Static functions ------------------------------ */
-static void     prvSerialISR( void );
+static void prvSerialISR(void);
 
 /* ------------------------ Static variables ------------------------------ */
 typedef struct
 {
-    portBASE_TYPE   xInitialized;
-    xQueueHandle    xRXChars;
-    xQueueHandle    xTXChars;
+    portBASE_TYPE xInitialized;
+    xQueueHandle xRXChars;
+    xQueueHandle xTXChars;
 } xComPortIF_t;
 
 static xComPortIF_t xComPortIF[COM_NIFACE];
 
 /* ------------------------ Begin implementation -------------------------- */
 xComPortHandle
-xSerialPortInitMinimal( unsigned portLONG ulWantedBaud, unsigned portBASE_TYPE uxQueueLength )
+xSerialPortInitMinimal(unsigned portLONG ulWantedBaud, unsigned portBASE_TYPE uxQueueLength)
 {
-    extern void     ( *__RAMVEC[] ) (  );
-    xComPortHandle  xReturn;
-    portBASE_TYPE   xOldIPL;
+    extern void (*__RAMVEC[])();
+    xComPortHandle xReturn;
+    portBASE_TYPE xOldIPL;
 
     /* Create the queues used to hold Rx and Tx characters. */
     xComPortIF[0].xRXChars =
-        xQueueCreate( uxQueueLength, ( unsigned portBASE_TYPE )sizeof( signed portCHAR ) );
+        xQueueCreate(uxQueueLength, (unsigned portBASE_TYPE)sizeof(signed portCHAR));
     xComPortIF[0].xTXChars =
-        xQueueCreate( uxQueueLength + 1, ( unsigned portBASE_TYPE )sizeof( signed portCHAR ) );
+        xQueueCreate(uxQueueLength + 1, (unsigned portBASE_TYPE)sizeof(signed portCHAR));
 
     /* If the queues were created correctly then setup the serial port hardware. */
-    if( ( xComPortIF[0].xRXChars != 0 ) && ( xComPortIF[0].xTXChars != 0 ) )
+    if ((xComPortIF[0].xRXChars != 0) && (xComPortIF[0].xTXChars != 0))
     {
-        xOldIPL = portSET_IPL( portIPL_MAX );
+        xOldIPL = portSET_IPL(portIPL_MAX);
 
         /* UART 0: Reset transmitter, receiver and mode register pointer */
-        MCF_UART_UCR0 = MCF_UART_UCR_MISC( 0x3 );
-        MCF_UART_UCR0 = MCF_UART_UCR_MISC( 0x2 );
-        MCF_UART_UCR0 = MCF_UART_UCR_MISC( 0x1 );
+        MCF_UART_UCR0 = MCF_UART_UCR_MISC(0x3);
+        MCF_UART_UCR0 = MCF_UART_UCR_MISC(0x2);
+        MCF_UART_UCR0 = MCF_UART_UCR_MISC(0x1);
 
         /* Enable receive interrupts. */
         MCF_UART_UIMR0 = MCF_UART_UIMR_RXRDY_FU;
 
         /* 8 Databits, 1 Stopbit and no parity */
-        MCF_UART_UMR0 = MCF_UART_UMR_PM( 0x3 ) | MCF_UART_UMR_SB( 0x7 ) | MCF_UART_UMR_BC( 0x3 );
+        MCF_UART_UMR0 = MCF_UART_UMR_PM(0x3) | MCF_UART_UMR_SB(0x7) | MCF_UART_UMR_BC(0x3);
 
         /* UART 0 Clocking */
-        MCF_UART_UCSR0 = MCF_UART_UCSR_RCS( 0xd ) | MCF_UART_UCSR_TCS( 0xd );
-        MCF_UART_UBG10 = BAUDRATE_VALUE( FSYS_2, ulWantedBaud ) >> 8U;
-        MCF_UART_UBG20 = BAUDRATE_VALUE( FSYS_2, ulWantedBaud ) & 0xFFU;
+        MCF_UART_UCSR0 = MCF_UART_UCSR_RCS(0xd) | MCF_UART_UCSR_TCS(0xd);
+        MCF_UART_UBG10 = BAUDRATE_VALUE(FSYS_2, ulWantedBaud) >> 8U;
+        MCF_UART_UBG20 = BAUDRATE_VALUE(FSYS_2, ulWantedBaud) & 0xFFU;
 
         /* UART 0: Enable interrupts */
         __RAMVEC[MCF_UART_VECTOR] = prvSerialISR;
-        MCF_INTC0_ICR13 = MCF_INTC0_ICRn_IL( 0x2 ) | MCF_INTC0_ICRn_IP( 0x1 );
+        MCF_INTC0_ICR13 = MCF_INTC0_ICRn_IL(0x2) | MCF_INTC0_ICRn_IP(0x1);
         MCF_INTC0_IMRL &= ~MCF_INTC0_IMRL_INT_MASK13;
 
         /* UART 0 Miscellaneous */
@@ -107,42 +107,42 @@ xSerialPortInitMinimal( unsigned portLONG ulWantedBaud, unsigned portBASE_TYPE u
         MCF_GPIO_PAR_UART = MCF_GPIO_PAR_UART_PAR_U0RXD | MCF_GPIO_PAR_UART_PAR_U0TXD;
 
         /* Enable the UART. */
-        MCF_UART_UCR0 = MCF_UART_UCR_RXC( 0x1 ) | MCF_UART_UCR_TXC( 0x1 );
+        MCF_UART_UCR0 = MCF_UART_UCR_RXC(0x1) | MCF_UART_UCR_TXC(0x1);
 
         xComPortIF[0].xInitialized = TRUE;
-        xReturn = ( xComPortHandle ) & xComPortIF[0];
+        xReturn = (xComPortHandle)&xComPortIF[0];
 
-        ( void )portSET_IPL( xOldIPL );
+        (void)portSET_IPL(xOldIPL);
     }
     else
     {
-        xReturn = ( xComPortHandle ) 0;
+        xReturn = (xComPortHandle)0;
     }
 
     return xReturn;
 }
 
-signed          portBASE_TYPE
-xSerialGetChar( xComPortHandle pxPort, signed portCHAR * pcRxedChar, portTickType xBlockTime )
+signed portBASE_TYPE
+xSerialGetChar(xComPortHandle pxPort, signed portCHAR *pcRxedChar, portTickType xBlockTime)
 {
-    int             i;
-    portBASE_TYPE   xResult = pdFALSE;
+    int i;
+    portBASE_TYPE xResult = pdFALSE;
 
     /* Lookup the correct interface. */
-    for( i = 0; i < COM_NIFACE; i++ )
+    for (i = 0; i < COM_NIFACE; i++)
     {
-        if( pxPort == ( xComPortHandle ) & xComPortIF[i] )
+        if (pxPort == (xComPortHandle)&xComPortIF[i])
         {
             break;
         }
     }
     /* This COM port is available. */
-    if( ( i != COM_NIFACE ) && xComPortIF[i].xInitialized )
+    if ((i != COM_NIFACE) && xComPortIF[i].xInitialized)
     {
         /* Get the next character from the buffer.  Return false if no characters
          * are available, or arrive before xBlockTime expires.
          */
-        if( xQueueReceive( xComPortIF[i].xRXChars, pcRxedChar, xBlockTime ) )
+        if (xQueueReceive(xComPortIF[i].xRXChars, pcRxedChar, xBlockTime))
         {
             xResult = pdTRUE;
         }
@@ -150,43 +150,42 @@ xSerialGetChar( xComPortHandle pxPort, signed portCHAR * pcRxedChar, portTickTyp
     return xResult;
 }
 
-void
-vSerialPutString( xComPortHandle pxPort, const signed portCHAR *
-                  const pcString, unsigned portSHORT usStringLength )
+void vSerialPutString(xComPortHandle pxPort, const signed portCHAR *const pcString, unsigned portSHORT usStringLength)
 {
-    int             i;
+    int i;
     signed portCHAR *pChNext;
 
     /* Send each character in the string, one at a time. */
-    pChNext = ( signed portCHAR * )pcString;
-    for( i = 0; i < usStringLength; i++ )
+    pChNext = (signed portCHAR *)pcString;
+    for (i = 0; i < usStringLength; i++)
     {
         /* Block until character has been transmitted. */
-        while( xSerialPutChar( pxPort, *pChNext, COM_BLOCK_RETRYTIME ) != pdTRUE );
+        while (xSerialPutChar(pxPort, *pChNext, COM_BLOCK_RETRYTIME) != pdTRUE)
+            ;
         pChNext++;
     }
 }
 
-signed          portBASE_TYPE
-xSerialPutChar( xComPortHandle pxPort, signed portCHAR cOutChar, portTickType xBlockTime )
+signed portBASE_TYPE
+xSerialPutChar(xComPortHandle pxPort, signed portCHAR cOutChar, portTickType xBlockTime)
 {
-    int             i;
-    portBASE_TYPE   xResult = pdFALSE;
-    portBASE_TYPE   xOldIPL;
+    int i;
+    portBASE_TYPE xResult = pdFALSE;
+    portBASE_TYPE xOldIPL;
 
     /* Lookup the correct interface. */
-    for( i = 0; i < COM_NIFACE; i++ )
+    for (i = 0; i < COM_NIFACE; i++)
     {
-        if( pxPort == ( xComPortHandle ) & xComPortIF[i] )
+        if (pxPort == (xComPortHandle)&xComPortIF[i])
         {
             break;
         }
     }
     /* This COM port is available. */
-    if( ( i != COM_NIFACE ) && xComPortIF[i].xInitialized )
+    if ((i != COM_NIFACE) && xComPortIF[i].xInitialized)
     {
         /* Place the character in the queue of characters to be transmitted. */
-        if( xQueueSend( xComPortIF[i].xTXChars, &cOutChar, xBlockTime ) == pdPASS )
+        if (xQueueSend(xComPortIF[i].xTXChars, &cOutChar, xBlockTime) == pdPASS)
         {
             MCF_UART_UIMR0 = MCF_UART_UIMR_TXRDY | MCF_UART_UIMR_RXRDY_FU;
             /* Turn on the Tx interrupt so the ISR will remove the character from the
@@ -197,61 +196,59 @@ xSerialPutChar( xComPortHandle pxPort, signed portCHAR cOutChar, portTickType xB
     return xResult;
 }
 
-signed          portBASE_TYPE
-xSerialPutCharNOISR( xComPortHandle pxPort, signed portCHAR cOutChar )
+signed portBASE_TYPE
+xSerialPutCharNOISR(xComPortHandle pxPort, signed portCHAR cOutChar)
 {
-    int             i;
-    portBASE_TYPE   xResult = pdFALSE;
-    portBASE_TYPE   xOldIPL = portSET_IPL( portIPL_MAX );
+    int i;
+    portBASE_TYPE xResult = pdFALSE;
+    portBASE_TYPE xOldIPL = portSET_IPL(portIPL_MAX);
 
     /* Lookup the correct interface. */
-    for( i = 0; i < COM_NIFACE; i++ )
+    for (i = 0; i < COM_NIFACE; i++)
     {
-        if( pxPort == ( xComPortHandle ) & xComPortIF[i] )
+        if (pxPort == (xComPortHandle)&xComPortIF[i])
         {
             break;
         }
     }
     /* This COM port is available. Support for this only available for COM1 right now. */
-    if( ( i != COM_NIFACE ) && ( i == 0 ) )
+    if ((i != COM_NIFACE) && (i == 0))
     {
         /* Wait until the transmit buffer is ready. */
-        while( !( MCF_UART_USR0 & MCF_UART_USR_TXRDY ) );
+        while (!(MCF_UART_USR0 & MCF_UART_USR_TXRDY))
+            ;
         /* Place the character in the transmit buffer. */
         MCF_UART_UTB0 = cOutChar;
         xResult = pdTRUE;
     }
-    ( void )portSET_IPL( xOldIPL );
+    (void)portSET_IPL(xOldIPL);
     return xResult;
 }
 
-void
-vSerialPutStringNOISR( xComPortHandle pxPort, const signed portCHAR *
-                       const pcString, unsigned portSHORT usStringLength )
+void vSerialPutStringNOISR(xComPortHandle pxPort, const signed portCHAR *const pcString, unsigned portSHORT usStringLength)
 {
-    int             i;
+    int i;
     signed portCHAR *pChNext;
-    portBASE_TYPE   xOldIPL = portSET_IPL( portIPL_MAX );
+    portBASE_TYPE xOldIPL = portSET_IPL(portIPL_MAX);
 
     /* Send each character in the string, one at a time. */
-    pChNext = ( signed portCHAR * )pcString;
-    for( i = 0; i < usStringLength; i++ )
+    pChNext = (signed portCHAR *)pcString;
+    for (i = 0; i < usStringLength; i++)
     {
         /* Block until character has been transmitted. */
-        while( xSerialPutCharNOISR( pxPort, *pChNext ) != pdTRUE );
+        while (xSerialPutCharNOISR(pxPort, *pChNext) != pdTRUE)
+            ;
         pChNext++;
     }
-    ( void )portSET_IPL( xOldIPL );
+    (void)portSET_IPL(xOldIPL);
 }
 
-void
-vSerialClose( xComPortHandle xPort )
+void vSerialClose(xComPortHandle xPort)
 {
     /* Not supported as not required by the demo application. */
 }
 
-void
-prvSerialISR( void )
+void prvSerialISR(void)
 {
     static signed portCHAR cChar;
     static portBASE_TYPE xTaskWokenByTx = pdFALSE, xTaskWokenByRx = pdFALSE;
@@ -262,19 +259,19 @@ prvSerialISR( void )
      * is the usage of a frame pointer which is unlinked on entry.
      */
 #if _GCC_USES_FP == 1
-    asm volatile    ( "unlk %fp\n\t" );
+    asm volatile("unlk %fp\n\t");
 #endif
     /* This ISR can cause a context switch, so the first statement must be
      * a call to the portENTER_SWITCHING_ISR() macro. This must be BEFORE any
      * variable declarations.
      */
-    portENTER_SWITCHING_ISR(  );
+    portENTER_SWITCHING_ISR();
 
     /* Ready to send a character from the buffer. */
-    if( MCF_UART_USR0 & MCF_UART_USR_TXRDY )
+    if (MCF_UART_USR0 & MCF_UART_USR_TXRDY)
     {
         /* Transmit buffer is ready. Test if there are characters available. */
-        if( xQueueReceiveFromISR( xComPortIF[0].xTXChars, &cChar, &xTaskWokenByTx ) == pdTRUE )
+        if (xQueueReceiveFromISR(xComPortIF[0].xTXChars, &cChar, &xTaskWokenByTx) == pdTRUE)
         {
             /* A character was retrieved from the queue so can be sent. */
             MCF_UART_UTB0 = cChar;
@@ -285,13 +282,13 @@ prvSerialISR( void )
             MCF_UART_UIMR0 = MCF_UART_UIMR_RXRDY_FU;
         }
     }
-    if( MCF_UART_USR0 & MCF_UART_USR_RXRDY )
+    if (MCF_UART_USR0 & MCF_UART_USR_RXRDY)
     {
         cChar = MCF_UART_URB0;
-        xTaskWokenByRx = xQueueSendFromISR( xComPortIF[0].xRXChars, &cChar, xTaskWokenByRx );
+        xTaskWokenByRx = xQueueSendFromISR(xComPortIF[0].xRXChars, &cChar, xTaskWokenByRx);
     }
     /* Exit the ISR.  If a task was woken by either a character being
      * or transmitted then a context switch will occur.
      */
-    portEXIT_SWITCHING_ISR( ( xTaskWokenByTx || xTaskWokenByRx ) );
+    portEXIT_SWITCHING_ISR((xTaskWokenByTx || xTaskWokenByRx));
 }

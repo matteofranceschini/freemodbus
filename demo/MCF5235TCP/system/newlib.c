@@ -41,39 +41,35 @@
 #include <serial.h>
 
 /* ------------------------ Prototypes ------------------------------------ */
-void vSerialPutStringNOISR( xComPortHandle pxPort,
-                            const signed portCHAR * const pcString,
-                            unsigned portSHORT usStringLength );
+void vSerialPutStringNOISR(xComPortHandle pxPort,
+                           const signed portCHAR *const pcString,
+                           unsigned portSHORT usStringLength);
 
 /* ------------------------ Start implementation -------------------------- */
-void
-_exit( int status )
+void _exit(int status)
 {
-    asm volatile    ( "halt" );
+    asm volatile("halt");
 
-    for( ;; );
+    for (;;)
+        ;
 }
 
-pid_t
-getpid( void )
-{
-    return 0;
-}
-
-int
-kill( pid_t pid, int sig )
-{
-    _exit( 0 );
-}
-
-int
-close( int fd )
+pid_t getpid(void)
 {
     return 0;
 }
 
-int
-fstat( int fd, struct stat *buf )
+int kill(pid_t pid, int sig)
+{
+    _exit(0);
+}
+
+int close(int fd)
+{
+    return 0;
+}
+
+int fstat(int fd, struct stat *buf)
 {
     buf->st_mode = S_IFCHR;
     buf->st_blksize = 0;
@@ -81,64 +77,61 @@ fstat( int fd, struct stat *buf )
 }
 
 ssize_t
-write( int fd, const void *buf, size_t nbytes )
+write(int fd, const void *buf, size_t nbytes)
 {
     ssize_t res = nbytes;
     extern xComPortHandle xSTDComPort;
-    switch ( fd )
+    switch (fd)
     {
-        case STDERR_FILENO:
-            vSerialPutStringNOISR( xSTDComPort,
-                                   ( const signed portCHAR * const )buf,
-                                   ( unsigned portSHORT )nbytes );
-            break;
-        case STDOUT_FILENO:
-            vSerialPutString( xSTDComPort,
-                              ( const signed portCHAR * const)buf,
-                              ( unsigned portSHORT )nbytes );
-            break;
-        default:
-            errno = EIO;
-            res = -1;
-            break;
+    case STDERR_FILENO:
+        vSerialPutStringNOISR(xSTDComPort,
+                              (const signed portCHAR *const)buf,
+                              (unsigned portSHORT)nbytes);
+        break;
+    case STDOUT_FILENO:
+        vSerialPutString(xSTDComPort,
+                         (const signed portCHAR *const)buf,
+                         (unsigned portSHORT)nbytes);
+        break;
+    default:
+        errno = EIO;
+        res = -1;
+        break;
     }
     return res;
 }
 
-int
-read( int fd, void *buf, size_t nbytes )
+int read(int fd, void *buf, size_t nbytes)
 {
-    switch ( fd )
+    switch (fd)
     {
-        default:
-            errno = EIO;
-            return -1;
+    default:
+        errno = EIO;
+        return -1;
     }
 }
 
-int
-isatty( int fd )
+int isatty(int fd)
 {
     return 0;
 }
 
-off_t
-lseek( int fd, off_t offset, int whence )
+off_t lseek(int fd, off_t offset, int whence)
 {
     errno = EIO;
-    return ( off_t ) - 1;
+    return (off_t)-1;
 }
 
-extern char     _end[];
-char           *heap_ptr;
+extern char _end[];
+char *heap_ptr;
 
-void           *
-sbrk( ptrdiff_t nbytes )
+void *
+sbrk(ptrdiff_t nbytes)
 {
-    char           *base;
+    char *base;
 
-    if( !heap_ptr )
-        heap_ptr = ( char * )&_end;
+    if (!heap_ptr)
+        heap_ptr = (char *)&_end;
     base = heap_ptr;
     heap_ptr += nbytes;
 

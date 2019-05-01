@@ -19,20 +19,19 @@
 
 	A special exception to the GPL can be applied should you wish to distribute
 	a combined work that includes FreeRTOS.org, without being obliged to provide
-	the source code for any proprietary components.  See the licensing section 
+	the source code for any proprietary components.  See the licensing section
 	of http://www.FreeRTOS.org for full details of how and when the exception
 	can be applied.
 
 	***************************************************************************
-	See http://www.FreeRTOS.org for documentation, latest information, license 
-	and contact details.  Please ensure to read the configuration and relevant 
+	See http://www.FreeRTOS.org for documentation, latest information, license
+	and contact details.  Please ensure to read the configuration and relevant
 	port sections of the online documentation.
 
 	Also see http://www.SafeRTOS.com for an IEC 61508 compliant version along
 	with commercial development and support options.
 	***************************************************************************
 */
-
 
 /*
  * Implementation of pvPortMalloc() and vPortFree() that relies on the
@@ -52,13 +51,13 @@
 
 /*-----------------------------------------------------------*/
 
-void *pvPortMalloc( size_t xWantedSize )
+void *pvPortMalloc(size_t xWantedSize)
 {
-void *pvReturn;
+	void *pvReturn;
 
 	vTaskSuspendAll();
 	{
-		pvReturn = malloc( xWantedSize );
+		pvReturn = malloc(xWantedSize);
 	}
 	xTaskResumeAll();
 
@@ -66,17 +65,14 @@ void *pvReturn;
 }
 /*-----------------------------------------------------------*/
 
-void vPortFree( void *pv )
+void vPortFree(void *pv)
 {
-	if( pv )
+	if (pv)
 	{
 		vTaskSuspendAll();
 		{
-			free( pv );
+			free(pv);
 		}
 		xTaskResumeAll();
 	}
 }
-
-
-

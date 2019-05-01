@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -41,13 +41,11 @@
 //         Define
 //-----------------------------------------------------------------------------
 /// BMP offset for header
-#define  IMAGE_OFFSET       0x100
-
+#define IMAGE_OFFSET 0x100
 
 //------------------------------------------------------------------------------
 //         Internal constants
 //------------------------------------------------------------------------------
-
 
 //------------------------------------------------------------------------------
 //         Internal types
@@ -56,7 +54,8 @@
 //------------------------------------------------------------------------------
 /// Describe the BMP palette
 //------------------------------------------------------------------------------
-struct BMPPaletteEntry {
+struct BMPPaletteEntry
+{
 
     /// Blue value
     unsigned char b;
@@ -79,7 +78,7 @@ struct BMPPaletteEntry {
 //------------------------------------------------------------------------------
 unsigned char BMP_IsValid(void *file)
 {
-    return ((struct BMPHeader *) file)->type == BMP_TYPE;
+    return ((struct BMPHeader *)file)->type == BMP_TYPE;
 }
 
 //------------------------------------------------------------------------------
@@ -90,7 +89,7 @@ unsigned char BMP_IsValid(void *file)
 //------------------------------------------------------------------------------
 unsigned int BMP_GetFileSize(void *file)
 {
-    return ((struct BMPHeader *) file)->fileSize;
+    return ((struct BMPHeader *)file)->fileSize;
 }
 
 //-----------------------------------------------------------------------------
@@ -101,22 +100,23 @@ unsigned int BMP_GetFileSize(void *file)
 /// \param bmpRgb Type of BMP (YUV or RGB)
 /// \param nbByte_Pixels Number of byte per pixels
 //-----------------------------------------------------------------------------
-void WriteBMPheader(unsigned int* pAddressHeader, 
-                    unsigned int  bmpHSize,
-                    unsigned int  bmpVSize,
+void WriteBMPheader(unsigned int *pAddressHeader,
+                    unsigned int bmpHSize,
+                    unsigned int bmpVSize,
                     unsigned char bmpRgb,
                     unsigned char nbByte_Pixels)
 {
     unsigned int i;
-    unsigned int* fill;
+    unsigned int *fill;
     struct BMPHeader *Header;
 
     fill = pAddressHeader;
-    for (i=0; i<IMAGE_OFFSET; i+=4) {
+    for (i = 0; i < IMAGE_OFFSET; i += 4)
+    {
         *fill++ = 0;
     }
 
-    Header = (struct BMPHeader*) pAddressHeader;
+    Header = (struct BMPHeader *)pAddressHeader;
 
     Header->type = BMP_TYPE;
     Header->fileSize = (bmpHSize * bmpVSize * nbByte_Pixels) + IMAGE_OFFSET;
@@ -124,7 +124,7 @@ void WriteBMPheader(unsigned int* pAddressHeader,
     Header->reserved2 = 0;
     Header->offset = IMAGE_OFFSET;
     Header->headerSize = BITMAPINFOHEADER;
-    Header->width  = bmpHSize;
+    Header->width = bmpHSize;
     Header->height = bmpVSize;
     Header->planes = 1;
     Header->bits = nbByte_Pixels * 8;
@@ -136,16 +136,15 @@ void WriteBMPheader(unsigned int* pAddressHeader,
     Header->importantcolours = 0;
 }
 
-
 //------------------------------------------------------------------------------
 /// debug function, dislay BMP header
 /// \param pAddressHeader Address of the BMP
 //------------------------------------------------------------------------------
-void BMP_displayHeader(unsigned int* pAddressHeader)
+void BMP_displayHeader(unsigned int *pAddressHeader)
 {
     struct BMPHeader *header;
 
-    header = (struct BMPHeader*) pAddressHeader;
+    header = (struct BMPHeader *)pAddressHeader;
 
     TRACE_INFO("BMP\n\r");
     TRACE_INFO("type       0x%X \n\r", header->type);
@@ -165,7 +164,6 @@ void BMP_displayHeader(unsigned int* pAddressHeader)
     TRACE_INFO("ncolours    %d \n\r", header->ncolours);
     TRACE_INFO("importantcolours %d\n\r", header->importantcolours);
 }
-
 
 //------------------------------------------------------------------------------
 /// Loads a BMP image located at the given address, decodes it and stores the
@@ -193,19 +191,19 @@ unsigned char BMP_Decode(
     unsigned char *image;
 
     // Read header information
-    header = (struct BMPHeader *) file;
+    header = (struct BMPHeader *)file;
 
     // Verify that the file is valid
-    if (!BMP_IsValid(file)) {
+    if (!BMP_IsValid(file))
+    {
 
-        TRACE_ERROR("BMP_Decode: File type is not 'BM' (0x%04X).\n\r",header->type);
+        TRACE_ERROR("BMP_Decode: File type is not 'BM' (0x%04X).\n\r", header->type);
         return 1;
     }
 
     // Check that parameters match
-    if ((header->compression != 0)
-        || (header->width != width)
-        || (header->height != height)) {
+    if ((header->compression != 0) || (header->width != width) || (header->height != height))
+    {
 
         TRACE_ERROR("BMP_Decode: File format not supported\n\r");
         TRACE_ERROR(" -> .compression = %u\n\r", header->compression);
@@ -216,34 +214,39 @@ unsigned char BMP_Decode(
     }
 
     // Get image data
-    image = (unsigned char *) ((unsigned int) file + header->offset);
+    image = (unsigned char *)((unsigned int)file + header->offset);
 
     // Check that the bpp resolution is supported
     // Only a 24-bit output & 24- or 8-bit input are supported
-    if (bpp != 24) {
+    if (bpp != 24)
+    {
 
         TRACE_ERROR("BMP_Decode: Output resolution not supported\n\r");
         return 3;
     }
-    else if (header->bits == 24) {
+    else if (header->bits == 24)
+    {
 
         // Decoding is ok
-        if (!buffer) return 0;
+        if (!buffer)
+            return 0;
 
         // Get image data (swapping red & blue)
-        for (i=0; i < height; i++) {
-            for (j=0; j < width; j++) {
+        for (i = 0; i < height; i++)
+        {
+            for (j = 0; j < width; j++)
+            {
 
                 r = image[((height - i - 1) * width + j) * 3 + 2];
                 g = image[((height - i - 1) * width + j) * 3 + 1];
                 b = image[((height - i - 1) * width + j) * 3];
-                
+
 #if defined(BOARD_LCD_RGB565)
                 // Interlacing
                 r = ((r << 1) & 0xF0) | ((g & 0x80) >> 4) | ((r & 0x80) >> 5);
                 g = (g << 1) & 0xF8;
                 b = b & 0xF8;
-                
+
                 buffer[(i * width + j) * 3] = b;
                 buffer[(i * width + j) * 3 + 1] = g;
                 buffer[(i * width + j) * 3 + 2] = r;
@@ -256,20 +259,24 @@ unsigned char BMP_Decode(
             }
         }
     }
-    else if (header->bits == 8) {
+    else if (header->bits == 8)
+    {
 
         // Decoding is ok
-        if (!buffer) return 0;    
+        if (!buffer)
+            return 0;
 
         // Retrieve palette
         struct BMPPaletteEntry palette[256];
         memcpy(palette,
-               (unsigned char *) ((unsigned int) file + sizeof(struct BMPHeader)),
+               (unsigned char *)((unsigned int)file + sizeof(struct BMPHeader)),
                header->offset - sizeof(struct BMPHeader));
 
         // Decode image (reversing row order)
-        for (i=0; i < height; i++) {
-            for (j=0; j < width; j++) {
+        for (i = 0; i < height; i++)
+        {
+            for (j = 0; j < width; j++)
+            {
 
                 r = palette[image[(height - i - 1) * width + j]].r;
                 g = palette[image[(height - i - 1) * width + j]].g;
@@ -281,7 +288,8 @@ unsigned char BMP_Decode(
             }
         }
     }
-    else {
+    else
+    {
 
         TRACE_ERROR("BMP_Decode: Input resolution not supported\n\r");
         TRACE_INFO("header->bits 0x%X \n\r", header->bits);
@@ -310,13 +318,13 @@ void RGB565toBGR555(
     unsigned int j;
     unsigned int row;
 
-    for (i=0; i < height*(bpp/8); i++) {
-        row = (i*width*(bpp/8));
-        for (j=0; j <= width*(bpp/8); j+=2) {
-            fileDestination[row+j] = ((fileSource[row+j+1]>>3)&0x1F)
-                                    | (fileSource[row+j]&0xE0);
-            fileDestination[row+j+1] = (fileSource[row+j+1]&0x03)
-                                    | ((fileSource[row+j]&0x1F)<<2);
+    for (i = 0; i < height * (bpp / 8); i++)
+    {
+        row = (i * width * (bpp / 8));
+        for (j = 0; j <= width * (bpp / 8); j += 2)
+        {
+            fileDestination[row + j] = ((fileSource[row + j + 1] >> 3) & 0x1F) | (fileSource[row + j] & 0xE0);
+            fileDestination[row + j + 1] = (fileSource[row + j + 1] & 0x03) | ((fileSource[row + j] & 0x1F) << 2);
         }
     }
 }

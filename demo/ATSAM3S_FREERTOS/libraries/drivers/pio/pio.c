@@ -60,14 +60,16 @@ static void PIO_SetPeripheralA(
     pio->PIO_IDR = mask;
 
     // Enable the pull-up(s) if necessary
-    if (enablePullUp) {
+    if (enablePullUp)
+    {
         pio->PIO_PUER = mask;
     }
-    else {
+    else
+    {
 
         pio->PIO_PUDR = mask;
     }
-    
+
     abcdsr = pio->PIO_ABCDSR[0];
     pio->PIO_ABCDSR[0] &= (~mask & abcdsr);
     abcdsr = pio->PIO_ABCDSR[1];
@@ -94,11 +96,13 @@ static void PIO_SetPeripheralB(
     pio->PIO_IDR = mask;
 
     // Enable the pull-up(s) if necessary
-    if (enablePullUp) {
+    if (enablePullUp)
+    {
 
         pio->PIO_PUER = mask;
     }
-    else {
+    else
+    {
 
         pio->PIO_PUDR = mask;
     }
@@ -107,7 +111,7 @@ static void PIO_SetPeripheralB(
     pio->PIO_ABCDSR[0] = (mask | abcdsr);
     abcdsr = pio->PIO_ABCDSR[1];
     pio->PIO_ABCDSR[1] &= (~mask & abcdsr);
-    
+
     pio->PIO_PDR = mask;
 }
 
@@ -130,11 +134,13 @@ static void PIO_SetPeripheralC(
     pio->PIO_IDR = mask;
 
     // Enable the pull-up(s) if necessary
-    if (enablePullUp) {
+    if (enablePullUp)
+    {
 
         pio->PIO_PUER = mask;
     }
-    else {
+    else
+    {
 
         pio->PIO_PUDR = mask;
     }
@@ -143,7 +149,7 @@ static void PIO_SetPeripheralC(
     pio->PIO_ABCDSR[0] &= (~mask & abcdsr);
     abcdsr = pio->PIO_ABCDSR[1];
     pio->PIO_ABCDSR[1] = (mask | abcdsr);
-    
+
     pio->PIO_PDR = mask;
 }
 
@@ -166,11 +172,13 @@ static void PIO_SetPeripheralD(
     pio->PIO_IDR = mask;
 
     // Enable the pull-up(s) if necessary
-    if (enablePullUp) {
+    if (enablePullUp)
+    {
 
         pio->PIO_PUER = mask;
     }
-    else {
+    else
+    {
 
         pio->PIO_PUDR = mask;
     }
@@ -179,7 +187,7 @@ static void PIO_SetPeripheralD(
     pio->PIO_ABCDSR[0] = (mask | abcdsr);
     abcdsr = pio->PIO_ABCDSR[1];
     pio->PIO_ABCDSR[1] = (mask | abcdsr);
-    
+
     pio->PIO_PDR = mask;
 }
 
@@ -213,7 +221,8 @@ static void PIO_SetInput(
         pio->PIO_IFDR = mask;
 
     // Enable de-bounce if necessary
-    if (attribute & PIO_DEBOUNCE) {
+    if (attribute & PIO_DEBOUNCE)
+    {
         pio->PIO_DIFSR = mask;
     }
 
@@ -244,31 +253,37 @@ static void PIO_SetOutput(
     pio->PIO_IDR = mask;
 
     // Enable pull-up(s) if necessary
-    if (enablePullUp) {
+    if (enablePullUp)
+    {
 
         pio->PIO_PUER = mask;
     }
-    else {
+    else
+    {
 
         pio->PIO_PUDR = mask;
     }
 
     // Enable multi-drive if necessary
-    if (enableMultiDrive) {
+    if (enableMultiDrive)
+    {
 
         pio->PIO_MDER = mask;
     }
-    else {
+    else
+    {
 
         pio->PIO_MDDR = mask;
     }
 
     // Set default value
-    if (defaultValue) {
+    if (defaultValue)
+    {
 
         pio->PIO_SODR = mask;
     }
-    else {
+    else
+    {
 
         pio->PIO_CODR = mask;
     }
@@ -294,24 +309,27 @@ static void PIO_SetInterrupt(
     unsigned char risingEdgeOrHighLevel)
 {
     /* Configure the Interrupt mode in the PIO controller */
-    if (additionnalItMode) {
+    if (additionnalItMode)
+    {
         /* enable additional interrupt mode */
-        pio->PIO_AIMER       = mask;
-        
+        pio->PIO_AIMER = mask;
+
         /* if bit field of selected pin is 1, set as Rising Edge/High level detection event */
         if (risingEdgeOrHighLevel)
-            pio->PIO_REHLSR    = mask;
+            pio->PIO_REHLSR = mask;
         else
-            pio->PIO_FELLSR     = mask;
+            pio->PIO_FELLSR = mask;
 
         /* if bit field of selected pin is 1, set as edge detection source */
         if (edgeMode)
-            pio->PIO_ESR     = mask;
+            pio->PIO_ESR = mask;
         else
-            pio->PIO_LSR     = mask;
-    } else {
+            pio->PIO_LSR = mask;
+    }
+    else
+    {
         /* disable additional interrupt mode */
-        pio->PIO_AIMDR       = mask;
+        pio->PIO_AIMDR = mask;
     }
 }
 
@@ -331,57 +349,60 @@ static void PIO_SetInterrupt(
 unsigned char PIO_Configure(const Pin *list, unsigned int size)
 {
     // Configure pins
-    while (size > 0) {
+    while (size > 0)
+    {
 
-        switch (list->type) {
+        switch (list->type)
+        {
 
-            case PIO_PERIPH_A:
-                PIO_SetPeripheralA(list->pio,
-                                   list->mask,
-                                   (list->attribute & PIO_PULLUP) ? 1 : 0);
-                break;
+        case PIO_PERIPH_A:
+            PIO_SetPeripheralA(list->pio,
+                               list->mask,
+                               (list->attribute & PIO_PULLUP) ? 1 : 0);
+            break;
 
-            case PIO_PERIPH_B:
-                PIO_SetPeripheralB(list->pio,
-                                   list->mask,
-                                   (list->attribute & PIO_PULLUP) ? 1 : 0);
-                break;
+        case PIO_PERIPH_B:
+            PIO_SetPeripheralB(list->pio,
+                               list->mask,
+                               (list->attribute & PIO_PULLUP) ? 1 : 0);
+            break;
 
-            case PIO_PERIPH_C:
-                PIO_SetPeripheralC(list->pio,
-                                   list->mask,
-                                   (list->attribute & PIO_PULLUP) ? 1 : 0);
-                break;
-                
-            case PIO_PERIPH_D:
-                PIO_SetPeripheralD(list->pio,
-                                   list->mask,
-                                   (list->attribute & PIO_PULLUP) ? 1 : 0);
-                break;
-            case PIO_INPUT:
-                PMC_EnablePeripheral(list->id);
-                PIO_SetInput(list->pio,
+        case PIO_PERIPH_C:
+            PIO_SetPeripheralC(list->pio,
+                               list->mask,
+                               (list->attribute & PIO_PULLUP) ? 1 : 0);
+            break;
+
+        case PIO_PERIPH_D:
+            PIO_SetPeripheralD(list->pio,
+                               list->mask,
+                               (list->attribute & PIO_PULLUP) ? 1 : 0);
+            break;
+        case PIO_INPUT:
+            PMC_EnablePeripheral(list->id);
+            PIO_SetInput(list->pio,
+                         list->mask,
+                         list->attribute);
+            PIO_SetInterrupt(list->pio,
                              list->mask,
-                             list->attribute);
-                PIO_SetInterrupt(list->pio,
-                                 list->mask,
-                                 (list->attribute & PIO_IT_AIME) ? 1 : 0,
-                                 (list->attribute & PIO_IT_EDGE) ? 1 : 0,
-                                 (list->attribute & PIO_IT_RE_OR_HL) ? 1 : 0);
-                break;
+                             (list->attribute & PIO_IT_AIME) ? 1 : 0,
+                             (list->attribute & PIO_IT_EDGE) ? 1 : 0,
+                             (list->attribute & PIO_IT_RE_OR_HL) ? 1 : 0);
+            break;
 
-            case PIO_OUTPUT_0:
-            case PIO_OUTPUT_1:
-                PIO_SetOutput(list->pio,
-                              list->mask,
-                              (list->type == PIO_OUTPUT_1),
-                              (list->attribute & PIO_OPENDRAIN) ? 1 : 0,
-                              (list->attribute & PIO_PULLUP) ? 1 : 0);
-                break;
+        case PIO_OUTPUT_0:
+        case PIO_OUTPUT_1:
+            PIO_SetOutput(list->pio,
+                          list->mask,
+                          (list->type == PIO_OUTPUT_1),
+                          (list->attribute & PIO_OPENDRAIN) ? 1 : 0,
+                          (list->attribute & PIO_PULLUP) ? 1 : 0);
+            break;
 
-            default: return 0;
+        default:
+            return 0;
         }
-                         
+
         list++;
         size--;
     }
@@ -423,25 +444,28 @@ void PIO_Clear(const Pin *pin)
 unsigned char PIO_Get(const Pin *pin)
 {
     unsigned int reg;
-    if ((pin->type == PIO_OUTPUT_0) || (pin->type == PIO_OUTPUT_1)) {
+    if ((pin->type == PIO_OUTPUT_0) || (pin->type == PIO_OUTPUT_1))
+    {
 
         reg = pin->pio->PIO_ODSR;
     }
-    else {
+    else
+    {
 
         reg = pin->pio->PIO_PDSR;
     }
 
-    if ((reg & pin->mask) == 0) {
+    if ((reg & pin->mask) == 0)
+    {
 
         return 0;
     }
-    else {
+    else
+    {
 
         return 1;
     }
 }
-
 
 //------------------------------------------------------------------------------
 /// Returns 1 if one or more PIO of the given Pin are configured to output a
@@ -453,11 +477,13 @@ unsigned char PIO_Get(const Pin *pin)
 //------------------------------------------------------------------------------
 unsigned char PIO_GetOutputDataStatus(const Pin *pin)
 {
-    if ((pin->pio->PIO_ODSR & pin->mask) == 0) {
+    if ((pin->pio->PIO_ODSR & pin->mask) == 0)
+    {
 
         return 0;
     }
-    else {
+    else
+    {
 
         return 1;
     }

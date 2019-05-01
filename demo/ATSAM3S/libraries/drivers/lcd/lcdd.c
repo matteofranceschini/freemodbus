@@ -66,30 +66,14 @@ void LCDD_Initialize(void)
     PMC_EnablePeripheral(ID_SMC);
 
     /* EBI SMC Configuration */
-    pSmc->SMC_CS_NUMBER[1].SMC_SETUP = 0
-                | ((2 <<  0) & SMC_SETUP1_NWE_SETUP)
-                | ((2 <<  8) & SMC_SETUP1_NCS_WR_SETUP)
-                | ((2 << 16) & SMC_SETUP1_NRD_SETUP)
-                | ((2 << 24) & SMC_SETUP1_NCS_RD_SETUP)
-                ;
+    pSmc->SMC_CS_NUMBER[1].SMC_SETUP = 0 | ((2 << 0) & SMC_SETUP1_NWE_SETUP) | ((2 << 8) & SMC_SETUP1_NCS_WR_SETUP) | ((2 << 16) & SMC_SETUP1_NRD_SETUP) | ((2 << 24) & SMC_SETUP1_NCS_RD_SETUP);
 
-    pSmc->SMC_CS_NUMBER[1].SMC_PULSE = 0
-                | ((4  <<  0) & SMC_PULSE1_NWE_PULSE)
-                | ((4  <<  8) & SMC_PULSE1_NCS_WR_PULSE)
-                | ((10 << 16) & SMC_PULSE1_NRD_PULSE)
-                | ((10 << 24) & SMC_PULSE1_NCS_RD_PULSE)
-                ;
+    pSmc->SMC_CS_NUMBER[1].SMC_PULSE = 0 | ((4 << 0) & SMC_PULSE1_NWE_PULSE) | ((4 << 8) & SMC_PULSE1_NCS_WR_PULSE) | ((10 << 16) & SMC_PULSE1_NRD_PULSE) | ((10 << 24) & SMC_PULSE1_NCS_RD_PULSE);
 
-    pSmc->SMC_CS_NUMBER[1].SMC_CYCLE = 0
-                | ((10 <<  0) & SMC_CYCLE1_NWE_CYCLE)
-                | ((22 << 16) & SMC_CYCLE1_NRD_CYCLE)
-                ;
+    pSmc->SMC_CS_NUMBER[1].SMC_CYCLE = 0 | ((10 << 0) & SMC_CYCLE1_NWE_CYCLE) | ((22 << 16) & SMC_CYCLE1_NRD_CYCLE);
 
-    pSmc->SMC_CS_NUMBER[1].SMC_MODE = 0
-                | (SMC_MODE1_READ_MODE)
-                | (SMC_MODE1_WRITE_MODE)
-                | (0) /* Set 8 bit width. TODO: replace with definition in device header file */
-                ;
+    pSmc->SMC_CS_NUMBER[1].SMC_MODE = 0 | (SMC_MODE1_READ_MODE) | (SMC_MODE1_WRITE_MODE) | (0) /* Set 8 bit width. TODO: replace with definition in device header file */
+        ;
 
     /* Initialize LCD controller */
     LCD_Initialize();
@@ -119,7 +103,7 @@ void LCDD_Off(void)
  *
  * \param level   Backlight brightness level [1..16], 1 means maximum brightness.
  */
-void LCDD_SetBacklight (uint32_t level)
+void LCDD_SetBacklight(uint32_t level)
 {
     uint32_t i;
     const Pin pPins[] = {BOARD_BACKLIGHT_PIN};
@@ -133,11 +117,13 @@ void LCDD_SetBacklight (uint32_t level)
 
     /* Switch off backlight */
     PIO_Clear(pPins);
-    i = 600 * (BOARD_MCK / 1000000);    /* wait for at least 500us */
-    while(i--);
+    i = 600 * (BOARD_MCK / 1000000); /* wait for at least 500us */
+    while (i--)
+        ;
 
     /* Set new backlight level */
-    for (i = 0; i < level; i++) {
+    for (i = 0; i < level; i++)
+    {
         PIO_Clear(pPins);
         PIO_Clear(pPins);
         PIO_Clear(pPins);

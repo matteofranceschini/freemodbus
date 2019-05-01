@@ -61,8 +61,6 @@
 #include <board.h>
 #include <acc/acc.h>
 
-
-
 /*----------------------------------------------------------------------------
  *        Exported functions
  *----------------------------------------------------------------------------*/
@@ -79,34 +77,30 @@
            file
 */
 void ACC_Configure(Acc *pAcc,
-                     uint8_t idAcc,
-                     uint8_t selplus,
-                     uint8_t selminus,
-                     uint16_t ac_en,
-                     uint16_t edge,
-                     uint16_t invert)
+                   uint8_t idAcc,
+                   uint8_t selplus,
+                   uint8_t selminus,
+                   uint16_t ac_en,
+                   uint16_t edge,
+                   uint16_t invert)
 {
 
-    /* Enable peripheral clock*/
-    PMC->PMC_PCER1 = 1 << (idAcc-32);
+  /* Enable peripheral clock*/
+  PMC->PMC_PCER1 = 1 << (idAcc - 32);
 
-    /*  Reset the controller */
-    pAcc->ACC_CR |= ACC_CR_SWRST;
+  /*  Reset the controller */
+  pAcc->ACC_CR |= ACC_CR_SWRST;
 
-    /*  Write to the MR register */
-    ACC_CfgModeReg( pAcc,
-        ( selplus & ACC_MR_SELPLUS)
-        | (( selminus<<4) & ACC_MR_SELMINUS)			
-        | ( ac_en & ACC_MR_ACEN)
-        | ( edge & ACC_MR_EDGETYP)
-        | ( invert & ACC_MR_INV) );
-    //pAcc->ACC_MR |= (ACC_MR_SELFS_OUTPUT|ACC_MR_FE_EN);
+  /*  Write to the MR register */
+  ACC_CfgModeReg(pAcc,
+                 (selplus & ACC_MR_SELPLUS) | ((selminus << 4) & ACC_MR_SELMINUS) | (ac_en & ACC_MR_ACEN) | (edge & ACC_MR_EDGETYP) | (invert & ACC_MR_INV));
+  //pAcc->ACC_MR |= (ACC_MR_SELFS_OUTPUT|ACC_MR_FE_EN);
 
-    pAcc->ACC_ACR = 0x7;
+  pAcc->ACC_ACR = 0x7;
 
-    while(pAcc->ACC_ISR & (uint32_t)ACC_ISR_MASK);
+  while (pAcc->ACC_ISR & (uint32_t)ACC_ISR_MASK)
+    ;
 }
-
 
 /**
  * Return the Channel Converted Data
@@ -114,51 +108,45 @@ void ACC_Configure(Acc *pAcc,
  * \param channel channel to get converted value
  * \return Channel converted data of the specified channel
  */
-void ACC_SetComparisionPair(Acc *pAcc, uint8_t selplus,uint8_t selminus)
+void ACC_SetComparisionPair(Acc *pAcc, uint8_t selplus, uint8_t selminus)
 {
 
-    uint32_t temp;
+  uint32_t temp;
 
-    ASSERT(selplus < 8 && selminus < 8,"The assigned channel number is invalid!");
+  ASSERT(selplus < 8 && selminus < 8, "The assigned channel number is invalid!");
 
-    temp =  pAcc->ACC_MR;
+  temp = pAcc->ACC_MR;
 
-    pAcc->ACC_MR = temp & (~ACC_MR_SELMINUS)&(~ACC_MR_SELPLUS);
+  pAcc->ACC_MR = temp & (~ACC_MR_SELMINUS) & (~ACC_MR_SELPLUS);
 
-    pAcc->ACC_MR |= ((selplus & ACC_MR_SELPLUS)|((selminus<<4) & ACC_MR_SELMINUS));
-
+  pAcc->ACC_MR |= ((selplus & ACC_MR_SELPLUS) | ((selminus << 4) & ACC_MR_SELMINUS));
 }
 /**
  * Return Comparison Result
  * \param pAcc Pointer to an Acc instance.
  * \param status value of ACC_ISR
  */
-uint8_t ACC_GetComparisionResult(Acc *pAcc,uint32_t status)
+uint8_t ACC_GetComparisionResult(Acc *pAcc, uint32_t status)
 {
   uint32_t temp = pAcc->ACC_MR;
-  if( (temp & ACC_MR_INV)== ACC_MR_INV)
+  if ((temp & ACC_MR_INV) == ACC_MR_INV)
   {
 
-    if( status & ACC_ISR_SCO)
+    if (status & ACC_ISR_SCO)
     {
       return 0; /* inn>inp*/
     }
-    else return 1;/* inp>inn*/
-
+    else
+      return 1; /* inp>inn*/
   }
   else
   {
 
-     if( status & ACC_ISR_SCO)
-     {
+    if (status & ACC_ISR_SCO)
+    {
       return 1; /* inp>inn*/
-     }
-     else return 0;/* inn>inp*/
+    }
+    else
+      return 0; /* inn>inp*/
   }
-
 }
-
-
-
-
-

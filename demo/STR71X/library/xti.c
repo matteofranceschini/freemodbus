@@ -29,15 +29,15 @@
 *******************************************************************************/
 void XTI_Init(void)
 {
-  XTI->SR=0x00;
-  XTI->MRH=0x00;
-  XTI->MRL=0x00;
-  XTI->TRH=0x00;
-  XTI->TRL=0x00;
-  XTI->PRH=0x00;
-  XTI->PRL=0x00;
-  XTI->CTRL=0x00; /* Write the STOP bit twice to reset the STOP state machine */
-  XTI->CTRL=0x00;
+  XTI->SR = 0x00;
+  XTI->MRH = 0x00;
+  XTI->MRL = 0x00;
+  XTI->TRH = 0x00;
+  XTI->TRL = 0x00;
+  XTI->PRH = 0x00;
+  XTI->PRL = 0x00;
+  XTI->CTRL = 0x00; /* Write the STOP bit twice to reset the STOP state machine */
+  XTI->CTRL = 0x00;
 }
 
 /*******************************************************************************
@@ -50,15 +50,15 @@ void XTI_Init(void)
 *******************************************************************************/
 void XTI_LineModeConfig(u16 Lines, XTITriggerEdge_TypeDef TriggerEdge)
 {
-  if(TriggerEdge == XTI_FallingEdge)
+  if (TriggerEdge == XTI_FallingEdge)
   {
     XTI->TRL &= ~Lines;
-    XTI->TRH &= ~(Lines>>8)&0x00FF;
+    XTI->TRH &= ~(Lines >> 8) & 0x00FF;
   }
   else
   {
     XTI->TRL |= Lines;
-    XTI->TRH |= (Lines>>8)&0x00FF;
+    XTI->TRH |= (Lines >> 8) & 0x00FF;
   }
 }
 
@@ -72,15 +72,15 @@ void XTI_LineModeConfig(u16 Lines, XTITriggerEdge_TypeDef TriggerEdge)
 *******************************************************************************/
 void XTI_LineConfig(u16 Lines, FunctionalState NewState)
 {
-  if(NewState)
+  if (NewState)
   {
     XTI->MRL |= Lines;
-    XTI->MRH |= (Lines>>8)&0x00FF;
+    XTI->MRH |= (Lines >> 8) & 0x00FF;
   }
   else
   {
     XTI->MRL &= ~Lines;
-    XTI->MRH &= ~(Lines>>8)&0x00FF;
+    XTI->MRH &= ~(Lines >> 8) & 0x00FF;
   }
 }
 

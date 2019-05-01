@@ -46,21 +46,21 @@
 /* *****************************************************************************
                 SOFTWARE API FOR AIC
    ***************************************************************************** */
-#define AT91C_AIC_BRANCH_OPCODE ((void (*) ()) 0xE51FFF20)      // ldr, pc, [pc, #-&F20]
+#define AT91C_AIC_BRANCH_OPCODE ((void (*)())0xE51FFF20) // ldr, pc, [pc, #-&F20]
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_AIC_ConfigureIt
 //* \brief Interrupt Handler Initialization
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_AIC_ConfigureIt( AT91PS_AIC pAic, // \arg pointer to the AIC registers
-                       unsigned int irq_id,     // \arg interrupt number to initialize
-                       unsigned int priority,   // \arg priority to give to the interrupt
-                       unsigned int src_type,   // \arg activation and sense of activation
-                       void            ( *newHandler ) (  ) )   // \arg address of the interrupt handler
+AT91F_AIC_ConfigureIt(AT91PS_AIC pAic,       // \arg pointer to the AIC registers
+                      unsigned int irq_id,   // \arg interrupt number to initialize
+                      unsigned int priority, // \arg priority to give to the interrupt
+                      unsigned int src_type, // \arg activation and sense of activation
+                      void (*newHandler)())  // \arg address of the interrupt handler
 {
-    unsigned int    oldHandler;
-    unsigned int    mask;
+    unsigned int oldHandler;
+    unsigned int mask;
 
     oldHandler = pAic->AIC_SVR[irq_id];
 
@@ -68,7 +68,7 @@ AT91F_AIC_ConfigureIt( AT91PS_AIC pAic, // \arg pointer to the AIC registers
     //* Disable the interrupt on the interrupt controller
     pAic->AIC_IDCR = mask;
     //* Save the interrupt handler routine pointer and the interrupt priority
-    pAic->AIC_SVR[irq_id] = ( unsigned int )newHandler;
+    pAic->AIC_SVR[irq_id] = (unsigned int)newHandler;
     //* Store the Source Mode Register
     pAic->AIC_SMR[irq_id] = src_type | priority;
     //* Clear the interrupt on the interrupt controller
@@ -82,8 +82,8 @@ AT91F_AIC_ConfigureIt( AT91PS_AIC pAic, // \arg pointer to the AIC registers
 //* \brief Enable corresponding IT number
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_AIC_EnableIt( AT91PS_AIC pAic,    // \arg pointer to the AIC registers
-                    unsigned int irq_id )       // \arg interrupt number to initialize
+AT91F_AIC_EnableIt(AT91PS_AIC pAic,     // \arg pointer to the AIC registers
+                   unsigned int irq_id) // \arg interrupt number to initialize
 {
     //* Enable the interrupt on the interrupt controller
     pAic->AIC_IECR = 0x1 << irq_id;
@@ -94,10 +94,10 @@ AT91F_AIC_EnableIt( AT91PS_AIC pAic,    // \arg pointer to the AIC registers
 //* \brief Disable corresponding IT number
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_AIC_DisableIt( AT91PS_AIC pAic,   // \arg pointer to the AIC registers
-                     unsigned int irq_id )      // \arg interrupt number to initialize
+AT91F_AIC_DisableIt(AT91PS_AIC pAic,     // \arg pointer to the AIC registers
+                    unsigned int irq_id) // \arg interrupt number to initialize
 {
-    unsigned int    mask = 0x1 << irq_id;
+    unsigned int mask = 0x1 << irq_id;
 
     //* Disable the interrupt on the interrupt controller
     pAic->AIC_IDCR = mask;
@@ -110,11 +110,11 @@ AT91F_AIC_DisableIt( AT91PS_AIC pAic,   // \arg pointer to the AIC registers
 //* \brief Clear corresponding IT number
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_AIC_ClearIt( AT91PS_AIC pAic,     // \arg pointer to the AIC registers
-                   unsigned int irq_id )        // \arg interrupt number to initialize
+AT91F_AIC_ClearIt(AT91PS_AIC pAic,     // \arg pointer to the AIC registers
+                  unsigned int irq_id) // \arg interrupt number to initialize
 {
     //* Clear the interrupt on the Interrupt Controller ( if one is pending )
-    pAic->AIC_ICCR = ( 0x1 << irq_id );
+    pAic->AIC_ICCR = (0x1 << irq_id);
 }
 
 //*----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ AT91F_AIC_ClearIt( AT91PS_AIC pAic,     // \arg pointer to the AIC registers
 //* \brief Acknowledge corresponding IT number
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_AIC_AcknowledgeIt( AT91PS_AIC pAic )      // \arg pointer to the AIC registers
+AT91F_AIC_AcknowledgeIt(AT91PS_AIC pAic) // \arg pointer to the AIC registers
 {
     pAic->AIC_EOICR = pAic->AIC_EOICR;
 }
@@ -132,16 +132,16 @@ AT91F_AIC_AcknowledgeIt( AT91PS_AIC pAic )      // \arg pointer to the AIC regis
 //* \brief Configure vector handler
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_AIC_SetExceptionVector( unsigned int *pVector,    // \arg pointer to the AIC registers
-                              void            ( *Handler ) (  ) )       // \arg Interrupt Handler
+AT91F_AIC_SetExceptionVector(unsigned int *pVector, // \arg pointer to the AIC registers
+                             void (*Handler)())     // \arg Interrupt Handler
 {
-    unsigned int    oldVector = *pVector;
+    unsigned int oldVector = *pVector;
 
-    if( ( unsigned int )Handler == ( unsigned int )AT91C_AIC_BRANCH_OPCODE )
-        *pVector = ( unsigned int )AT91C_AIC_BRANCH_OPCODE;
+    if ((unsigned int)Handler == (unsigned int)AT91C_AIC_BRANCH_OPCODE)
+        *pVector = (unsigned int)AT91C_AIC_BRANCH_OPCODE;
     else
         *pVector =
-            ( ( ( ( ( unsigned int )Handler ) - ( ( unsigned int )pVector ) - 0x8 ) >> 2 ) & 0x00FFFFFF ) | 0xEA000000;
+            (((((unsigned int)Handler) - ((unsigned int)pVector) - 0x8) >> 2) & 0x00FFFFFF) | 0xEA000000;
 
     return oldVector;
 }
@@ -151,10 +151,10 @@ AT91F_AIC_SetExceptionVector( unsigned int *pVector,    // \arg pointer to the A
 //* \brief Trig an IT
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_AIC_Trig( AT91PS_AIC pAic,        // \arg pointer to the AIC registers
-                unsigned int irq_id )   // \arg interrupt number
+AT91F_AIC_Trig(AT91PS_AIC pAic,     // \arg pointer to the AIC registers
+               unsigned int irq_id) // \arg interrupt number
 {
-    pAic->AIC_ISCR = ( 0x1 << irq_id );
+    pAic->AIC_ISCR = (0x1 << irq_id);
 }
 
 //*----------------------------------------------------------------------------
@@ -162,10 +162,10 @@ AT91F_AIC_Trig( AT91PS_AIC pAic,        // \arg pointer to the AIC registers
 //* \brief Test if an IT is active
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_AIC_IsActive( AT91PS_AIC pAic,    // \arg pointer to the AIC registers
-                    unsigned int irq_id )       // \arg Interrupt Number
+AT91F_AIC_IsActive(AT91PS_AIC pAic,     // \arg pointer to the AIC registers
+                   unsigned int irq_id) // \arg Interrupt Number
 {
-    return ( pAic->AIC_ISR & ( 0x1 << irq_id ) );
+    return (pAic->AIC_ISR & (0x1 << irq_id));
 }
 
 //*----------------------------------------------------------------------------
@@ -173,10 +173,10 @@ AT91F_AIC_IsActive( AT91PS_AIC pAic,    // \arg pointer to the AIC registers
 //* \brief Test if an IT is pending
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_AIC_IsPending( AT91PS_AIC pAic,   // \arg pointer to the AIC registers
-                     unsigned int irq_id )      // \arg Interrupt Number
+AT91F_AIC_IsPending(AT91PS_AIC pAic,     // \arg pointer to the AIC registers
+                    unsigned int irq_id) // \arg Interrupt Number
 {
-    return ( pAic->AIC_IPR & ( 0x1 << irq_id ) );
+    return (pAic->AIC_IPR & (0x1 << irq_id));
 }
 
 //*----------------------------------------------------------------------------
@@ -184,28 +184,28 @@ AT91F_AIC_IsPending( AT91PS_AIC pAic,   // \arg pointer to the AIC registers
 //* \brief Set exception vectors and AIC registers to default values
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_AIC_Open( AT91PS_AIC pAic,        // \arg pointer to the AIC registers
-                void            ( *IrqHandler ) (  ),   // \arg Default IRQ vector exception
-                void            ( *FiqHandler ) (  ),   // \arg Default FIQ vector exception
-                void            ( *DefaultHandler ) (  ),       // \arg Default Handler set in ISR
-                void            ( *SpuriousHandler ) (  ),      // \arg Default Spurious Handler
-                unsigned int protectMode )      // \arg Debug Control Register
+AT91F_AIC_Open(AT91PS_AIC pAic,           // \arg pointer to the AIC registers
+               void (*IrqHandler)(),      // \arg Default IRQ vector exception
+               void (*FiqHandler)(),      // \arg Default FIQ vector exception
+               void (*DefaultHandler)(),  // \arg Default Handler set in ISR
+               void (*SpuriousHandler)(), // \arg Default Spurious Handler
+               unsigned int protectMode)  // \arg Debug Control Register
 {
-    int             i;
+    int i;
 
     // Disable all interrupts and set IVR to the default handler
-    for( i = 0; i < 32; ++i )
+    for (i = 0; i < 32; ++i)
     {
-        AT91F_AIC_DisableIt( pAic, i );
-        AT91F_AIC_ConfigureIt( pAic, i, AT91C_AIC_PRIOR_LOWEST, AT91C_AIC_SRCTYPE_HIGH_LEVEL, DefaultHandler );
+        AT91F_AIC_DisableIt(pAic, i);
+        AT91F_AIC_ConfigureIt(pAic, i, AT91C_AIC_PRIOR_LOWEST, AT91C_AIC_SRCTYPE_HIGH_LEVEL, DefaultHandler);
     }
 
     // Set the IRQ exception vector
-    AT91F_AIC_SetExceptionVector( ( unsigned int * )0x18, IrqHandler );
+    AT91F_AIC_SetExceptionVector((unsigned int *)0x18, IrqHandler);
     // Set the Fast Interrupt exception vector
-    AT91F_AIC_SetExceptionVector( ( unsigned int * )0x1C, FiqHandler );
+    AT91F_AIC_SetExceptionVector((unsigned int *)0x1C, FiqHandler);
 
-    pAic->AIC_SPU = ( unsigned int )SpuriousHandler;
+    pAic->AIC_SPU = (unsigned int)SpuriousHandler;
     pAic->AIC_DCR = protectMode;
 }
 
@@ -217,11 +217,11 @@ AT91F_AIC_Open( AT91PS_AIC pAic,        // \arg pointer to the AIC registers
 //* \brief Set the next receive transfer descriptor
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_SetNextRx( AT91PS_PDC pPDC,   // \arg pointer to a PDC controller
-                     char *address,     // \arg address to the next bloc to be received
-                     unsigned int bytes )       // \arg number of bytes to be received
+AT91F_PDC_SetNextRx(AT91PS_PDC pPDC,    // \arg pointer to a PDC controller
+                    char *address,      // \arg address to the next bloc to be received
+                    unsigned int bytes) // \arg number of bytes to be received
 {
-    pPDC->PDC_RNPR = ( unsigned int )address;
+    pPDC->PDC_RNPR = (unsigned int)address;
     pPDC->PDC_RNCR = bytes;
 }
 
@@ -230,11 +230,11 @@ AT91F_PDC_SetNextRx( AT91PS_PDC pPDC,   // \arg pointer to a PDC controller
 //* \brief Set the next transmit transfer descriptor
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_SetNextTx( AT91PS_PDC pPDC,   // \arg pointer to a PDC controller
-                     char *address,     // \arg address to the next bloc to be transmitted
-                     unsigned int bytes )       // \arg number of bytes to be transmitted
+AT91F_PDC_SetNextTx(AT91PS_PDC pPDC,    // \arg pointer to a PDC controller
+                    char *address,      // \arg address to the next bloc to be transmitted
+                    unsigned int bytes) // \arg number of bytes to be transmitted
 {
-    pPDC->PDC_TNPR = ( unsigned int )address;
+    pPDC->PDC_TNPR = (unsigned int)address;
     pPDC->PDC_TNCR = bytes;
 }
 
@@ -243,11 +243,11 @@ AT91F_PDC_SetNextTx( AT91PS_PDC pPDC,   // \arg pointer to a PDC controller
 //* \brief Set the receive transfer descriptor
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_SetRx( AT91PS_PDC pPDC,       // \arg pointer to a PDC controller
-                 char *address, // \arg address to the next bloc to be received
-                 unsigned int bytes )   // \arg number of bytes to be received
+AT91F_PDC_SetRx(AT91PS_PDC pPDC,    // \arg pointer to a PDC controller
+                char *address,      // \arg address to the next bloc to be received
+                unsigned int bytes) // \arg number of bytes to be received
 {
-    pPDC->PDC_RPR = ( unsigned int )address;
+    pPDC->PDC_RPR = (unsigned int)address;
     pPDC->PDC_RCR = bytes;
 }
 
@@ -256,11 +256,11 @@ AT91F_PDC_SetRx( AT91PS_PDC pPDC,       // \arg pointer to a PDC controller
 //* \brief Set the transmit transfer descriptor
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_SetTx( AT91PS_PDC pPDC,       // \arg pointer to a PDC controller
-                 char *address, // \arg address to the next bloc to be transmitted
-                 unsigned int bytes )   // \arg number of bytes to be transmitted
+AT91F_PDC_SetTx(AT91PS_PDC pPDC,    // \arg pointer to a PDC controller
+                char *address,      // \arg address to the next bloc to be transmitted
+                unsigned int bytes) // \arg number of bytes to be transmitted
 {
-    pPDC->PDC_TPR = ( unsigned int )address;
+    pPDC->PDC_TPR = (unsigned int)address;
     pPDC->PDC_TCR = bytes;
 }
 
@@ -269,7 +269,7 @@ AT91F_PDC_SetTx( AT91PS_PDC pPDC,       // \arg pointer to a PDC controller
 //* \brief Enable transmit
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_EnableTx( AT91PS_PDC pPDC )   // \arg pointer to a PDC controller
+AT91F_PDC_EnableTx(AT91PS_PDC pPDC) // \arg pointer to a PDC controller
 {
     pPDC->PDC_PTCR = AT91C_PDC_TXTEN;
 }
@@ -279,7 +279,7 @@ AT91F_PDC_EnableTx( AT91PS_PDC pPDC )   // \arg pointer to a PDC controller
 //* \brief Enable receive
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_EnableRx( AT91PS_PDC pPDC )   // \arg pointer to a PDC controller
+AT91F_PDC_EnableRx(AT91PS_PDC pPDC) // \arg pointer to a PDC controller
 {
     pPDC->PDC_PTCR = AT91C_PDC_RXTEN;
 }
@@ -289,7 +289,7 @@ AT91F_PDC_EnableRx( AT91PS_PDC pPDC )   // \arg pointer to a PDC controller
 //* \brief Disable transmit
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_DisableTx( AT91PS_PDC pPDC )  // \arg pointer to a PDC controller
+AT91F_PDC_DisableTx(AT91PS_PDC pPDC) // \arg pointer to a PDC controller
 {
     pPDC->PDC_PTCR = AT91C_PDC_TXTDIS;
 }
@@ -299,7 +299,7 @@ AT91F_PDC_DisableTx( AT91PS_PDC pPDC )  // \arg pointer to a PDC controller
 //* \brief Disable receive
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_DisableRx( AT91PS_PDC pPDC )  // \arg pointer to a PDC controller
+AT91F_PDC_DisableRx(AT91PS_PDC pPDC) // \arg pointer to a PDC controller
 {
     pPDC->PDC_PTCR = AT91C_PDC_RXTDIS;
 }
@@ -309,10 +309,10 @@ AT91F_PDC_DisableRx( AT91PS_PDC pPDC )  // \arg pointer to a PDC controller
 //* \brief Test if the current transfer descriptor has been sent
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PDC_IsTxEmpty(            // \return return 1 if transfer is complete
-                        AT91PS_PDC pPDC )       // \arg pointer to a PDC controller
+AT91F_PDC_IsTxEmpty( // \return return 1 if transfer is complete
+    AT91PS_PDC pPDC) // \arg pointer to a PDC controller
 {
-    return !( pPDC->PDC_TCR );
+    return !(pPDC->PDC_TCR);
 }
 
 //*----------------------------------------------------------------------------
@@ -320,10 +320,10 @@ AT91F_PDC_IsTxEmpty(            // \return return 1 if transfer is complete
 //* \brief Test if the next transfer descriptor has been moved to the current td
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PDC_IsNextTxEmpty(        // \return return 1 if transfer is complete
-                            AT91PS_PDC pPDC )   // \arg pointer to a PDC controller
+AT91F_PDC_IsNextTxEmpty( // \return return 1 if transfer is complete
+    AT91PS_PDC pPDC)     // \arg pointer to a PDC controller
 {
-    return !( pPDC->PDC_TNCR );
+    return !(pPDC->PDC_TNCR);
 }
 
 //*----------------------------------------------------------------------------
@@ -331,10 +331,10 @@ AT91F_PDC_IsNextTxEmpty(        // \return return 1 if transfer is complete
 //* \brief Test if the current transfer descriptor has been filled
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PDC_IsRxEmpty(            // \return return 1 if transfer is complete
-                        AT91PS_PDC pPDC )       // \arg pointer to a PDC controller
+AT91F_PDC_IsRxEmpty( // \return return 1 if transfer is complete
+    AT91PS_PDC pPDC) // \arg pointer to a PDC controller
 {
-    return !( pPDC->PDC_RCR );
+    return !(pPDC->PDC_RCR);
 }
 
 //*----------------------------------------------------------------------------
@@ -342,10 +342,10 @@ AT91F_PDC_IsRxEmpty(            // \return return 1 if transfer is complete
 //* \brief Test if the next transfer descriptor has been moved to the current td
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PDC_IsNextRxEmpty(        // \return return 1 if transfer is complete
-                            AT91PS_PDC pPDC )   // \arg pointer to a PDC controller
+AT91F_PDC_IsNextRxEmpty( // \return return 1 if transfer is complete
+    AT91PS_PDC pPDC)     // \arg pointer to a PDC controller
 {
-    return !( pPDC->PDC_RNCR );
+    return !(pPDC->PDC_RNCR);
 }
 
 //*----------------------------------------------------------------------------
@@ -353,21 +353,21 @@ AT91F_PDC_IsNextRxEmpty(        // \return return 1 if transfer is complete
 //* \brief Open PDC: disable TX and RX reset transfer descriptors, re-enable RX and TX
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_Open( AT91PS_PDC pPDC )       // \arg pointer to a PDC controller
+AT91F_PDC_Open(AT91PS_PDC pPDC) // \arg pointer to a PDC controller
 {
     //* Disable the RX and TX PDC transfer requests
-    AT91F_PDC_DisableRx( pPDC );
-    AT91F_PDC_DisableTx( pPDC );
+    AT91F_PDC_DisableRx(pPDC);
+    AT91F_PDC_DisableTx(pPDC);
 
     //* Reset all Counter register Next buffer first
-    AT91F_PDC_SetNextTx( pPDC, ( char * )0, 0 );
-    AT91F_PDC_SetNextRx( pPDC, ( char * )0, 0 );
-    AT91F_PDC_SetTx( pPDC, ( char * )0, 0 );
-    AT91F_PDC_SetRx( pPDC, ( char * )0, 0 );
+    AT91F_PDC_SetNextTx(pPDC, (char *)0, 0);
+    AT91F_PDC_SetNextRx(pPDC, (char *)0, 0);
+    AT91F_PDC_SetTx(pPDC, (char *)0, 0);
+    AT91F_PDC_SetRx(pPDC, (char *)0, 0);
 
     //* Enable the RX and TX PDC transfer requests
-    AT91F_PDC_EnableRx( pPDC );
-    AT91F_PDC_EnableTx( pPDC );
+    AT91F_PDC_EnableRx(pPDC);
+    AT91F_PDC_EnableTx(pPDC);
 }
 
 //*----------------------------------------------------------------------------
@@ -375,18 +375,17 @@ AT91F_PDC_Open( AT91PS_PDC pPDC )       // \arg pointer to a PDC controller
 //* \brief Close PDC: disable TX and RX reset transfer descriptors
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PDC_Close( AT91PS_PDC pPDC )      // \arg pointer to a PDC controller
+AT91F_PDC_Close(AT91PS_PDC pPDC) // \arg pointer to a PDC controller
 {
     //* Disable the RX and TX PDC transfer requests
-    AT91F_PDC_DisableRx( pPDC );
-    AT91F_PDC_DisableTx( pPDC );
+    AT91F_PDC_DisableRx(pPDC);
+    AT91F_PDC_DisableTx(pPDC);
 
     //* Reset all Counter register Next buffer first
-    AT91F_PDC_SetNextTx( pPDC, ( char * )0, 0 );
-    AT91F_PDC_SetNextRx( pPDC, ( char * )0, 0 );
-    AT91F_PDC_SetTx( pPDC, ( char * )0, 0 );
-    AT91F_PDC_SetRx( pPDC, ( char * )0, 0 );
-
+    AT91F_PDC_SetNextTx(pPDC, (char *)0, 0);
+    AT91F_PDC_SetNextRx(pPDC, (char *)0, 0);
+    AT91F_PDC_SetTx(pPDC, (char *)0, 0);
+    AT91F_PDC_SetRx(pPDC, (char *)0, 0);
 }
 
 //*----------------------------------------------------------------------------
@@ -394,20 +393,20 @@ AT91F_PDC_Close( AT91PS_PDC pPDC )      // \arg pointer to a PDC controller
 //* \brief Close PDC: disable TX and RX reset transfer descriptors
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PDC_SendFrame( AT91PS_PDC pPDC,
-                     char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer )
+AT91F_PDC_SendFrame(AT91PS_PDC pPDC,
+                    char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer)
 {
-    if( AT91F_PDC_IsTxEmpty( pPDC ) )
+    if (AT91F_PDC_IsTxEmpty(pPDC))
     {
         //* Buffer and next buffer can be initialized
-        AT91F_PDC_SetTx( pPDC, pBuffer, szBuffer );
-        AT91F_PDC_SetNextTx( pPDC, pNextBuffer, szNextBuffer );
+        AT91F_PDC_SetTx(pPDC, pBuffer, szBuffer);
+        AT91F_PDC_SetNextTx(pPDC, pNextBuffer, szNextBuffer);
         return 2;
     }
-    else if( AT91F_PDC_IsNextTxEmpty( pPDC ) )
+    else if (AT91F_PDC_IsNextTxEmpty(pPDC))
     {
         //* Only one buffer can be initialized
-        AT91F_PDC_SetNextTx( pPDC, pBuffer, szBuffer );
+        AT91F_PDC_SetNextTx(pPDC, pBuffer, szBuffer);
         return 1;
     }
     else
@@ -422,20 +421,20 @@ AT91F_PDC_SendFrame( AT91PS_PDC pPDC,
 //* \brief Close PDC: disable TX and RX reset transfer descriptors
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PDC_ReceiveFrame( AT91PS_PDC pPDC,
-                        char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer )
+AT91F_PDC_ReceiveFrame(AT91PS_PDC pPDC,
+                       char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer)
 {
-    if( AT91F_PDC_IsRxEmpty( pPDC ) )
+    if (AT91F_PDC_IsRxEmpty(pPDC))
     {
         //* Buffer and next buffer can be initialized
-        AT91F_PDC_SetRx( pPDC, pBuffer, szBuffer );
-        AT91F_PDC_SetNextRx( pPDC, pNextBuffer, szNextBuffer );
+        AT91F_PDC_SetRx(pPDC, pBuffer, szBuffer);
+        AT91F_PDC_SetNextRx(pPDC, pNextBuffer, szNextBuffer);
         return 2;
     }
-    else if( AT91F_PDC_IsNextRxEmpty( pPDC ) )
+    else if (AT91F_PDC_IsNextRxEmpty(pPDC))
     {
         //* Only one buffer can be initialized
-        AT91F_PDC_SetNextRx( pPDC, pBuffer, szBuffer );
+        AT91F_PDC_SetNextRx(pPDC, pBuffer, szBuffer);
         return 1;
     }
     else
@@ -453,8 +452,8 @@ AT91F_PDC_ReceiveFrame( AT91PS_PDC pPDC,
 //* \brief Enable DBGU Interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_DBGU_InterruptEnable( AT91PS_DBGU pDbgu,  // \arg  pointer to a DBGU controller
-                            unsigned int flag ) // \arg  dbgu interrupt to be enabled
+AT91F_DBGU_InterruptEnable(AT91PS_DBGU pDbgu, // \arg  pointer to a DBGU controller
+                           unsigned int flag) // \arg  dbgu interrupt to be enabled
 {
     pDbgu->DBGU_IER = flag;
 }
@@ -464,8 +463,8 @@ AT91F_DBGU_InterruptEnable( AT91PS_DBGU pDbgu,  // \arg  pointer to a DBGU contr
 //* \brief Disable DBGU Interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_DBGU_InterruptDisable( AT91PS_DBGU pDbgu, // \arg  pointer to a DBGU controller
-                             unsigned int flag )        // \arg  dbgu interrupt to be disabled
+AT91F_DBGU_InterruptDisable(AT91PS_DBGU pDbgu, // \arg  pointer to a DBGU controller
+                            unsigned int flag) // \arg  dbgu interrupt to be disabled
 {
     pDbgu->DBGU_IDR = flag;
 }
@@ -475,21 +474,21 @@ AT91F_DBGU_InterruptDisable( AT91PS_DBGU pDbgu, // \arg  pointer to a DBGU contr
 //* \brief Return DBGU Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_DBGU_GetInterruptMaskStatus(      // \return DBGU Interrupt Mask Status
-                                      AT91PS_DBGU pDbgu )       // \arg  pointer to a DBGU controller
+AT91F_DBGU_GetInterruptMaskStatus( // \return DBGU Interrupt Mask Status
+    AT91PS_DBGU pDbgu)             // \arg  pointer to a DBGU controller
 {
     return pDbgu->DBGU_IMR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_DBGU_IsInterruptMasked
-//* \brief Test if DBGU Interrupt is Masked 
+//* \brief Test if DBGU Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_DBGU_IsInterruptMasked( AT91PS_DBGU pDbgu,        // \arg  pointer to a DBGU controller
-                              unsigned int flag )       // \arg  flag to be tested
+AT91F_DBGU_IsInterruptMasked(AT91PS_DBGU pDbgu, // \arg  pointer to a DBGU controller
+                             unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_DBGU_GetInterruptMaskStatus( pDbgu ) & flag );
+    return (AT91F_DBGU_GetInterruptMaskStatus(pDbgu) & flag);
 }
 
 /* *****************************************************************************
@@ -500,13 +499,13 @@ AT91F_DBGU_IsInterruptMasked( AT91PS_DBGU pDbgu,        // \arg  pointer to a DB
 //* \brief Enable pins to be drived by peripheral
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_CfgPeriph( AT91PS_PIO pPio,   // \arg pointer to a PIO controller
-                     unsigned int periphAEnable,        // \arg PERIPH A to enable
-                     unsigned int periphBEnable )       // \arg PERIPH B to enable
+AT91F_PIO_CfgPeriph(AT91PS_PIO pPio,            // \arg pointer to a PIO controller
+                    unsigned int periphAEnable, // \arg PERIPH A to enable
+                    unsigned int periphBEnable) // \arg PERIPH B to enable
 {
     pPio->PIO_ASR = periphAEnable;
     pPio->PIO_BSR = periphBEnable;
-    pPio->PIO_PDR = ( periphAEnable | periphBEnable );  // Set in Periph mode
+    pPio->PIO_PDR = (periphAEnable | periphBEnable); // Set in Periph mode
 }
 
 //*----------------------------------------------------------------------------
@@ -514,11 +513,11 @@ AT91F_PIO_CfgPeriph( AT91PS_PIO pPio,   // \arg pointer to a PIO controller
 //* \brief Enable PIO in output mode
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_CfgOutput( AT91PS_PIO pPio,   // \arg pointer to a PIO controller
-                     unsigned int pioEnable )   // \arg PIO to be enabled
+AT91F_PIO_CfgOutput(AT91PS_PIO pPio,        // \arg pointer to a PIO controller
+                    unsigned int pioEnable) // \arg PIO to be enabled
 {
-    pPio->PIO_PER = pioEnable;  // Set in PIO mode
-    pPio->PIO_OER = pioEnable;  // Configure in Output
+    pPio->PIO_PER = pioEnable; // Set in PIO mode
+    pPio->PIO_OER = pioEnable; // Configure in Output
 }
 
 //*----------------------------------------------------------------------------
@@ -526,8 +525,8 @@ AT91F_PIO_CfgOutput( AT91PS_PIO pPio,   // \arg pointer to a PIO controller
 //* \brief Enable PIO in input mode
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_CfgInput( AT91PS_PIO pPio,    // \arg pointer to a PIO controller
-                    unsigned int inputEnable )  // \arg PIO to be enabled
+AT91F_PIO_CfgInput(AT91PS_PIO pPio,          // \arg pointer to a PIO controller
+                   unsigned int inputEnable) // \arg PIO to be enabled
 {
     // Disable output
     pPio->PIO_ODR = inputEnable;
@@ -539,8 +538,8 @@ AT91F_PIO_CfgInput( AT91PS_PIO pPio,    // \arg pointer to a PIO controller
 //* \brief Configure PIO in open drain
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_CfgOpendrain( AT91PS_PIO pPio,        // \arg pointer to a PIO controller
-                        unsigned int multiDrvEnable )   // \arg pio to be configured in open drain
+AT91F_PIO_CfgOpendrain(AT91PS_PIO pPio,             // \arg pointer to a PIO controller
+                       unsigned int multiDrvEnable) // \arg pio to be configured in open drain
 {
     // Configure the multi-drive option
     pPio->PIO_MDDR = ~multiDrvEnable;
@@ -552,8 +551,8 @@ AT91F_PIO_CfgOpendrain( AT91PS_PIO pPio,        // \arg pointer to a PIO control
 //* \brief Enable pullup on PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_CfgPullup( AT91PS_PIO pPio,   // \arg pointer to a PIO controller
-                     unsigned int pullupEnable )        // \arg enable pullup on PIO
+AT91F_PIO_CfgPullup(AT91PS_PIO pPio,           // \arg pointer to a PIO controller
+                    unsigned int pullupEnable) // \arg enable pullup on PIO
 {
     // Connect or not Pullup
     pPio->PIO_PPUDR = ~pullupEnable;
@@ -565,8 +564,8 @@ AT91F_PIO_CfgPullup( AT91PS_PIO pPio,   // \arg pointer to a PIO controller
 //* \brief Enable direct drive on PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_CfgDirectDrive( AT91PS_PIO pPio,      // \arg pointer to a PIO controller
-                          unsigned int directDrive )    // \arg PIO to be configured with direct drive
+AT91F_PIO_CfgDirectDrive(AT91PS_PIO pPio,          // \arg pointer to a PIO controller
+                         unsigned int directDrive) // \arg PIO to be configured with direct drive
 {
     // Configure the Direct Drive
     pPio->PIO_OWDR = ~directDrive;
@@ -578,8 +577,8 @@ AT91F_PIO_CfgDirectDrive( AT91PS_PIO pPio,      // \arg pointer to a PIO control
 //* \brief Enable input filter on input PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_CfgInputFilter( AT91PS_PIO pPio,      // \arg pointer to a PIO controller
-                          unsigned int inputFilter )    // \arg PIO to be configured with input filter
+AT91F_PIO_CfgInputFilter(AT91PS_PIO pPio,          // \arg pointer to a PIO controller
+                         unsigned int inputFilter) // \arg PIO to be configured with input filter
 {
     // Configure the Direct Drive
     pPio->PIO_IFDR = ~inputFilter;
@@ -591,8 +590,8 @@ AT91F_PIO_CfgInputFilter( AT91PS_PIO pPio,      // \arg pointer to a PIO control
 //* \brief Return PIO input value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetInput(             // \return PIO input
-                       AT91PS_PIO pPio )        // \arg  pointer to a PIO controller
+AT91F_PIO_GetInput(  // \return PIO input
+    AT91PS_PIO pPio) // \arg  pointer to a PIO controller
 {
     return pPio->PIO_PDSR;
 }
@@ -602,20 +601,19 @@ AT91F_PIO_GetInput(             // \return PIO input
 //* \brief Test if PIO is input flag is active
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsInputSet( AT91PS_PIO pPio,  // \arg  pointer to a PIO controller
-                      unsigned int flag )       // \arg  flag to be tested
+AT91F_PIO_IsInputSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                     unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_GetInput( pPio ) & flag );
+    return (AT91F_PIO_GetInput(pPio) & flag);
 }
-
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_PIO_SetOutput
 //* \brief Set to 1 output PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_SetOutput( AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
-                     unsigned int flag )        // \arg  output to be set
+AT91F_PIO_SetOutput(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                    unsigned int flag) // \arg  output to be set
 {
     pPio->PIO_SODR = flag;
 }
@@ -625,8 +623,8 @@ AT91F_PIO_SetOutput( AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
 //* \brief Set to 0 output PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_ClearOutput( AT91PS_PIO pPio, // \arg  pointer to a PIO controller
-                       unsigned int flag )      // \arg  output to be cleared
+AT91F_PIO_ClearOutput(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                      unsigned int flag) // \arg  output to be cleared
 {
     pPio->PIO_CODR = flag;
 }
@@ -636,8 +634,8 @@ AT91F_PIO_ClearOutput( AT91PS_PIO pPio, // \arg  pointer to a PIO controller
 //* \brief Force output when Direct drive option is enabled
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_ForceOutput( AT91PS_PIO pPio, // \arg  pointer to a PIO controller
-                       unsigned int flag )      // \arg  output to be forced
+AT91F_PIO_ForceOutput(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                      unsigned int flag) // \arg  output to be forced
 {
     pPio->PIO_ODSR = flag;
 }
@@ -647,8 +645,8 @@ AT91F_PIO_ForceOutput( AT91PS_PIO pPio, // \arg  pointer to a PIO controller
 //* \brief Enable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_Enable( AT91PS_PIO pPio,      // \arg  pointer to a PIO controller
-                  unsigned int flag )   // \arg  pio to be enabled 
+AT91F_PIO_Enable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                 unsigned int flag) // \arg  pio to be enabled
 {
     pPio->PIO_PER = flag;
 }
@@ -658,8 +656,8 @@ AT91F_PIO_Enable( AT91PS_PIO pPio,      // \arg  pointer to a PIO controller
 //* \brief Disable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_Disable( AT91PS_PIO pPio,     // \arg  pointer to a PIO controller
-                   unsigned int flag )  // \arg  pio to be disabled 
+AT91F_PIO_Disable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                  unsigned int flag) // \arg  pio to be disabled
 {
     pPio->PIO_PDR = flag;
 }
@@ -669,8 +667,8 @@ AT91F_PIO_Disable( AT91PS_PIO pPio,     // \arg  pointer to a PIO controller
 //* \brief Return PIO Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetStatus(            // \return PIO Status
-                        AT91PS_PIO pPio )       // \arg  pointer to a PIO controller
+AT91F_PIO_GetStatus( // \return PIO Status
+    AT91PS_PIO pPio) // \arg  pointer to a PIO controller
 {
     return pPio->PIO_PSR;
 }
@@ -680,10 +678,10 @@ AT91F_PIO_GetStatus(            // \return PIO Status
 //* \brief Test if PIO is Set
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsSet( AT91PS_PIO pPio,       // \arg  pointer to a PIO controller
-                 unsigned int flag )    // \arg  flag to be tested
+AT91F_PIO_IsSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_GetStatus( pPio ) & flag );
+    return (AT91F_PIO_GetStatus(pPio) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -691,8 +689,8 @@ AT91F_PIO_IsSet( AT91PS_PIO pPio,       // \arg  pointer to a PIO controller
 //* \brief Output Enable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_OutputEnable( AT91PS_PIO pPio,        // \arg  pointer to a PIO controller
-                        unsigned int flag )     // \arg  pio output to be enabled
+AT91F_PIO_OutputEnable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                       unsigned int flag) // \arg  pio output to be enabled
 {
     pPio->PIO_OER = flag;
 }
@@ -702,8 +700,8 @@ AT91F_PIO_OutputEnable( AT91PS_PIO pPio,        // \arg  pointer to a PIO contro
 //* \brief Output Enable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_OutputDisable( AT91PS_PIO pPio,       // \arg  pointer to a PIO controller
-                         unsigned int flag )    // \arg  pio output to be disabled
+AT91F_PIO_OutputDisable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                        unsigned int flag) // \arg  pio output to be disabled
 {
     pPio->PIO_ODR = flag;
 }
@@ -713,8 +711,8 @@ AT91F_PIO_OutputDisable( AT91PS_PIO pPio,       // \arg  pointer to a PIO contro
 //* \brief Return PIO Output Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetOutputStatus(      // \return PIO Output Status
-                              AT91PS_PIO pPio ) // \arg  pointer to a PIO controller
+AT91F_PIO_GetOutputStatus( // \return PIO Output Status
+    AT91PS_PIO pPio)       // \arg  pointer to a PIO controller
 {
     return pPio->PIO_OSR;
 }
@@ -724,10 +722,10 @@ AT91F_PIO_GetOutputStatus(      // \return PIO Output Status
 //* \brief Test if PIO Output is Set
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsOutputSet( AT91PS_PIO pPio, // \arg  pointer to a PIO controller
-                       unsigned int flag )      // \arg  flag to be tested
+AT91F_PIO_IsOutputSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                      unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_GetOutputStatus( pPio ) & flag );
+    return (AT91F_PIO_GetOutputStatus(pPio) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -735,8 +733,8 @@ AT91F_PIO_IsOutputSet( AT91PS_PIO pPio, // \arg  pointer to a PIO controller
 //* \brief Input Filter Enable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_InputFilterEnable( AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
-                             unsigned int flag )        // \arg  pio input filter to be enabled
+AT91F_PIO_InputFilterEnable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                            unsigned int flag) // \arg  pio input filter to be enabled
 {
     pPio->PIO_IFER = flag;
 }
@@ -746,8 +744,8 @@ AT91F_PIO_InputFilterEnable( AT91PS_PIO pPio,   // \arg  pointer to a PIO contro
 //* \brief Input Filter Disable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_InputFilterDisable( AT91PS_PIO pPio,  // \arg  pointer to a PIO controller
-                              unsigned int flag )       // \arg  pio input filter to be disabled
+AT91F_PIO_InputFilterDisable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                             unsigned int flag) // \arg  pio input filter to be disabled
 {
     pPio->PIO_IFDR = flag;
 }
@@ -757,8 +755,8 @@ AT91F_PIO_InputFilterDisable( AT91PS_PIO pPio,  // \arg  pointer to a PIO contro
 //* \brief Return PIO Input Filter Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetInputFilterStatus(         // \return PIO Input Filter Status
-                                   AT91PS_PIO pPio )    // \arg  pointer to a PIO controller
+AT91F_PIO_GetInputFilterStatus( // \return PIO Input Filter Status
+    AT91PS_PIO pPio)            // \arg  pointer to a PIO controller
 {
     return pPio->PIO_IFSR;
 }
@@ -768,19 +766,19 @@ AT91F_PIO_GetInputFilterStatus(         // \return PIO Input Filter Status
 //* \brief Test if PIO Input filter is Set
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsInputFilterSet( AT91PS_PIO pPio,    // \arg  pointer to a PIO controller
-                            unsigned int flag ) // \arg  flag to be tested
+AT91F_PIO_IsInputFilterSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                           unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_GetInputFilterStatus( pPio ) & flag );
+    return (AT91F_PIO_GetInputFilterStatus(pPio) & flag);
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_PIO_GetOutputDataStatus
-//* \brief Return PIO Output Data Status 
+//* \brief Return PIO Output Data Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetOutputDataStatus(  // \return PIO Output Data Status 
-                                  AT91PS_PIO pPio )     // \arg  pointer to a PIO controller
+AT91F_PIO_GetOutputDataStatus( // \return PIO Output Data Status
+    AT91PS_PIO pPio)           // \arg  pointer to a PIO controller
 {
     return pPio->PIO_ODSR;
 }
@@ -790,8 +788,8 @@ AT91F_PIO_GetOutputDataStatus(  // \return PIO Output Data Status
 //* \brief Enable PIO Interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_InterruptEnable( AT91PS_PIO pPio,     // \arg  pointer to a PIO controller
-                           unsigned int flag )  // \arg  pio interrupt to be enabled
+AT91F_PIO_InterruptEnable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                          unsigned int flag) // \arg  pio interrupt to be enabled
 {
     pPio->PIO_IER = flag;
 }
@@ -801,8 +799,8 @@ AT91F_PIO_InterruptEnable( AT91PS_PIO pPio,     // \arg  pointer to a PIO contro
 //* \brief Disable PIO Interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_InterruptDisable( AT91PS_PIO pPio,    // \arg  pointer to a PIO controller
-                            unsigned int flag ) // \arg  pio interrupt to be disabled
+AT91F_PIO_InterruptDisable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                           unsigned int flag) // \arg  pio interrupt to be disabled
 {
     pPio->PIO_IDR = flag;
 }
@@ -812,8 +810,8 @@ AT91F_PIO_InterruptDisable( AT91PS_PIO pPio,    // \arg  pointer to a PIO contro
 //* \brief Return PIO Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetInterruptMaskStatus(       // \return PIO Interrupt Mask Status
-                                     AT91PS_PIO pPio )  // \arg  pointer to a PIO controller
+AT91F_PIO_GetInterruptMaskStatus( // \return PIO Interrupt Mask Status
+    AT91PS_PIO pPio)              // \arg  pointer to a PIO controller
 {
     return pPio->PIO_IMR;
 }
@@ -823,21 +821,21 @@ AT91F_PIO_GetInterruptMaskStatus(       // \return PIO Interrupt Mask Status
 //* \brief Return PIO Interrupt Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetInterruptStatus(   // \return PIO Interrupt Status
-                                 AT91PS_PIO pPio )      // \arg  pointer to a PIO controller
+AT91F_PIO_GetInterruptStatus( // \return PIO Interrupt Status
+    AT91PS_PIO pPio)          // \arg  pointer to a PIO controller
 {
     return pPio->PIO_ISR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_PIO_IsInterruptMasked
-//* \brief Test if PIO Interrupt is Masked 
+//* \brief Test if PIO Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsInterruptMasked( AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
-                             unsigned int flag )        // \arg  flag to be tested
+AT91F_PIO_IsInterruptMasked(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                            unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_GetInterruptMaskStatus( pPio ) & flag );
+    return (AT91F_PIO_GetInterruptMaskStatus(pPio) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -845,10 +843,10 @@ AT91F_PIO_IsInterruptMasked( AT91PS_PIO pPio,   // \arg  pointer to a PIO contro
 //* \brief Test if PIO Interrupt is Set
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsInterruptSet( AT91PS_PIO pPio,      // \arg  pointer to a PIO controller
-                          unsigned int flag )   // \arg  flag to be tested
+AT91F_PIO_IsInterruptSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                         unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_GetInterruptStatus( pPio ) & flag );
+    return (AT91F_PIO_GetInterruptStatus(pPio) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -856,8 +854,8 @@ AT91F_PIO_IsInterruptSet( AT91PS_PIO pPio,      // \arg  pointer to a PIO contro
 //* \brief Multi Driver Enable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_MultiDriverEnable( AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
-                             unsigned int flag )        // \arg  pio to be enabled
+AT91F_PIO_MultiDriverEnable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                            unsigned int flag) // \arg  pio to be enabled
 {
     pPio->PIO_MDER = flag;
 }
@@ -867,8 +865,8 @@ AT91F_PIO_MultiDriverEnable( AT91PS_PIO pPio,   // \arg  pointer to a PIO contro
 //* \brief Multi Driver Disable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_MultiDriverDisable( AT91PS_PIO pPio,  // \arg  pointer to a PIO controller
-                              unsigned int flag )       // \arg  pio to be disabled
+AT91F_PIO_MultiDriverDisable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                             unsigned int flag) // \arg  pio to be disabled
 {
     pPio->PIO_MDDR = flag;
 }
@@ -878,8 +876,8 @@ AT91F_PIO_MultiDriverDisable( AT91PS_PIO pPio,  // \arg  pointer to a PIO contro
 //* \brief Return PIO Multi Driver Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetMultiDriverStatus(         // \return PIO Multi Driver Status
-                                   AT91PS_PIO pPio )    // \arg  pointer to a PIO controller
+AT91F_PIO_GetMultiDriverStatus( // \return PIO Multi Driver Status
+    AT91PS_PIO pPio)            // \arg  pointer to a PIO controller
 {
     return pPio->PIO_MDSR;
 }
@@ -889,30 +887,30 @@ AT91F_PIO_GetMultiDriverStatus(         // \return PIO Multi Driver Status
 //* \brief Test if PIO MultiDriver is Set
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsMultiDriverSet( AT91PS_PIO pPio,    // \arg  pointer to a PIO controller
-                            unsigned int flag ) // \arg  flag to be tested
+AT91F_PIO_IsMultiDriverSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                           unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_GetMultiDriverStatus( pPio ) & flag );
+    return (AT91F_PIO_GetMultiDriverStatus(pPio) & flag);
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_PIO_A_RegisterSelection
-//* \brief PIO A Register Selection 
+//* \brief PIO A Register Selection
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_A_RegisterSelection( AT91PS_PIO pPio, // \arg  pointer to a PIO controller
-                               unsigned int flag )      // \arg  pio A register selection
+AT91F_PIO_A_RegisterSelection(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                              unsigned int flag) // \arg  pio A register selection
 {
     pPio->PIO_ASR = flag;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_PIO_B_RegisterSelection
-//* \brief PIO B Register Selection 
+//* \brief PIO B Register Selection
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_B_RegisterSelection( AT91PS_PIO pPio, // \arg  pointer to a PIO controller
-                               unsigned int flag )      // \arg  pio B register selection 
+AT91F_PIO_B_RegisterSelection(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                              unsigned int flag) // \arg  pio B register selection
 {
     pPio->PIO_BSR = flag;
 }
@@ -922,8 +920,8 @@ AT91F_PIO_B_RegisterSelection( AT91PS_PIO pPio, // \arg  pointer to a PIO contro
 //* \brief Return PIO Interrupt Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_Get_AB_RegisterStatus(        // \return PIO AB Register Status
-                                    AT91PS_PIO pPio )   // \arg  pointer to a PIO controller
+AT91F_PIO_Get_AB_RegisterStatus( // \return PIO AB Register Status
+    AT91PS_PIO pPio)             // \arg  pointer to a PIO controller
 {
     return pPio->PIO_ABSR;
 }
@@ -933,10 +931,10 @@ AT91F_PIO_Get_AB_RegisterStatus(        // \return PIO AB Register Status
 //* \brief Test if PIO AB Register is Set
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsAB_RegisterSet( AT91PS_PIO pPio,    // \arg  pointer to a PIO controller
-                            unsigned int flag ) // \arg  flag to be tested
+AT91F_PIO_IsAB_RegisterSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                           unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_Get_AB_RegisterStatus( pPio ) & flag );
+    return (AT91F_PIO_Get_AB_RegisterStatus(pPio) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -944,8 +942,8 @@ AT91F_PIO_IsAB_RegisterSet( AT91PS_PIO pPio,    // \arg  pointer to a PIO contro
 //* \brief Output Write Enable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_OutputWriteEnable( AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
-                             unsigned int flag )        // \arg  pio output write to be enabled
+AT91F_PIO_OutputWriteEnable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                            unsigned int flag) // \arg  pio output write to be enabled
 {
     pPio->PIO_OWER = flag;
 }
@@ -955,8 +953,8 @@ AT91F_PIO_OutputWriteEnable( AT91PS_PIO pPio,   // \arg  pointer to a PIO contro
 //* \brief Output Write Disable PIO
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIO_OutputWriteDisable( AT91PS_PIO pPio,  // \arg  pointer to a PIO controller
-                              unsigned int flag )       // \arg  pio output write to be disabled
+AT91F_PIO_OutputWriteDisable(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                             unsigned int flag) // \arg  pio output write to be disabled
 {
     pPio->PIO_OWDR = flag;
 }
@@ -966,8 +964,8 @@ AT91F_PIO_OutputWriteDisable( AT91PS_PIO pPio,  // \arg  pointer to a PIO contro
 //* \brief Return PIO Output Write Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetOutputWriteStatus(         // \return PIO Output Write Status
-                                   AT91PS_PIO pPio )    // \arg  pointer to a PIO controller
+AT91F_PIO_GetOutputWriteStatus( // \return PIO Output Write Status
+    AT91PS_PIO pPio)            // \arg  pointer to a PIO controller
 {
     return pPio->PIO_OWSR;
 }
@@ -977,10 +975,10 @@ AT91F_PIO_GetOutputWriteStatus(         // \return PIO Output Write Status
 //* \brief Test if PIO OutputWrite is Set
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsOutputWriteSet( AT91PS_PIO pPio,    // \arg  pointer to a PIO controller
-                            unsigned int flag ) // \arg  flag to be tested
+AT91F_PIO_IsOutputWriteSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                           unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_GetOutputWriteStatus( pPio ) & flag );
+    return (AT91F_PIO_GetOutputWriteStatus(pPio) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -988,21 +986,21 @@ AT91F_PIO_IsOutputWriteSet( AT91PS_PIO pPio,    // \arg  pointer to a PIO contro
 //* \brief Return PIO Configuration Pullup
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PIO_GetCfgPullup(         // \return PIO Configuration Pullup 
-                           AT91PS_PIO pPio )    // \arg  pointer to a PIO controller
+AT91F_PIO_GetCfgPullup( // \return PIO Configuration Pullup
+    AT91PS_PIO pPio)    // \arg  pointer to a PIO controller
 {
     return pPio->PIO_PPUSR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_PIO_IsOutputDataStatusSet
-//* \brief Test if PIO Output Data Status is Set 
+//* \brief Test if PIO Output Data Status is Set
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsOutputDataStatusSet( AT91PS_PIO pPio,       // \arg  pointer to a PIO controller
-                                 unsigned int flag )    // \arg  flag to be tested
+AT91F_PIO_IsOutputDataStatusSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                                unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PIO_GetOutputDataStatus( pPio ) & flag );
+    return (AT91F_PIO_GetOutputDataStatus(pPio) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -1010,10 +1008,10 @@ AT91F_PIO_IsOutputDataStatusSet( AT91PS_PIO pPio,       // \arg  pointer to a PI
 //* \brief Test if PIO Configuration Pullup Status is Set
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_PIO_IsCfgPullupStatusSet( AT91PS_PIO pPio,        // \arg  pointer to a PIO controller
-                                unsigned int flag )     // \arg  flag to be tested
+AT91F_PIO_IsCfgPullupStatusSet(AT91PS_PIO pPio,   // \arg  pointer to a PIO controller
+                               unsigned int flag) // \arg  flag to be tested
 {
-    return ( ~AT91F_PIO_GetCfgPullup( pPio ) & flag );
+    return (~AT91F_PIO_GetCfgPullup(pPio) & flag);
 }
 
 /* *****************************************************************************
@@ -1024,8 +1022,8 @@ AT91F_PIO_IsCfgPullupStatusSet( AT91PS_PIO pPio,        // \arg  pointer to a PI
 //* \brief Configure the System Clock Enable Register of the PMC controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_CfgSysClkEnableReg( AT91PS_PMC pPMC,  // \arg pointer to PMC controller
-                              unsigned int mode )
+AT91F_PMC_CfgSysClkEnableReg(AT91PS_PMC pPMC, // \arg pointer to PMC controller
+                             unsigned int mode)
 {
     //* Write to the SCER register
     pPMC->PMC_SCER = mode;
@@ -1036,8 +1034,8 @@ AT91F_PMC_CfgSysClkEnableReg( AT91PS_PMC pPMC,  // \arg pointer to PMC controlle
 //* \brief Configure the System Clock Disable Register of the PMC controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_CfgSysClkDisableReg( AT91PS_PMC pPMC, // \arg pointer to PMC controller
-                               unsigned int mode )
+AT91F_PMC_CfgSysClkDisableReg(AT91PS_PMC pPMC, // \arg pointer to PMC controller
+                              unsigned int mode)
 {
     //* Write to the SCDR register
     pPMC->PMC_SCDR = mode;
@@ -1048,8 +1046,8 @@ AT91F_PMC_CfgSysClkDisableReg( AT91PS_PMC pPMC, // \arg pointer to PMC controlle
 //* \brief Return the System Clock Status Register of the PMC controller
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PMC_GetSysClkStatusReg( AT91PS_PMC pPMC   // pointer to a CAN controller
-     )
+AT91F_PMC_GetSysClkStatusReg(AT91PS_PMC pPMC // pointer to a CAN controller
+)
 {
     return pPMC->PMC_SCSR;
 }
@@ -1059,8 +1057,8 @@ AT91F_PMC_GetSysClkStatusReg( AT91PS_PMC pPMC   // pointer to a CAN controller
 //* \brief Enable peripheral clock
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_EnablePeriphClock( AT91PS_PMC pPMC,   // \arg pointer to PMC controller
-                             unsigned int periphIds )   // \arg IDs of peripherals
+AT91F_PMC_EnablePeriphClock(AT91PS_PMC pPMC,        // \arg pointer to PMC controller
+                            unsigned int periphIds) // \arg IDs of peripherals
 {
     pPMC->PMC_PCER = periphIds;
 }
@@ -1070,8 +1068,8 @@ AT91F_PMC_EnablePeriphClock( AT91PS_PMC pPMC,   // \arg pointer to PMC controlle
 //* \brief Disable peripheral clock
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_DisablePeriphClock( AT91PS_PMC pPMC,  // \arg pointer to PMC controller
-                              unsigned int periphIds )  // \arg IDs of peripherals
+AT91F_PMC_DisablePeriphClock(AT91PS_PMC pPMC,        // \arg pointer to PMC controller
+                             unsigned int periphIds) // \arg IDs of peripherals
 {
     pPMC->PMC_PCDR = periphIds;
 }
@@ -1081,7 +1079,7 @@ AT91F_PMC_DisablePeriphClock( AT91PS_PMC pPMC,  // \arg pointer to PMC controlle
 //* \brief Get peripheral clock status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PMC_GetPeriphClock( AT91PS_PMC pPMC )     // \arg pointer to PMC controller
+AT91F_PMC_GetPeriphClock(AT91PS_PMC pPMC) // \arg pointer to PMC controller
 {
     return pPMC->PMC_PCSR;
 }
@@ -1091,8 +1089,8 @@ AT91F_PMC_GetPeriphClock( AT91PS_PMC pPMC )     // \arg pointer to PMC controlle
 //* \brief Cfg the main oscillator
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CKGR_CfgMainOscillatorReg( AT91PS_CKGR pCKGR,     // \arg pointer to CKGR controller
-                                 unsigned int mode )
+AT91F_CKGR_CfgMainOscillatorReg(AT91PS_CKGR pCKGR, // \arg pointer to CKGR controller
+                                unsigned int mode)
 {
     pCKGR->CKGR_MOR = mode;
 }
@@ -1102,7 +1100,7 @@ AT91F_CKGR_CfgMainOscillatorReg( AT91PS_CKGR pCKGR,     // \arg pointer to CKGR 
 //* \brief Cfg the main oscillator
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CKGR_GetMainOscillatorReg( AT91PS_CKGR pCKGR )    // \arg pointer to CKGR controller
+AT91F_CKGR_GetMainOscillatorReg(AT91PS_CKGR pCKGR) // \arg pointer to CKGR controller
 {
     return pCKGR->CKGR_MOR;
 }
@@ -1112,7 +1110,7 @@ AT91F_CKGR_GetMainOscillatorReg( AT91PS_CKGR pCKGR )    // \arg pointer to CKGR 
 //* \brief Enable the main oscillator
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CKGR_EnableMainOscillator( AT91PS_CKGR pCKGR )    // \arg pointer to CKGR controller
+AT91F_CKGR_EnableMainOscillator(AT91PS_CKGR pCKGR) // \arg pointer to CKGR controller
 {
     pCKGR->CKGR_MOR |= AT91C_CKGR_MOSCEN;
 }
@@ -1122,7 +1120,7 @@ AT91F_CKGR_EnableMainOscillator( AT91PS_CKGR pCKGR )    // \arg pointer to CKGR 
 //* \brief Disable the main oscillator
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CKGR_DisableMainOscillator( AT91PS_CKGR pCKGR )   // \arg pointer to CKGR controller
+AT91F_CKGR_DisableMainOscillator(AT91PS_CKGR pCKGR) // \arg pointer to CKGR controller
 {
     pCKGR->CKGR_MOR &= ~AT91C_CKGR_MOSCEN;
 }
@@ -1132,12 +1130,12 @@ AT91F_CKGR_DisableMainOscillator( AT91PS_CKGR pCKGR )   // \arg pointer to CKGR 
 //* \brief Cfg MOR Register according to the main osc startup time
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CKGR_CfgMainOscStartUpTime( AT91PS_CKGR pCKGR,    // \arg pointer to CKGR controller
-                                  unsigned int startup_time,    // \arg main osc startup time in microsecond (us)
-                                  unsigned int slowClock )      // \arg slowClock in Hz
+AT91F_CKGR_CfgMainOscStartUpTime(AT91PS_CKGR pCKGR,         // \arg pointer to CKGR controller
+                                 unsigned int startup_time, // \arg main osc startup time in microsecond (us)
+                                 unsigned int slowClock)    // \arg slowClock in Hz
 {
     pCKGR->CKGR_MOR &= ~AT91C_CKGR_OSCOUNT;
-    pCKGR->CKGR_MOR |= ( ( slowClock * startup_time ) / ( 8 * 1000000 ) ) << 8;
+    pCKGR->CKGR_MOR |= ((slowClock * startup_time) / (8 * 1000000)) << 8;
 }
 
 //*----------------------------------------------------------------------------
@@ -1145,7 +1143,7 @@ AT91F_CKGR_CfgMainOscStartUpTime( AT91PS_CKGR pCKGR,    // \arg pointer to CKGR 
 //* \brief Cfg the main oscillator
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CKGR_GetMainClockFreqReg( AT91PS_CKGR pCKGR )     // \arg pointer to CKGR controller
+AT91F_CKGR_GetMainClockFreqReg(AT91PS_CKGR pCKGR) // \arg pointer to CKGR controller
 {
     return pCKGR->CKGR_MCFR;
 }
@@ -1155,10 +1153,10 @@ AT91F_CKGR_GetMainClockFreqReg( AT91PS_CKGR pCKGR )     // \arg pointer to CKGR 
 //* \brief Return Main clock in Hz
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CKGR_GetMainClock( AT91PS_CKGR pCKGR,     // \arg pointer to CKGR controller
-                         unsigned int slowClock )       // \arg slowClock in Hz
+AT91F_CKGR_GetMainClock(AT91PS_CKGR pCKGR,      // \arg pointer to CKGR controller
+                        unsigned int slowClock) // \arg slowClock in Hz
 {
-    return ( ( pCKGR->CKGR_MCFR & AT91C_CKGR_MAINF ) * slowClock ) >> 4;
+    return ((pCKGR->CKGR_MCFR & AT91C_CKGR_MAINF) * slowClock) >> 4;
 }
 
 //*----------------------------------------------------------------------------
@@ -1166,8 +1164,8 @@ AT91F_CKGR_GetMainClock( AT91PS_CKGR pCKGR,     // \arg pointer to CKGR controll
 //* \brief Cfg Master Clock Register
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_CfgMCKReg( AT91PS_PMC pPMC,   // \arg pointer to PMC controller
-                     unsigned int mode )
+AT91F_PMC_CfgMCKReg(AT91PS_PMC pPMC, // \arg pointer to PMC controller
+                    unsigned int mode)
 {
     pPMC->PMC_MCKR = mode;
 }
@@ -1177,7 +1175,7 @@ AT91F_PMC_CfgMCKReg( AT91PS_PMC pPMC,   // \arg pointer to PMC controller
 //* \brief Return Master Clock Register
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PMC_GetMCKReg( AT91PS_PMC pPMC )  // \arg pointer to PMC controller
+AT91F_PMC_GetMCKReg(AT91PS_PMC pPMC) // \arg pointer to PMC controller
 {
     return pPMC->PMC_MCKR;
 }
@@ -1187,25 +1185,25 @@ AT91F_PMC_GetMCKReg( AT91PS_PMC pPMC )  // \arg pointer to PMC controller
 //* \brief Return master clock in Hz which correponds to processor clock for ARM7
 //*------------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PMC_GetMasterClock( AT91PS_PMC pPMC,      // \arg pointer to PMC controller
-                          AT91PS_CKGR pCKGR,    // \arg pointer to CKGR controller
-                          unsigned int slowClock )      // \arg slowClock in Hz
+AT91F_PMC_GetMasterClock(AT91PS_PMC pPMC,        // \arg pointer to PMC controller
+                         AT91PS_CKGR pCKGR,      // \arg pointer to CKGR controller
+                         unsigned int slowClock) // \arg slowClock in Hz
 {
-    unsigned int    reg = pPMC->PMC_MCKR;
-    unsigned int    prescaler = ( 1 << ( ( reg & AT91C_PMC_PRES ) >> 2 ) );
-    unsigned int    pllDivider, pllMultiplier;
+    unsigned int reg = pPMC->PMC_MCKR;
+    unsigned int prescaler = (1 << ((reg & AT91C_PMC_PRES) >> 2));
+    unsigned int pllDivider, pllMultiplier;
 
-    switch ( reg & AT91C_PMC_CSS )
+    switch (reg & AT91C_PMC_CSS)
     {
-    case AT91C_PMC_CSS_SLOW_CLK:       // Slow clock selected
+    case AT91C_PMC_CSS_SLOW_CLK: // Slow clock selected
         return slowClock / prescaler;
-    case AT91C_PMC_CSS_MAIN_CLK:       // Main clock is selected
-        return AT91F_CKGR_GetMainClock( pCKGR, slowClock ) / prescaler;
-    case AT91C_PMC_CSS_PLL_CLK:        // PLLB clock is selected
+    case AT91C_PMC_CSS_MAIN_CLK: // Main clock is selected
+        return AT91F_CKGR_GetMainClock(pCKGR, slowClock) / prescaler;
+    case AT91C_PMC_CSS_PLL_CLK: // PLLB clock is selected
         reg = pCKGR->CKGR_PLLR;
-        pllDivider = ( reg & AT91C_CKGR_DIV );
-        pllMultiplier = ( ( reg & AT91C_CKGR_MUL ) >> 16 ) + 1;
-        return AT91F_CKGR_GetMainClock( pCKGR, slowClock ) / pllDivider * pllMultiplier / prescaler;
+        pllDivider = (reg & AT91C_CKGR_DIV);
+        pllMultiplier = ((reg & AT91C_CKGR_MUL) >> 16) + 1;
+        return AT91F_CKGR_GetMainClock(pCKGR, slowClock) / pllDivider * pllMultiplier / prescaler;
     }
     return 0;
 }
@@ -1215,12 +1213,12 @@ AT91F_PMC_GetMasterClock( AT91PS_PMC pPMC,      // \arg pointer to PMC controlle
 //* \brief Enable Programmable Clock x Output
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_EnablePCK( AT91PS_PMC pPMC,   // \arg pointer to PMC controller
-                     unsigned int pck,  // \arg Programmable Clock x Output
-                     unsigned int mode )
+AT91F_PMC_EnablePCK(AT91PS_PMC pPMC,  // \arg pointer to PMC controller
+                    unsigned int pck, // \arg Programmable Clock x Output
+                    unsigned int mode)
 {
     pPMC->PMC_PCKR[pck] = mode;
-    pPMC->PMC_SCER = ( 1 << pck ) << 8;
+    pPMC->PMC_SCER = (1 << pck) << 8;
 }
 
 //*----------------------------------------------------------------------------
@@ -1228,10 +1226,10 @@ AT91F_PMC_EnablePCK( AT91PS_PMC pPMC,   // \arg pointer to PMC controller
 //* \brief Disable Programmable Clock x Output
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_DisablePCK( AT91PS_PMC pPMC,  // \arg pointer to PMC controller
-                      unsigned int pck )        // \arg Programmable Clock x Output
+AT91F_PMC_DisablePCK(AT91PS_PMC pPMC,  // \arg pointer to PMC controller
+                     unsigned int pck) // \arg Programmable Clock x Output
 {
-    pPMC->PMC_SCDR = ( 1 << pck ) << 8;
+    pPMC->PMC_SCDR = (1 << pck) << 8;
 }
 
 //*----------------------------------------------------------------------------
@@ -1239,8 +1237,8 @@ AT91F_PMC_DisablePCK( AT91PS_PMC pPMC,  // \arg pointer to PMC controller
 //* \brief Enable PMC interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_EnableIt( AT91PS_PMC pPMC,    // pointer to a PMC controller
-                    unsigned int flag ) // IT to be enabled
+AT91F_PMC_EnableIt(AT91PS_PMC pPMC,   // pointer to a PMC controller
+                   unsigned int flag) // IT to be enabled
 {
     //* Write to the IER register
     pPMC->PMC_IER = flag;
@@ -1251,8 +1249,8 @@ AT91F_PMC_EnableIt( AT91PS_PMC pPMC,    // pointer to a PMC controller
 //* \brief Disable PMC interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_DisableIt( AT91PS_PMC pPMC,   // pointer to a PMC controller
-                     unsigned int flag )        // IT to be disabled
+AT91F_PMC_DisableIt(AT91PS_PMC pPMC,   // pointer to a PMC controller
+                    unsigned int flag) // IT to be disabled
 {
     //* Write to the IDR register
     pPMC->PMC_IDR = flag;
@@ -1263,8 +1261,8 @@ AT91F_PMC_DisableIt( AT91PS_PMC pPMC,   // pointer to a PMC controller
 //* \brief Return PMC Interrupt Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PMC_GetStatus(            // \return PMC Interrupt Status
-                        AT91PS_PMC pPMC )       // pointer to a PMC controller
+AT91F_PMC_GetStatus( // \return PMC Interrupt Status
+    AT91PS_PMC pPMC) // pointer to a PMC controller
 {
     return pPMC->PMC_SR;
 }
@@ -1274,8 +1272,8 @@ AT91F_PMC_GetStatus(            // \return PMC Interrupt Status
 //* \brief Return PMC Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PMC_GetInterruptMaskStatus(       // \return PMC Interrupt Mask Status
-                                     AT91PS_PMC pPMC )  // pointer to a PMC controller
+AT91F_PMC_GetInterruptMaskStatus( // \return PMC Interrupt Mask Status
+    AT91PS_PMC pPMC)              // pointer to a PMC controller
 {
     return pPMC->PMC_IMR;
 }
@@ -1285,10 +1283,10 @@ AT91F_PMC_GetInterruptMaskStatus(       // \return PMC Interrupt Mask Status
 //* \brief Test if PMC Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PMC_IsInterruptMasked( AT91PS_PMC pPMC,   // \arg  pointer to a PMC controller
-                             unsigned int flag )        // \arg  flag to be tested
+AT91F_PMC_IsInterruptMasked(AT91PS_PMC pPMC,   // \arg  pointer to a PMC controller
+                            unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PMC_GetInterruptMaskStatus( pPMC ) & flag );
+    return (AT91F_PMC_GetInterruptMaskStatus(pPMC) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -1296,10 +1294,10 @@ AT91F_PMC_IsInterruptMasked( AT91PS_PMC pPMC,   // \arg  pointer to a PMC contro
 //* \brief Test if PMC Status is Set
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PMC_IsStatusSet( AT91PS_PMC pPMC, // \arg  pointer to a PMC controller
-                       unsigned int flag )      // \arg  flag to be tested
+AT91F_PMC_IsStatusSet(AT91PS_PMC pPMC,   // \arg  pointer to a PMC controller
+                      unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PMC_GetStatus( pPMC ) & flag );
+    return (AT91F_PMC_GetStatus(pPMC) & flag);
 }
 
 // ----------------------------------------------------------------------------
@@ -1307,8 +1305,8 @@ AT91F_PMC_IsStatusSet( AT91PS_PMC pPMC, // \arg  pointer to a PMC controller
 //  \brief Cfg the PLL Register
 // ----------------------------------------------------------------------------
 static __inline void
-AT91F_CKGR_CfgPLLReg( AT91PS_CKGR pCKGR,        // \arg pointer to CKGR controller
-                      unsigned int mode )
+AT91F_CKGR_CfgPLLReg(AT91PS_CKGR pCKGR, // \arg pointer to CKGR controller
+                     unsigned int mode)
 {
     pCKGR->CKGR_PLLR = mode;
 }
@@ -1318,11 +1316,10 @@ AT91F_CKGR_CfgPLLReg( AT91PS_CKGR pCKGR,        // \arg pointer to CKGR controll
 //  \brief Get the PLL Register
 // ----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CKGR_GetPLLReg( AT91PS_CKGR pCKGR )       // \arg pointer to CKGR controller
+AT91F_CKGR_GetPLLReg(AT91PS_CKGR pCKGR) // \arg pointer to CKGR controller
 {
     return pCKGR->CKGR_PLLR;
 }
-
 
 /* *****************************************************************************
                 SOFTWARE API FOR RSTC
@@ -1332,9 +1329,9 @@ AT91F_CKGR_GetPLLReg( AT91PS_CKGR pCKGR )       // \arg pointer to CKGR controll
 //* \brief Start Software Reset
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_RSTSoftReset( AT91PS_RSTC pRSTC, unsigned int reset )
+AT91F_RSTSoftReset(AT91PS_RSTC pRSTC, unsigned int reset)
 {
-    pRSTC->RSTC_RCR = ( 0xA5000000 | reset );
+    pRSTC->RSTC_RCR = (0xA5000000 | reset);
 }
 
 //*----------------------------------------------------------------------------
@@ -1342,9 +1339,9 @@ AT91F_RSTSoftReset( AT91PS_RSTC pRSTC, unsigned int reset )
 //* \brief Set Reset Mode
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_RSTSetMode( AT91PS_RSTC pRSTC, unsigned int mode )
+AT91F_RSTSetMode(AT91PS_RSTC pRSTC, unsigned int mode)
 {
-    pRSTC->RSTC_RMR = ( 0xA5000000 | mode );
+    pRSTC->RSTC_RMR = (0xA5000000 | mode);
 }
 
 //*----------------------------------------------------------------------------
@@ -1352,9 +1349,9 @@ AT91F_RSTSetMode( AT91PS_RSTC pRSTC, unsigned int mode )
 //* \brief Get Reset Mode
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_RSTGetMode( AT91PS_RSTC pRSTC )
+AT91F_RSTGetMode(AT91PS_RSTC pRSTC)
 {
-    return ( pRSTC->RSTC_RMR );
+    return (pRSTC->RSTC_RMR);
 }
 
 //*----------------------------------------------------------------------------
@@ -1362,9 +1359,9 @@ AT91F_RSTGetMode( AT91PS_RSTC pRSTC )
 //* \brief Get Reset Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_RSTGetStatus( AT91PS_RSTC pRSTC )
+AT91F_RSTGetStatus(AT91PS_RSTC pRSTC)
 {
-    return ( pRSTC->RSTC_RSR );
+    return (pRSTC->RSTC_RSR);
 }
 
 //*----------------------------------------------------------------------------
@@ -1372,9 +1369,9 @@ AT91F_RSTGetStatus( AT91PS_RSTC pRSTC )
 //* \brief Return !=0 if software reset is still not completed
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_RSTIsSoftRstActive( AT91PS_RSTC pRSTC )
+AT91F_RSTIsSoftRstActive(AT91PS_RSTC pRSTC)
 {
-    return ( ( pRSTC->RSTC_RSR ) & AT91C_RSTC_SRCMP );
+    return ((pRSTC->RSTC_RSR) & AT91C_RSTC_SRCMP);
 }
 
 /* *****************************************************************************
@@ -1385,12 +1382,12 @@ AT91F_RSTIsSoftRstActive( AT91PS_RSTC pRSTC )
 //* \brief  Set the RTT prescaler according to the TimeBase in ms
 //*--------------------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_RTTSetTimeBase( AT91PS_RTTC pRTTC, unsigned int ms )
+AT91F_RTTSetTimeBase(AT91PS_RTTC pRTTC, unsigned int ms)
 {
-    if( ms > 2000 )
-        return 1;               // AT91C_TIME_OUT_OF_RANGE
+    if (ms > 2000)
+        return 1; // AT91C_TIME_OUT_OF_RANGE
     pRTTC->RTTC_RTMR &= ~0xFFFF;
-    pRTTC->RTTC_RTMR |= ( ( ( ms << 15 ) / 1000 ) & 0xFFFF );
+    pRTTC->RTTC_RTMR |= (((ms << 15) / 1000) & 0xFFFF);
     return 0;
 }
 
@@ -1399,11 +1396,11 @@ AT91F_RTTSetTimeBase( AT91PS_RTTC pRTTC, unsigned int ms )
 //* \brief  Set the new prescaler value
 //*--------------------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_RTTSetPrescaler( AT91PS_RTTC pRTTC, unsigned int rtpres )
+AT91F_RTTSetPrescaler(AT91PS_RTTC pRTTC, unsigned int rtpres)
 {
     pRTTC->RTTC_RTMR &= ~0xFFFF;
-    pRTTC->RTTC_RTMR |= ( rtpres & 0xFFFF );
-    return ( pRTTC->RTTC_RTMR );
+    pRTTC->RTTC_RTMR |= (rtpres & 0xFFFF);
+    return (pRTTC->RTTC_RTMR);
 }
 
 //*--------------------------------------------------------------------------------------
@@ -1411,18 +1408,17 @@ AT91F_RTTSetPrescaler( AT91PS_RTTC pRTTC, unsigned int rtpres )
 //* \brief  Restart the RTT prescaler
 //*--------------------------------------------------------------------------------------
 static __inline void
-AT91F_RTTRestart( AT91PS_RTTC pRTTC )
+AT91F_RTTRestart(AT91PS_RTTC pRTTC)
 {
     pRTTC->RTTC_RTMR |= AT91C_RTTC_RTTRST;
 }
-
 
 //*--------------------------------------------------------------------------------------
 //* \fn     AT91F_RTT_SetAlarmINT()
 //* \brief  Enable RTT Alarm Interrupt
 //*--------------------------------------------------------------------------------------
 static __inline void
-AT91F_RTTSetAlarmINT( AT91PS_RTTC pRTTC )
+AT91F_RTTSetAlarmINT(AT91PS_RTTC pRTTC)
 {
     pRTTC->RTTC_RTMR |= AT91C_RTTC_ALMIEN;
 }
@@ -1432,7 +1428,7 @@ AT91F_RTTSetAlarmINT( AT91PS_RTTC pRTTC )
 //* \brief  Disable RTT Alarm Interrupt
 //*--------------------------------------------------------------------------------------
 static __inline void
-AT91F_RTTClearAlarmINT( AT91PS_RTTC pRTTC )
+AT91F_RTTClearAlarmINT(AT91PS_RTTC pRTTC)
 {
     pRTTC->RTTC_RTMR &= ~AT91C_RTTC_ALMIEN;
 }
@@ -1442,7 +1438,7 @@ AT91F_RTTClearAlarmINT( AT91PS_RTTC pRTTC )
 //* \brief  Enable RTT INC Interrupt
 //*--------------------------------------------------------------------------------------
 static __inline void
-AT91F_RTTSetRttIncINT( AT91PS_RTTC pRTTC )
+AT91F_RTTSetRttIncINT(AT91PS_RTTC pRTTC)
 {
     pRTTC->RTTC_RTMR |= AT91C_RTTC_RTTINCIEN;
 }
@@ -1452,7 +1448,7 @@ AT91F_RTTSetRttIncINT( AT91PS_RTTC pRTTC )
 //* \brief  Disable RTT INC Interrupt
 //*--------------------------------------------------------------------------------------
 static __inline void
-AT91F_RTTClearRttIncINT( AT91PS_RTTC pRTTC )
+AT91F_RTTClearRttIncINT(AT91PS_RTTC pRTTC)
 {
     pRTTC->RTTC_RTMR &= ~AT91C_RTTC_RTTINCIEN;
 }
@@ -1462,7 +1458,7 @@ AT91F_RTTClearRttIncINT( AT91PS_RTTC pRTTC )
 //* \brief  Set RTT Alarm Value
 //*--------------------------------------------------------------------------------------
 static __inline void
-AT91F_RTTSetAlarmValue( AT91PS_RTTC pRTTC, unsigned int alarm )
+AT91F_RTTSetAlarmValue(AT91PS_RTTC pRTTC, unsigned int alarm)
 {
     pRTTC->RTTC_RTAR = alarm;
 }
@@ -1472,9 +1468,9 @@ AT91F_RTTSetAlarmValue( AT91PS_RTTC pRTTC, unsigned int alarm )
 //* \brief  Get RTT Alarm Value
 //*--------------------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_RTTGetAlarmValue( AT91PS_RTTC pRTTC )
+AT91F_RTTGetAlarmValue(AT91PS_RTTC pRTTC)
 {
-    return ( pRTTC->RTTC_RTAR );
+    return (pRTTC->RTTC_RTAR);
 }
 
 //*--------------------------------------------------------------------------------------
@@ -1482,9 +1478,9 @@ AT91F_RTTGetAlarmValue( AT91PS_RTTC pRTTC )
 //* \brief  Read the RTT status
 //*--------------------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_RTTGetStatus( AT91PS_RTTC pRTTC )
+AT91F_RTTGetStatus(AT91PS_RTTC pRTTC)
 {
-    return ( pRTTC->RTTC_RTSR );
+    return (pRTTC->RTTC_RTSR);
 }
 
 //*--------------------------------------------------------------------------------------
@@ -1492,7 +1488,7 @@ AT91F_RTTGetStatus( AT91PS_RTTC pRTTC )
 //* \brief  Read the RTT value
 //*--------------------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_RTTReadValue( AT91PS_RTTC pRTTC )
+AT91F_RTTReadValue(AT91PS_RTTC pRTTC)
 {
     register volatile unsigned int val1, val2;
 
@@ -1500,9 +1496,8 @@ AT91F_RTTReadValue( AT91PS_RTTC pRTTC )
     {
         val1 = pRTTC->RTTC_RTVR;
         val2 = pRTTC->RTTC_RTVR;
-    }
-    while( val1 != val2 );
-    return ( val1 );
+    } while (val1 != val2);
+    return (val1);
 }
 
 /* *****************************************************************************
@@ -1513,20 +1508,20 @@ AT91F_RTTReadValue( AT91PS_RTTC pRTTC )
 //* \brief System timer init : period in µsecond, system clock freq in MHz
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PITInit( AT91PS_PITC pPITC, unsigned int period, unsigned int pit_frequency )
+AT91F_PITInit(AT91PS_PITC pPITC, unsigned int period, unsigned int pit_frequency)
 {
-    pPITC->PITC_PIMR = period ? ( period * pit_frequency + 8 ) >> 4 : 0;        // +8 to avoid %10 and /10
+    pPITC->PITC_PIMR = period ? (period * pit_frequency + 8) >> 4 : 0; // +8 to avoid %10 and /10
     pPITC->PITC_PIMR |= AT91C_PITC_PITEN;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_PITSetPIV
-//* \brief Set the PIT Periodic Interval Value 
+//* \brief Set the PIT Periodic Interval Value
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PITSetPIV( AT91PS_PITC pPITC, unsigned int piv )
+AT91F_PITSetPIV(AT91PS_PITC pPITC, unsigned int piv)
 {
-    pPITC->PITC_PIMR = piv | ( pPITC->PITC_PIMR & ( AT91C_PITC_PITEN | AT91C_PITC_PITIEN ) );
+    pPITC->PITC_PIMR = piv | (pPITC->PITC_PIMR & (AT91C_PITC_PITEN | AT91C_PITC_PITIEN));
 }
 
 //*----------------------------------------------------------------------------
@@ -1534,7 +1529,7 @@ AT91F_PITSetPIV( AT91PS_PITC pPITC, unsigned int piv )
 //* \brief Enable PIT periodic interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PITEnableInt( AT91PS_PITC pPITC )
+AT91F_PITEnableInt(AT91PS_PITC pPITC)
 {
     pPITC->PITC_PIMR |= AT91C_PITC_PITIEN;
 }
@@ -1544,7 +1539,7 @@ AT91F_PITEnableInt( AT91PS_PITC pPITC )
 //* \brief Disable PIT periodic interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PITDisableInt( AT91PS_PITC pPITC )
+AT91F_PITDisableInt(AT91PS_PITC pPITC)
 {
     pPITC->PITC_PIMR &= ~AT91C_PITC_PITIEN;
 }
@@ -1554,9 +1549,9 @@ AT91F_PITDisableInt( AT91PS_PITC pPITC )
 //* \brief Read PIT mode register
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PITGetMode( AT91PS_PITC pPITC )
+AT91F_PITGetMode(AT91PS_PITC pPITC)
 {
-    return ( pPITC->PITC_PIMR );
+    return (pPITC->PITC_PIMR);
 }
 
 //*----------------------------------------------------------------------------
@@ -1564,9 +1559,9 @@ AT91F_PITGetMode( AT91PS_PITC pPITC )
 //* \brief Read PIT status register
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PITGetStatus( AT91PS_PITC pPITC )
+AT91F_PITGetStatus(AT91PS_PITC pPITC)
 {
-    return ( pPITC->PITC_PISR );
+    return (pPITC->PITC_PISR);
 }
 
 //*----------------------------------------------------------------------------
@@ -1574,9 +1569,9 @@ AT91F_PITGetStatus( AT91PS_PITC pPITC )
 //* \brief Read PIT CPIV and PICNT without ressetting the counters
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PITGetPIIR( AT91PS_PITC pPITC )
+AT91F_PITGetPIIR(AT91PS_PITC pPITC)
 {
-    return ( pPITC->PITC_PIIR );
+    return (pPITC->PITC_PIIR);
 }
 
 //*----------------------------------------------------------------------------
@@ -1584,9 +1579,9 @@ AT91F_PITGetPIIR( AT91PS_PITC pPITC )
 //* \brief Read System timer CPIV and PICNT without ressetting the counters
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PITGetPIVR( AT91PS_PITC pPITC )
+AT91F_PITGetPIVR(AT91PS_PITC pPITC)
 {
-    return ( pPITC->PITC_PIVR );
+    return (pPITC->PITC_PIVR);
 }
 
 /* *****************************************************************************
@@ -1597,7 +1592,7 @@ AT91F_PITGetPIVR( AT91PS_PITC pPITC )
 //* \brief Set Watchdog Mode Register
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_WDTSetMode( AT91PS_WDTC pWDTC, unsigned int Mode )
+AT91F_WDTSetMode(AT91PS_WDTC pWDTC, unsigned int Mode)
 {
     pWDTC->WDTC_WDMR = Mode;
 }
@@ -1607,7 +1602,7 @@ AT91F_WDTSetMode( AT91PS_WDTC pWDTC, unsigned int Mode )
 //* \brief Restart Watchdog
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_WDTRestart( AT91PS_WDTC pWDTC )
+AT91F_WDTRestart(AT91PS_WDTC pWDTC)
 {
     pWDTC->WDTC_WDCR = 0xA5000001;
 }
@@ -1617,9 +1612,9 @@ AT91F_WDTRestart( AT91PS_WDTC pWDTC )
 //* \brief Get Watchdog Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_WDTSGettatus( AT91PS_WDTC pWDTC )
+AT91F_WDTSGettatus(AT91PS_WDTC pWDTC)
 {
-    return ( pWDTC->WDTC_WDSR & 0x3 );
+    return (pWDTC->WDTC_WDSR & 0x3);
 }
 
 //*----------------------------------------------------------------------------
@@ -1627,11 +1622,11 @@ AT91F_WDTSGettatus( AT91PS_WDTC pWDTC )
 //* \brief Translate ms into Watchdog Compatible value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_WDTGetPeriod( unsigned int ms )
+AT91F_WDTGetPeriod(unsigned int ms)
 {
-    if( ( ms < 4 ) || ( ms > 16000 ) )
+    if ((ms < 4) || (ms > 16000))
         return 0;
-    return ( ( ms << 8 ) / 1000 );
+    return ((ms << 8) / 1000);
 }
 
 /* *****************************************************************************
@@ -1642,7 +1637,7 @@ AT91F_WDTGetPeriod( unsigned int ms )
 //* \brief Enable VREG Low Power Mode
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_VREG_Enable_LowPowerMode( AT91PS_VREG pVREG )
+AT91F_VREG_Enable_LowPowerMode(AT91PS_VREG pVREG)
 {
     pVREG->VREG_MR |= AT91C_VREG_PSTDBY;
 }
@@ -1652,23 +1647,23 @@ AT91F_VREG_Enable_LowPowerMode( AT91PS_VREG pVREG )
 //* \brief Disable VREG Low Power Mode
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_VREG_Disable_LowPowerMode( AT91PS_VREG pVREG )
+AT91F_VREG_Disable_LowPowerMode(AT91PS_VREG pVREG)
 {
     pVREG->VREG_MR &= ~AT91C_VREG_PSTDBY;
-}                               /* *****************************************************************************
+} /* *****************************************************************************
                                    SOFTWARE API FOR MC
                                    ***************************************************************************** */
 
-#define AT91C_MC_CORRECT_KEY  ((unsigned int) 0x5A << 24)       // (MC) Correct Protect Key
+#define AT91C_MC_CORRECT_KEY ((unsigned int)0x5A << 24) // (MC) Correct Protect Key
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_MC_Remap
 //* \brief Make Remap
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_MC_Remap( void )          //  
+AT91F_MC_Remap(void) //
 {
-    AT91PS_MC       pMC = ( AT91PS_MC ) AT91C_BASE_MC;
+    AT91PS_MC pMC = (AT91PS_MC)AT91C_BASE_MC;
 
     pMC->MC_RCR = AT91C_MC_RCB;
 }
@@ -1678,8 +1673,8 @@ AT91F_MC_Remap( void )          //
 //* \brief Configure the EFC Mode Register of the MC controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_MC_EFC_CfgModeReg( AT91PS_MC pMC, // pointer to a MC controller
-                         unsigned int mode )    // mode register 
+AT91F_MC_EFC_CfgModeReg(AT91PS_MC pMC,     // pointer to a MC controller
+                        unsigned int mode) // mode register
 {
     // Write to the FMR register
     pMC->MC_FMR = mode;
@@ -1690,7 +1685,7 @@ AT91F_MC_EFC_CfgModeReg( AT91PS_MC pMC, // pointer to a MC controller
 //* \brief Return MC EFC Mode Regsiter
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_MC_EFC_GetModeReg( AT91PS_MC pMC )        // pointer to a MC controller
+AT91F_MC_EFC_GetModeReg(AT91PS_MC pMC) // pointer to a MC controller
 {
     return pMC->MC_FMR;
 }
@@ -1700,9 +1695,9 @@ AT91F_MC_EFC_GetModeReg( AT91PS_MC pMC )        // pointer to a MC controller
 //* \brief Return MC EFC Mode Regsiter
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_MC_EFC_ComputeFMCN( int master_clock )    // master clock in Hz
+AT91F_MC_EFC_ComputeFMCN(int master_clock) // master clock in Hz
 {
-    return ( master_clock / 1000000 + 2 );
+    return (master_clock / 1000000 + 2);
 }
 
 //*----------------------------------------------------------------------------
@@ -1710,8 +1705,8 @@ AT91F_MC_EFC_ComputeFMCN( int master_clock )    // master clock in Hz
 //* \brief Perform EFC Command
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_MC_EFC_PerformCmd( AT91PS_MC pMC, // pointer to a MC controller
-                         unsigned int transfer_cmd )
+AT91F_MC_EFC_PerformCmd(AT91PS_MC pMC, // pointer to a MC controller
+                        unsigned int transfer_cmd)
 {
     pMC->MC_FCR = transfer_cmd;
 }
@@ -1721,20 +1716,20 @@ AT91F_MC_EFC_PerformCmd( AT91PS_MC pMC, // pointer to a MC controller
 //* \brief Return MC EFC Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_MC_EFC_GetStatus( AT91PS_MC pMC ) // pointer to a MC controller
+AT91F_MC_EFC_GetStatus(AT91PS_MC pMC) // pointer to a MC controller
 {
     return pMC->MC_FSR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_MC_EFC_IsInterruptMasked
-//* \brief Test if EFC MC Interrupt is Masked 
+//* \brief Test if EFC MC Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_MC_EFC_IsInterruptMasked( AT91PS_MC pMC,  // \arg  pointer to a MC controller
-                                unsigned int flag )     // \arg  flag to be tested
+AT91F_MC_EFC_IsInterruptMasked(AT91PS_MC pMC,     // \arg  pointer to a MC controller
+                               unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_MC_EFC_GetModeReg( pMC ) & flag );
+    return (AT91F_MC_EFC_GetModeReg(pMC) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -1742,10 +1737,10 @@ AT91F_MC_EFC_IsInterruptMasked( AT91PS_MC pMC,  // \arg  pointer to a MC control
 //* \brief Test if EFC MC Interrupt is Set
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_MC_EFC_IsInterruptSet( AT91PS_MC pMC,     // \arg  pointer to a MC controller
-                             unsigned int flag )        // \arg  flag to be tested
+AT91F_MC_EFC_IsInterruptSet(AT91PS_MC pMC,     // \arg  pointer to a MC controller
+                            unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_MC_EFC_GetStatus( pMC ) & flag );
+    return (AT91F_MC_EFC_GetStatus(pMC) & flag);
 }
 
 /* *****************************************************************************
@@ -1756,12 +1751,12 @@ AT91F_MC_EFC_IsInterruptSet( AT91PS_MC pMC,     // \arg  pointer to a MC control
 //* \brief Configure SPI chip select register
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_CfgCs( AT91PS_SPI pSPI,       // pointer to a SPI controller
-                 int cs,        // SPI cs number (0 to 3)
-                 int val )      //  chip select register
+AT91F_SPI_CfgCs(AT91PS_SPI pSPI, // pointer to a SPI controller
+                int cs,          // SPI cs number (0 to 3)
+                int val)         //  chip select register
 {
     //* Write to the CSR register
-    *( pSPI->SPI_CSR + cs ) = val;
+    *(pSPI->SPI_CSR + cs) = val;
 }
 
 //*----------------------------------------------------------------------------
@@ -1769,8 +1764,8 @@ AT91F_SPI_CfgCs( AT91PS_SPI pSPI,       // pointer to a SPI controller
 //* \brief Enable SPI interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_EnableIt( AT91PS_SPI pSPI,    // pointer to a SPI controller
-                    unsigned int flag ) // IT to be enabled
+AT91F_SPI_EnableIt(AT91PS_SPI pSPI,   // pointer to a SPI controller
+                   unsigned int flag) // IT to be enabled
 {
     //* Write to the IER register
     pSPI->SPI_IER = flag;
@@ -1781,8 +1776,8 @@ AT91F_SPI_EnableIt( AT91PS_SPI pSPI,    // pointer to a SPI controller
 //* \brief Disable SPI interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_DisableIt( AT91PS_SPI pSPI,   // pointer to a SPI controller
-                     unsigned int flag )        // IT to be disabled
+AT91F_SPI_DisableIt(AT91PS_SPI pSPI,   // pointer to a SPI controller
+                    unsigned int flag) // IT to be disabled
 {
     //* Write to the IDR register
     pSPI->SPI_IDR = flag;
@@ -1793,8 +1788,8 @@ AT91F_SPI_DisableIt( AT91PS_SPI pSPI,   // pointer to a SPI controller
 //* \brief Reset the SPI controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_Reset( AT91PS_SPI pSPI        // pointer to a SPI controller
-     )
+AT91F_SPI_Reset(AT91PS_SPI pSPI // pointer to a SPI controller
+)
 {
     //* Write to the CR register
     pSPI->SPI_CR = AT91C_SPI_SWRST;
@@ -1805,8 +1800,8 @@ AT91F_SPI_Reset( AT91PS_SPI pSPI        // pointer to a SPI controller
 //* \brief Enable the SPI controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_Enable( AT91PS_SPI pSPI       // pointer to a SPI controller
-     )
+AT91F_SPI_Enable(AT91PS_SPI pSPI // pointer to a SPI controller
+)
 {
     //* Write to the CR register
     pSPI->SPI_CR = AT91C_SPI_SPIEN;
@@ -1817,8 +1812,8 @@ AT91F_SPI_Enable( AT91PS_SPI pSPI       // pointer to a SPI controller
 //* \brief Disable the SPI controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_Disable( AT91PS_SPI pSPI      // pointer to a SPI controller
-     )
+AT91F_SPI_Disable(AT91PS_SPI pSPI // pointer to a SPI controller
+)
 {
     //* Write to the CR register
     pSPI->SPI_CR = AT91C_SPI_SPIDIS;
@@ -1829,8 +1824,8 @@ AT91F_SPI_Disable( AT91PS_SPI pSPI      // pointer to a SPI controller
 //* \brief Enable the SPI controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_CfgMode( AT91PS_SPI pSPI,     // pointer to a SPI controller
-                   int mode )   // mode register 
+AT91F_SPI_CfgMode(AT91PS_SPI pSPI, // pointer to a SPI controller
+                  int mode)        // mode register
 {
     //* Write to the MR register
     pSPI->SPI_MR = mode;
@@ -1841,12 +1836,12 @@ AT91F_SPI_CfgMode( AT91PS_SPI pSPI,     // pointer to a SPI controller
 //* \brief Switch to the correct PCS of SPI Mode Register : Fixed Peripheral Selected
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_CfgPCS( AT91PS_SPI pSPI,      // pointer to a SPI controller
-                  char PCS_Device )     // PCS of the Device
+AT91F_SPI_CfgPCS(AT91PS_SPI pSPI, // pointer to a SPI controller
+                 char PCS_Device) // PCS of the Device
 {
     //* Write to the MR register
     pSPI->SPI_MR &= 0xFFF0FFFF;
-    pSPI->SPI_MR |= ( ( PCS_Device << 16 ) & AT91C_SPI_PCS );
+    pSPI->SPI_MR |= ((PCS_Device << 16) & AT91C_SPI_PCS);
 }
 
 //*----------------------------------------------------------------------------
@@ -1854,10 +1849,10 @@ AT91F_SPI_CfgPCS( AT91PS_SPI pSPI,      // pointer to a SPI controller
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1 if PDC has been initializaed with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_SPI_ReceiveFrame( AT91PS_SPI pSPI,
-                        char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer )
+AT91F_SPI_ReceiveFrame(AT91PS_SPI pSPI,
+                       char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer)
 {
-    return AT91F_PDC_ReceiveFrame( ( AT91PS_PDC ) & ( pSPI->SPI_RPR ), pBuffer, szBuffer, pNextBuffer, szNextBuffer );
+    return AT91F_PDC_ReceiveFrame((AT91PS_PDC) & (pSPI->SPI_RPR), pBuffer, szBuffer, pNextBuffer, szNextBuffer);
 }
 
 //*----------------------------------------------------------------------------
@@ -1865,10 +1860,10 @@ AT91F_SPI_ReceiveFrame( AT91PS_SPI pSPI,
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1 if PDC has been initializaed with Next Buffer, 0 if PDC is bSPIy
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_SPI_SendFrame( AT91PS_SPI pSPI,
-                     char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer )
+AT91F_SPI_SendFrame(AT91PS_SPI pSPI,
+                    char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer)
 {
-    return AT91F_PDC_SendFrame( ( AT91PS_PDC ) & ( pSPI->SPI_RPR ), pBuffer, szBuffer, pNextBuffer, szNextBuffer );
+    return AT91F_PDC_SendFrame((AT91PS_PDC) & (pSPI->SPI_RPR), pBuffer, szBuffer, pNextBuffer, szNextBuffer);
 }
 
 //*----------------------------------------------------------------------------
@@ -1876,7 +1871,7 @@ AT91F_SPI_SendFrame( AT91PS_SPI pSPI,
 //* \brief Close SPI: disable IT disable transfert, close PDC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_Close( AT91PS_SPI pSPI )      // \arg pointer to a SPI controller
+AT91F_SPI_Close(AT91PS_SPI pSPI) // \arg pointer to a SPI controller
 {
     //* Reset all the Chip Select register
     pSPI->SPI_CSR[0] = 0;
@@ -1891,7 +1886,7 @@ AT91F_SPI_Close( AT91PS_SPI pSPI )      // \arg pointer to a SPI controller
     pSPI->SPI_IDR = 0xFFFFFFFF;
 
     //* Abort the Peripheral Data Transfers
-    AT91F_PDC_Close( ( AT91PS_PDC ) & ( pSPI->SPI_RPR ) );
+    AT91F_PDC_Close((AT91PS_PDC) & (pSPI->SPI_RPR));
 
     //* Disable receiver and transmitter and stop any activity immediately
     pSPI->SPI_CR = AT91C_SPI_SPIDIS;
@@ -1902,12 +1897,12 @@ AT91F_SPI_Close( AT91PS_SPI pSPI )      // \arg pointer to a SPI controller
 //* \brief Send a character,does not check if ready to send
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI_PutChar( AT91PS_SPI pSPI, unsigned int character, unsigned int cs_number )
+AT91F_SPI_PutChar(AT91PS_SPI pSPI, unsigned int character, unsigned int cs_number)
 {
-    unsigned int    value_for_cs;
+    unsigned int value_for_cs;
 
-    value_for_cs = ( ~( 1 << cs_number ) ) & 0xF;       //Place a zero among a 4 ONEs number
-    pSPI->SPI_TDR = ( character & 0xFFFF ) | ( value_for_cs << 16 );
+    value_for_cs = (~(1 << cs_number)) & 0xF; //Place a zero among a 4 ONEs number
+    pSPI->SPI_TDR = (character & 0xFFFF) | (value_for_cs << 16);
 }
 
 //*----------------------------------------------------------------------------
@@ -1915,9 +1910,9 @@ AT91F_SPI_PutChar( AT91PS_SPI pSPI, unsigned int character, unsigned int cs_numb
 //* \brief Receive a character,does not check if a character is available
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_SPI_GetChar( const AT91PS_SPI pSPI )
+AT91F_SPI_GetChar(const AT91PS_SPI pSPI)
 {
-    return ( ( pSPI->SPI_RDR ) & 0xFFFF );
+    return ((pSPI->SPI_RDR) & 0xFFFF);
 }
 
 //*----------------------------------------------------------------------------
@@ -1925,21 +1920,21 @@ AT91F_SPI_GetChar( const AT91PS_SPI pSPI )
 //* \brief Return SPI Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_SPI_GetInterruptMaskStatus(       // \return SPI Interrupt Mask Status
-                                     AT91PS_SPI pSpi )  // \arg  pointer to a SPI controller
+AT91F_SPI_GetInterruptMaskStatus( // \return SPI Interrupt Mask Status
+    AT91PS_SPI pSpi)              // \arg  pointer to a SPI controller
 {
     return pSpi->SPI_IMR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_SPI_IsInterruptMasked
-//* \brief Test if SPI Interrupt is Masked 
+//* \brief Test if SPI Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_SPI_IsInterruptMasked( AT91PS_SPI pSpi,   // \arg  pointer to a SPI controller
-                             unsigned int flag )        // \arg  flag to be tested
+AT91F_SPI_IsInterruptMasked(AT91PS_SPI pSpi,   // \arg  pointer to a SPI controller
+                            unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_SPI_GetInterruptMaskStatus( pSpi ) & flag );
+    return (AT91F_SPI_GetInterruptMaskStatus(pSpi) & flag);
 }
 
 /* *****************************************************************************
@@ -1949,58 +1944,58 @@ AT91F_SPI_IsInterruptMasked( AT91PS_SPI pSpi,   // \arg  pointer to a SPI contro
 //* \fn    AT91F_US_Baudrate
 //* \brief Calculate the baudrate
 //* Standard Asynchronous Mode : 8 bits , 1 stop , no parity
-#define AT91C_US_ASYNC_MODE ( AT91C_US_USMODE_NORMAL + \
-                        AT91C_US_NBSTOP_1_BIT + \
-                        AT91C_US_PAR_NONE + \
-                        AT91C_US_CHRL_8_BITS + \
-                        AT91C_US_CLKS_CLOCK )
+#define AT91C_US_ASYNC_MODE (AT91C_US_USMODE_NORMAL + \
+                             AT91C_US_NBSTOP_1_BIT +  \
+                             AT91C_US_PAR_NONE +      \
+                             AT91C_US_CHRL_8_BITS +   \
+                             AT91C_US_CLKS_CLOCK)
 
 //* Standard External Asynchronous Mode : 8 bits , 1 stop , no parity
-#define AT91C_US_ASYNC_SCK_MODE ( AT91C_US_USMODE_NORMAL + \
-                            AT91C_US_NBSTOP_1_BIT + \
-                            AT91C_US_PAR_NONE + \
-                            AT91C_US_CHRL_8_BITS + \
-                            AT91C_US_CLKS_EXT )
+#define AT91C_US_ASYNC_SCK_MODE (AT91C_US_USMODE_NORMAL + \
+                                 AT91C_US_NBSTOP_1_BIT +  \
+                                 AT91C_US_PAR_NONE +      \
+                                 AT91C_US_CHRL_8_BITS +   \
+                                 AT91C_US_CLKS_EXT)
 
 //* Standard Synchronous Mode : 8 bits , 1 stop , no parity
-#define AT91C_US_SYNC_MODE ( AT91C_US_SYNC + \
-                       AT91C_US_USMODE_NORMAL + \
-                       AT91C_US_NBSTOP_1_BIT + \
-                       AT91C_US_PAR_NONE + \
-                       AT91C_US_CHRL_8_BITS + \
-                       AT91C_US_CLKS_CLOCK )
+#define AT91C_US_SYNC_MODE (AT91C_US_SYNC +          \
+                            AT91C_US_USMODE_NORMAL + \
+                            AT91C_US_NBSTOP_1_BIT +  \
+                            AT91C_US_PAR_NONE +      \
+                            AT91C_US_CHRL_8_BITS +   \
+                            AT91C_US_CLKS_CLOCK)
 
 //* SCK used Label
 #define AT91C_US_SCK_USED (AT91C_US_CKLO | AT91C_US_CLKS_EXT)
 
 //* Standard ISO T=0 Mode : 8 bits , 1 stop , parity
-#define AT91C_US_ISO_READER_MODE ( AT91C_US_USMODE_ISO7816_0 + \
-					   		 AT91C_US_CLKS_CLOCK +\
-                       		 AT91C_US_NBSTOP_1_BIT + \
-                       		 AT91C_US_PAR_EVEN + \
-                       		 AT91C_US_CHRL_8_BITS + \
-                       		 AT91C_US_CKLO +\
-                       		 AT91C_US_OVER)
+#define AT91C_US_ISO_READER_MODE (AT91C_US_USMODE_ISO7816_0 + \
+                                  AT91C_US_CLKS_CLOCK +       \
+                                  AT91C_US_NBSTOP_1_BIT +     \
+                                  AT91C_US_PAR_EVEN +         \
+                                  AT91C_US_CHRL_8_BITS +      \
+                                  AT91C_US_CKLO +             \
+                                  AT91C_US_OVER)
 
 //* Standard IRDA mode
-#define AT91C_US_ASYNC_IRDA_MODE (  AT91C_US_USMODE_IRDA + \
-                            AT91C_US_NBSTOP_1_BIT + \
-                            AT91C_US_PAR_NONE + \
-                            AT91C_US_CHRL_8_BITS + \
-                            AT91C_US_CLKS_CLOCK )
+#define AT91C_US_ASYNC_IRDA_MODE (AT91C_US_USMODE_IRDA +  \
+                                  AT91C_US_NBSTOP_1_BIT + \
+                                  AT91C_US_PAR_NONE +     \
+                                  AT91C_US_CHRL_8_BITS +  \
+                                  AT91C_US_CLKS_CLOCK)
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_US_Baudrate
 //* \brief Caluculate baud_value according to the main clock and the baud rate
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_US_Baudrate( const unsigned int main_clock,       // \arg peripheral clock
-                   const unsigned int baud_rate )       // \arg UART baudrate
+AT91F_US_Baudrate(const unsigned int main_clock, // \arg peripheral clock
+                  const unsigned int baud_rate)  // \arg UART baudrate
 {
-    unsigned int    baud_value = ( ( main_clock * 10 ) / ( baud_rate * 16 ) );
+    unsigned int baud_value = ((main_clock * 10) / (baud_rate * 16));
 
-    if( ( baud_value % 10 ) >= 5 )
-        baud_value = ( baud_value / 10 ) + 1;
+    if ((baud_value % 10) >= 5)
+        baud_value = (baud_value / 10) + 1;
     else
         baud_value /= 10;
     return baud_value;
@@ -2011,12 +2006,12 @@ AT91F_US_Baudrate( const unsigned int main_clock,       // \arg peripheral clock
 //* \brief Set the baudrate according to the CPU clock
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_SetBaudrate( AT91PS_USART pUSART,      // \arg pointer to a USART controller
-                      unsigned int mainClock,   // \arg peripheral clock
-                      unsigned int speed )      // \arg UART baudrate
+AT91F_US_SetBaudrate(AT91PS_USART pUSART,    // \arg pointer to a USART controller
+                     unsigned int mainClock, // \arg peripheral clock
+                     unsigned int speed)     // \arg UART baudrate
 {
     //* Define the baud rate divisor register
-    pUSART->US_BRGR = AT91F_US_Baudrate( mainClock, speed );
+    pUSART->US_BRGR = AT91F_US_Baudrate(mainClock, speed);
 }
 
 //*----------------------------------------------------------------------------
@@ -2024,8 +2019,8 @@ AT91F_US_SetBaudrate( AT91PS_USART pUSART,      // \arg pointer to a USART contr
 //* \brief Set USART timeguard
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_SetTimeguard( AT91PS_USART pUSART,     // \arg pointer to a USART controller
-                       unsigned int timeguard ) // \arg timeguard value
+AT91F_US_SetTimeguard(AT91PS_USART pUSART,    // \arg pointer to a USART controller
+                      unsigned int timeguard) // \arg timeguard value
 {
     //* Write the Timeguard Register
     pUSART->US_TTGR = timeguard;
@@ -2036,8 +2031,8 @@ AT91F_US_SetTimeguard( AT91PS_USART pUSART,     // \arg pointer to a USART contr
 //* \brief Enable USART IT
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_EnableIt( AT91PS_USART pUSART, // \arg pointer to a USART controller
-                   unsigned int flag )  // \arg IT to be enabled
+AT91F_US_EnableIt(AT91PS_USART pUSART, // \arg pointer to a USART controller
+                  unsigned int flag)   // \arg IT to be enabled
 {
     //* Write to the IER register
     pUSART->US_IER = flag;
@@ -2048,8 +2043,8 @@ AT91F_US_EnableIt( AT91PS_USART pUSART, // \arg pointer to a USART controller
 //* \brief Disable USART IT
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_DisableIt( AT91PS_USART pUSART,        // \arg pointer to a USART controller
-                    unsigned int flag ) // \arg IT to be disabled
+AT91F_US_DisableIt(AT91PS_USART pUSART, // \arg pointer to a USART controller
+                   unsigned int flag)   // \arg IT to be disabled
 {
     //* Write to the IER register
     pUSART->US_IDR = flag;
@@ -2060,30 +2055,29 @@ AT91F_US_DisableIt( AT91PS_USART pUSART,        // \arg pointer to a USART contr
 //* \brief Configure USART
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_Configure( AT91PS_USART pUSART,        // \arg pointer to a USART controller
-                    unsigned int mainClock,     // \arg peripheral clock
-                    unsigned int mode,  // \arg mode Register to be programmed
-                    unsigned int baudRate,      // \arg baudrate to be programmed
-                    unsigned int timeguard )    // \arg timeguard to be programmed
+AT91F_US_Configure(AT91PS_USART pUSART,    // \arg pointer to a USART controller
+                   unsigned int mainClock, // \arg peripheral clock
+                   unsigned int mode,      // \arg mode Register to be programmed
+                   unsigned int baudRate,  // \arg baudrate to be programmed
+                   unsigned int timeguard) // \arg timeguard to be programmed
 {
     //* Disable interrupts
-    pUSART->US_IDR = ( unsigned int )-1;
+    pUSART->US_IDR = (unsigned int)-1;
 
     //* Reset receiver and transmitter
     pUSART->US_CR = AT91C_US_RSTRX | AT91C_US_RSTTX | AT91C_US_RXDIS | AT91C_US_TXDIS;
 
     //* Define the baud rate divisor register
-    AT91F_US_SetBaudrate( pUSART, mainClock, baudRate );
+    AT91F_US_SetBaudrate(pUSART, mainClock, baudRate);
 
     //* Write the Timeguard Register
-    AT91F_US_SetTimeguard( pUSART, timeguard );
+    AT91F_US_SetTimeguard(pUSART, timeguard);
 
     //* Clear Transmit and Receive Counters
-    AT91F_PDC_Open( ( AT91PS_PDC ) & ( pUSART->US_RPR ) );
+    AT91F_PDC_Open((AT91PS_PDC) & (pUSART->US_RPR));
 
     //* Define the USART mode
     pUSART->US_MR = mode;
-
 }
 
 //*----------------------------------------------------------------------------
@@ -2091,7 +2085,7 @@ AT91F_US_Configure( AT91PS_USART pUSART,        // \arg pointer to a USART contr
 //* \brief Enable receiving characters
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_EnableRx( AT91PS_USART pUSART )        // \arg pointer to a USART controller
+AT91F_US_EnableRx(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
     //* Enable receiver
     pUSART->US_CR = AT91C_US_RXEN;
@@ -2102,7 +2096,7 @@ AT91F_US_EnableRx( AT91PS_USART pUSART )        // \arg pointer to a USART contr
 //* \brief Enable sending characters
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_EnableTx( AT91PS_USART pUSART )        // \arg pointer to a USART controller
+AT91F_US_EnableTx(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
     //* Enable  transmitter
     pUSART->US_CR = AT91C_US_TXEN;
@@ -2113,7 +2107,7 @@ AT91F_US_EnableTx( AT91PS_USART pUSART )        // \arg pointer to a USART contr
 //* \brief Reset Receiver and re-enable it
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_ResetRx( AT91PS_USART pUSART ) // \arg pointer to a USART controller
+AT91F_US_ResetRx(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
     //* Reset receiver
     pUSART->US_CR = AT91C_US_RSTRX;
@@ -2126,7 +2120,7 @@ AT91F_US_ResetRx( AT91PS_USART pUSART ) // \arg pointer to a USART controller
 //* \brief Reset Transmitter and re-enable it
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_ResetTx( AT91PS_USART pUSART ) // \arg pointer to a USART controller
+AT91F_US_ResetTx(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
     //* Reset transmitter
     pUSART->US_CR = AT91C_US_RSTTX;
@@ -2139,7 +2133,7 @@ AT91F_US_ResetTx( AT91PS_USART pUSART ) // \arg pointer to a USART controller
 //* \brief Disable Receiver
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_DisableRx( AT91PS_USART pUSART )       // \arg pointer to a USART controller
+AT91F_US_DisableRx(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
     //* Disable receiver
     pUSART->US_CR = AT91C_US_RXDIS;
@@ -2150,7 +2144,7 @@ AT91F_US_DisableRx( AT91PS_USART pUSART )       // \arg pointer to a USART contr
 //* \brief Disable Transmitter
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_DisableTx( AT91PS_USART pUSART )       // \arg pointer to a USART controller
+AT91F_US_DisableTx(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
     //* Disable transmitter
     pUSART->US_CR = AT91C_US_TXDIS;
@@ -2161,7 +2155,7 @@ AT91F_US_DisableTx( AT91PS_USART pUSART )       // \arg pointer to a USART contr
 //* \brief Close USART: disable IT disable receiver and transmitter, close PDC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_Close( AT91PS_USART pUSART )   // \arg pointer to a USART controller
+AT91F_US_Close(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
     //* Reset the baud rate divisor register
     pUSART->US_BRGR = 0;
@@ -2176,7 +2170,7 @@ AT91F_US_Close( AT91PS_USART pUSART )   // \arg pointer to a USART controller
     pUSART->US_IDR = 0xFFFFFFFF;
 
     //* Abort the Peripheral Data Transfers
-    AT91F_PDC_Close( ( AT91PS_PDC ) & ( pUSART->US_RPR ) );
+    AT91F_PDC_Close((AT91PS_PDC) & (pUSART->US_RPR));
 
     //* Disable receiver and transmitter and stop any activity immediately
     pUSART->US_CR = AT91C_US_TXDIS | AT91C_US_RXDIS | AT91C_US_RSTTX | AT91C_US_RSTRX;
@@ -2187,9 +2181,9 @@ AT91F_US_Close( AT91PS_USART pUSART )   // \arg pointer to a USART controller
 //* \brief Return 1 if a character can be written in US_THR
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_US_TxReady( AT91PS_USART pUSART ) // \arg pointer to a USART controller
+AT91F_US_TxReady(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
-    return ( pUSART->US_CSR & AT91C_US_TXRDY );
+    return (pUSART->US_CSR & AT91C_US_TXRDY);
 }
 
 //*----------------------------------------------------------------------------
@@ -2197,9 +2191,9 @@ AT91F_US_TxReady( AT91PS_USART pUSART ) // \arg pointer to a USART controller
 //* \brief Return 1 if a character can be read in US_RHR
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_US_RxReady( AT91PS_USART pUSART ) // \arg pointer to a USART controller
+AT91F_US_RxReady(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
-    return ( pUSART->US_CSR & AT91C_US_RXRDY );
+    return (pUSART->US_CSR & AT91C_US_RXRDY);
 }
 
 //*----------------------------------------------------------------------------
@@ -2207,11 +2201,11 @@ AT91F_US_RxReady( AT91PS_USART pUSART ) // \arg pointer to a USART controller
 //* \brief Return the error flag
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_US_Error( AT91PS_USART pUSART )   // \arg pointer to a USART controller
+AT91F_US_Error(AT91PS_USART pUSART) // \arg pointer to a USART controller
 {
-    return ( pUSART->US_CSR & ( AT91C_US_OVRE | // Overrun error
-                                AT91C_US_FRAME |        // Framing error
-                                AT91C_US_PARE ) );      // Parity error
+    return (pUSART->US_CSR & (AT91C_US_OVRE |  // Overrun error
+                              AT91C_US_FRAME | // Framing error
+                              AT91C_US_PARE)); // Parity error
 }
 
 //*----------------------------------------------------------------------------
@@ -2219,9 +2213,9 @@ AT91F_US_Error( AT91PS_USART pUSART )   // \arg pointer to a USART controller
 //* \brief Send a character,does not check if ready to send
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_PutChar( AT91PS_USART pUSART, int character )
+AT91F_US_PutChar(AT91PS_USART pUSART, int character)
 {
-    pUSART->US_THR = ( character & 0x1FF );
+    pUSART->US_THR = (character & 0x1FF);
 }
 
 //*----------------------------------------------------------------------------
@@ -2229,9 +2223,9 @@ AT91F_US_PutChar( AT91PS_USART pUSART, int character )
 //* \brief Receive a character,does not check if a character is available
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_US_GetChar( const AT91PS_USART pUSART )
+AT91F_US_GetChar(const AT91PS_USART pUSART)
 {
-    return ( ( pUSART->US_RHR ) & 0x1FF );
+    return ((pUSART->US_RHR) & 0x1FF);
 }
 
 //*----------------------------------------------------------------------------
@@ -2239,10 +2233,10 @@ AT91F_US_GetChar( const AT91PS_USART pUSART )
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1 if PDC has been initializaed with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_US_SendFrame( AT91PS_USART pUSART,
-                    char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer )
+AT91F_US_SendFrame(AT91PS_USART pUSART,
+                   char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer)
 {
-    return AT91F_PDC_SendFrame( ( AT91PS_PDC ) & ( pUSART->US_RPR ), pBuffer, szBuffer, pNextBuffer, szNextBuffer );
+    return AT91F_PDC_SendFrame((AT91PS_PDC) & (pUSART->US_RPR), pBuffer, szBuffer, pNextBuffer, szNextBuffer);
 }
 
 //*----------------------------------------------------------------------------
@@ -2250,10 +2244,10 @@ AT91F_US_SendFrame( AT91PS_USART pUSART,
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1 if PDC has been initializaed with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_US_ReceiveFrame( AT91PS_USART pUSART,
-                       char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer )
+AT91F_US_ReceiveFrame(AT91PS_USART pUSART,
+                      char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer)
 {
-    return AT91F_PDC_ReceiveFrame( ( AT91PS_PDC ) & ( pUSART->US_RPR ), pBuffer, szBuffer, pNextBuffer, szNextBuffer );
+    return AT91F_PDC_ReceiveFrame((AT91PS_PDC) & (pUSART->US_RPR), pBuffer, szBuffer, pNextBuffer, szNextBuffer);
 }
 
 //*----------------------------------------------------------------------------
@@ -2261,7 +2255,7 @@ AT91F_US_ReceiveFrame( AT91PS_USART pUSART,
 //* \brief Set the value of IrDa filter tregister
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US_SetIrdaFilter( AT91PS_USART pUSART, unsigned char value )
+AT91F_US_SetIrdaFilter(AT91PS_USART pUSART, unsigned char value)
 {
     pUSART->US_IF = value;
 }
@@ -2274,46 +2268,42 @@ AT91F_US_SetIrdaFilter( AT91PS_USART pUSART, unsigned char value )
 //* Configuration to set in the SSC Transmit Clock Mode Register
 //* Parameters :  nb_bit_by_slot : 8, 16 or 32 bits
 //*                       nb_slot_by_frame : number of channels
-#define AT91C_I2S_ASY_MASTER_TX_SETTING(nb_bit_by_slot, nb_slot_by_frame)( +\
-									   AT91C_SSC_CKS_DIV   +\
-                            		   AT91C_SSC_CKO_CONTINOUS      +\
-                            		   AT91C_SSC_CKG_NONE    +\
-                                       AT91C_SSC_START_FALL_RF +\
-                           			   AT91C_SSC_STTOUT  +\
-                            		   ((1<<16) & AT91C_SSC_STTDLY) +\
-                            		   ((((nb_bit_by_slot*nb_slot_by_frame)/2)-1) <<24))
-
+#define AT91C_I2S_ASY_MASTER_TX_SETTING(nb_bit_by_slot, nb_slot_by_frame) (+AT91C_SSC_CKS_DIV +             \
+                                                                           AT91C_SSC_CKO_CONTINOUS +        \
+                                                                           AT91C_SSC_CKG_NONE +             \
+                                                                           AT91C_SSC_START_FALL_RF +        \
+                                                                           AT91C_SSC_STTOUT +               \
+                                                                           ((1 << 16) & AT91C_SSC_STTDLY) + \
+                                                                           ((((nb_bit_by_slot * nb_slot_by_frame) / 2) - 1) << 24))
 
 //* Configuration to set in the SSC Transmit Frame Mode Register
 //* Parameters : nb_bit_by_slot : 8, 16 or 32 bits
 //*                      nb_slot_by_frame : number of channels
-#define AT91C_I2S_ASY_TX_FRAME_SETTING(nb_bit_by_slot, nb_slot_by_frame)( +\
-									(nb_bit_by_slot-1)  +\
-                            		AT91C_SSC_MSBF   +\
-                            		(((nb_slot_by_frame-1)<<8) & AT91C_SSC_DATNB)  +\
-                            		(((nb_bit_by_slot-1)<<16) & AT91C_SSC_FSLEN) +\
-                            		AT91C_SSC_FSOS_NEGATIVE)
-
+#define AT91C_I2S_ASY_TX_FRAME_SETTING(nb_bit_by_slot, nb_slot_by_frame) (+(nb_bit_by_slot - 1) +                             \
+                                                                          AT91C_SSC_MSBF +                                    \
+                                                                          (((nb_slot_by_frame - 1) << 8) & AT91C_SSC_DATNB) + \
+                                                                          (((nb_bit_by_slot - 1) << 16) & AT91C_SSC_FSLEN) +  \
+                                                                          AT91C_SSC_FSOS_NEGATIVE)
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_SSC_SetBaudrate
 //* \brief Set the baudrate according to the CPU clock
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_SetBaudrate( AT91PS_SSC pSSC, // \arg pointer to a SSC controller
-                       unsigned int mainClock,  // \arg peripheral clock
-                       unsigned int speed )     // \arg SSC baudrate
+AT91F_SSC_SetBaudrate(AT91PS_SSC pSSC,        // \arg pointer to a SSC controller
+                      unsigned int mainClock, // \arg peripheral clock
+                      unsigned int speed)     // \arg SSC baudrate
 {
-    unsigned int    baud_value;
+    unsigned int baud_value;
 
     //* Define the baud rate divisor register
-    if( speed == 0 )
+    if (speed == 0)
         baud_value = 0;
     else
     {
-        baud_value = ( unsigned int )( mainClock * 10 ) / ( 2 * speed );
-        if( ( baud_value % 10 ) >= 5 )
-            baud_value = ( baud_value / 10 ) + 1;
+        baud_value = (unsigned int)(mainClock * 10) / (2 * speed);
+        if ((baud_value % 10) >= 5)
+            baud_value = (baud_value / 10) + 1;
         else
             baud_value /= 10;
     }
@@ -2326,22 +2316,22 @@ AT91F_SSC_SetBaudrate( AT91PS_SSC pSSC, // \arg pointer to a SSC controller
 //* \brief Configure SSC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_Configure( AT91PS_SSC pSSC,   // \arg pointer to a SSC controller
-                     unsigned int syst_clock,   // \arg System Clock Frequency
-                     unsigned int baud_rate,    // \arg Expected Baud Rate Frequency
-                     unsigned int clock_rx,     // \arg Receiver Clock Parameters
-                     unsigned int mode_rx,      // \arg mode Register to be programmed
-                     unsigned int clock_tx,     // \arg Transmitter Clock Parameters
-                     unsigned int mode_tx )     // \arg mode Register to be programmed
+AT91F_SSC_Configure(AT91PS_SSC pSSC,         // \arg pointer to a SSC controller
+                    unsigned int syst_clock, // \arg System Clock Frequency
+                    unsigned int baud_rate,  // \arg Expected Baud Rate Frequency
+                    unsigned int clock_rx,   // \arg Receiver Clock Parameters
+                    unsigned int mode_rx,    // \arg mode Register to be programmed
+                    unsigned int clock_tx,   // \arg Transmitter Clock Parameters
+                    unsigned int mode_tx)    // \arg mode Register to be programmed
 {
     //* Disable interrupts
-    pSSC->SSC_IDR = ( unsigned int )-1;
+    pSSC->SSC_IDR = (unsigned int)-1;
 
     //* Reset receiver and transmitter
     pSSC->SSC_CR = AT91C_SSC_SWRST | AT91C_SSC_RXDIS | AT91C_SSC_TXDIS;
 
     //* Define the Clock Mode Register
-    AT91F_SSC_SetBaudrate( pSSC, syst_clock, baud_rate );
+    AT91F_SSC_SetBaudrate(pSSC, syst_clock, baud_rate);
 
     //* Write the Receive Clock Mode Register
     pSSC->SSC_RCMR = clock_rx;
@@ -2356,9 +2346,7 @@ AT91F_SSC_Configure( AT91PS_SSC pSSC,   // \arg pointer to a SSC controller
     pSSC->SSC_TFMR = mode_tx;
 
     //* Clear Transmit and Receive Counters
-    AT91F_PDC_Open( ( AT91PS_PDC ) & ( pSSC->SSC_RPR ) );
-
-
+    AT91F_PDC_Open((AT91PS_PDC) & (pSSC->SSC_RPR));
 }
 
 //*----------------------------------------------------------------------------
@@ -2366,7 +2354,7 @@ AT91F_SSC_Configure( AT91PS_SSC pSSC,   // \arg pointer to a SSC controller
 //* \brief Enable receiving datas
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_EnableRx( AT91PS_SSC pSSC )   // \arg pointer to a SSC controller
+AT91F_SSC_EnableRx(AT91PS_SSC pSSC) // \arg pointer to a SSC controller
 {
     //* Enable receiver
     pSSC->SSC_CR = AT91C_SSC_RXEN;
@@ -2377,7 +2365,7 @@ AT91F_SSC_EnableRx( AT91PS_SSC pSSC )   // \arg pointer to a SSC controller
 //* \brief Disable receiving datas
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_DisableRx( AT91PS_SSC pSSC )  // \arg pointer to a SSC controller
+AT91F_SSC_DisableRx(AT91PS_SSC pSSC) // \arg pointer to a SSC controller
 {
     //* Disable receiver
     pSSC->SSC_CR = AT91C_SSC_RXDIS;
@@ -2388,7 +2376,7 @@ AT91F_SSC_DisableRx( AT91PS_SSC pSSC )  // \arg pointer to a SSC controller
 //* \brief Enable sending datas
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_EnableTx( AT91PS_SSC pSSC )   // \arg pointer to a SSC controller
+AT91F_SSC_EnableTx(AT91PS_SSC pSSC) // \arg pointer to a SSC controller
 {
     //* Enable  transmitter
     pSSC->SSC_CR = AT91C_SSC_TXEN;
@@ -2399,7 +2387,7 @@ AT91F_SSC_EnableTx( AT91PS_SSC pSSC )   // \arg pointer to a SSC controller
 //* \brief Disable sending datas
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_DisableTx( AT91PS_SSC pSSC )  // \arg pointer to a SSC controller
+AT91F_SSC_DisableTx(AT91PS_SSC pSSC) // \arg pointer to a SSC controller
 {
     //* Disable  transmitter
     pSSC->SSC_CR = AT91C_SSC_TXDIS;
@@ -2410,8 +2398,8 @@ AT91F_SSC_DisableTx( AT91PS_SSC pSSC )  // \arg pointer to a SSC controller
 //* \brief Enable SSC IT
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_EnableIt( AT91PS_SSC pSSC,    // \arg pointer to a SSC controller
-                    unsigned int flag ) // \arg IT to be enabled
+AT91F_SSC_EnableIt(AT91PS_SSC pSSC,   // \arg pointer to a SSC controller
+                   unsigned int flag) // \arg IT to be enabled
 {
     //* Write to the IER register
     pSSC->SSC_IER = flag;
@@ -2422,8 +2410,8 @@ AT91F_SSC_EnableIt( AT91PS_SSC pSSC,    // \arg pointer to a SSC controller
 //* \brief Disable SSC IT
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_DisableIt( AT91PS_SSC pSSC,   // \arg pointer to a SSC controller
-                     unsigned int flag )        // \arg IT to be disabled
+AT91F_SSC_DisableIt(AT91PS_SSC pSSC,   // \arg pointer to a SSC controller
+                    unsigned int flag) // \arg IT to be disabled
 {
     //* Write to the IDR register
     pSSC->SSC_IDR = flag;
@@ -2434,10 +2422,10 @@ AT91F_SSC_DisableIt( AT91PS_SSC pSSC,   // \arg pointer to a SSC controller
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1 if PDC has been initialized with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_SSC_ReceiveFrame( AT91PS_SSC pSSC,
-                        char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer )
+AT91F_SSC_ReceiveFrame(AT91PS_SSC pSSC,
+                       char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer)
 {
-    return AT91F_PDC_ReceiveFrame( ( AT91PS_PDC ) & ( pSSC->SSC_RPR ), pBuffer, szBuffer, pNextBuffer, szNextBuffer );
+    return AT91F_PDC_ReceiveFrame((AT91PS_PDC) & (pSSC->SSC_RPR), pBuffer, szBuffer, pNextBuffer, szNextBuffer);
 }
 
 //*----------------------------------------------------------------------------
@@ -2445,10 +2433,10 @@ AT91F_SSC_ReceiveFrame( AT91PS_SSC pSSC,
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1 if PDC has been initialized with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_SSC_SendFrame( AT91PS_SSC pSSC,
-                     char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer )
+AT91F_SSC_SendFrame(AT91PS_SSC pSSC,
+                    char *pBuffer, unsigned int szBuffer, char *pNextBuffer, unsigned int szNextBuffer)
 {
-    return AT91F_PDC_SendFrame( ( AT91PS_PDC ) & ( pSSC->SSC_RPR ), pBuffer, szBuffer, pNextBuffer, szNextBuffer );
+    return AT91F_PDC_SendFrame((AT91PS_PDC) & (pSSC->SSC_RPR), pBuffer, szBuffer, pNextBuffer, szNextBuffer);
 }
 
 //*----------------------------------------------------------------------------
@@ -2456,21 +2444,21 @@ AT91F_SSC_SendFrame( AT91PS_SSC pSSC,
 //* \brief Return SSC Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_SSC_GetInterruptMaskStatus(       // \return SSC Interrupt Mask Status
-                                     AT91PS_SSC pSsc )  // \arg  pointer to a SSC controller
+AT91F_SSC_GetInterruptMaskStatus( // \return SSC Interrupt Mask Status
+    AT91PS_SSC pSsc)              // \arg  pointer to a SSC controller
 {
     return pSsc->SSC_IMR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_SSC_IsInterruptMasked
-//* \brief Test if SSC Interrupt is Masked 
+//* \brief Test if SSC Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_SSC_IsInterruptMasked( AT91PS_SSC pSsc,   // \arg  pointer to a SSC controller
-                             unsigned int flag )        // \arg  flag to be tested
+AT91F_SSC_IsInterruptMasked(AT91PS_SSC pSsc,   // \arg  pointer to a SSC controller
+                            unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_SSC_GetInterruptMaskStatus( pSsc ) & flag );
+    return (AT91F_SSC_GetInterruptMaskStatus(pSsc) & flag);
 }
 
 /* *****************************************************************************
@@ -2481,8 +2469,8 @@ AT91F_SSC_IsInterruptMasked( AT91PS_SSC pSsc,   // \arg  pointer to a SSC contro
 //* \brief Enable TWI IT
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TWI_EnableIt( AT91PS_TWI pTWI,    // \arg pointer to a TWI controller
-                    unsigned int flag ) // \arg IT to be enabled
+AT91F_TWI_EnableIt(AT91PS_TWI pTWI,   // \arg pointer to a TWI controller
+                   unsigned int flag) // \arg IT to be enabled
 {
     //* Write to the IER register
     pTWI->TWI_IER = flag;
@@ -2493,8 +2481,8 @@ AT91F_TWI_EnableIt( AT91PS_TWI pTWI,    // \arg pointer to a TWI controller
 //* \brief Disable TWI IT
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TWI_DisableIt( AT91PS_TWI pTWI,   // \arg pointer to a TWI controller
-                     unsigned int flag )        // \arg IT to be disabled
+AT91F_TWI_DisableIt(AT91PS_TWI pTWI,   // \arg pointer to a TWI controller
+                    unsigned int flag) // \arg IT to be disabled
 {
     //* Write to the IDR register
     pTWI->TWI_IDR = flag;
@@ -2505,17 +2493,16 @@ AT91F_TWI_DisableIt( AT91PS_TWI pTWI,   // \arg pointer to a TWI controller
 //* \brief Configure TWI in master mode
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TWI_Configure( AT91PS_TWI pTWI )  // \arg pointer to a TWI controller
+AT91F_TWI_Configure(AT91PS_TWI pTWI) // \arg pointer to a TWI controller
 {
     //* Disable interrupts
-    pTWI->TWI_IDR = ( unsigned int )-1;
+    pTWI->TWI_IDR = (unsigned int)-1;
 
     //* Reset peripheral
     pTWI->TWI_CR = AT91C_TWI_SWRST;
 
     //* Set Master mode
     pTWI->TWI_CR = AT91C_TWI_MSEN;
-
 }
 
 //*----------------------------------------------------------------------------
@@ -2523,21 +2510,21 @@ AT91F_TWI_Configure( AT91PS_TWI pTWI )  // \arg pointer to a TWI controller
 //* \brief Return TWI Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_TWI_GetInterruptMaskStatus(       // \return TWI Interrupt Mask Status
-                                     AT91PS_TWI pTwi )  // \arg  pointer to a TWI controller
+AT91F_TWI_GetInterruptMaskStatus( // \return TWI Interrupt Mask Status
+    AT91PS_TWI pTwi)              // \arg  pointer to a TWI controller
 {
     return pTwi->TWI_IMR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_TWI_IsInterruptMasked
-//* \brief Test if TWI Interrupt is Masked 
+//* \brief Test if TWI Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_TWI_IsInterruptMasked( AT91PS_TWI pTwi,   // \arg  pointer to a TWI controller
-                             unsigned int flag )        // \arg  flag to be tested
+AT91F_TWI_IsInterruptMasked(AT91PS_TWI pTwi,   // \arg  pointer to a TWI controller
+                            unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_TWI_GetInterruptMaskStatus( pTwi ) & flag );
+    return (AT91F_TWI_GetInterruptMaskStatus(pTwi) & flag);
 }
 
 /* *****************************************************************************
@@ -2548,8 +2535,8 @@ AT91F_TWI_IsInterruptMasked( AT91PS_TWI pTwi,   // \arg  pointer to a TWI contro
 //* \brief Return PWM Interrupt Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PWMC_GetStatus(           // \return PWM Interrupt Status
-                         AT91PS_PWMC pPWM )     // pointer to a PWM controller
+AT91F_PWMC_GetStatus( // \return PWM Interrupt Status
+    AT91PS_PWMC pPWM) // pointer to a PWM controller
 {
     return pPWM->PWMC_SR;
 }
@@ -2559,8 +2546,8 @@ AT91F_PWMC_GetStatus(           // \return PWM Interrupt Status
 //* \brief Enable PWM Interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_InterruptEnable( AT91PS_PWMC pPwm,   // \arg  pointer to a PWM controller
-                            unsigned int flag ) // \arg  PWM interrupt to be enabled
+AT91F_PWMC_InterruptEnable(AT91PS_PWMC pPwm,  // \arg  pointer to a PWM controller
+                           unsigned int flag) // \arg  PWM interrupt to be enabled
 {
     pPwm->PWMC_IER = flag;
 }
@@ -2570,8 +2557,8 @@ AT91F_PWMC_InterruptEnable( AT91PS_PWMC pPwm,   // \arg  pointer to a PWM contro
 //* \brief Disable PWM Interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_InterruptDisable( AT91PS_PWMC pPwm,  // \arg  pointer to a PWM controller
-                             unsigned int flag )        // \arg  PWM interrupt to be disabled
+AT91F_PWMC_InterruptDisable(AT91PS_PWMC pPwm,  // \arg  pointer to a PWM controller
+                            unsigned int flag) // \arg  PWM interrupt to be disabled
 {
     pPwm->PWMC_IDR = flag;
 }
@@ -2581,8 +2568,8 @@ AT91F_PWMC_InterruptDisable( AT91PS_PWMC pPwm,  // \arg  pointer to a PWM contro
 //* \brief Return PWM Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PWMC_GetInterruptMaskStatus(      // \return PWM Interrupt Mask Status
-                                      AT91PS_PWMC pPwm )        // \arg  pointer to a PWM controller
+AT91F_PWMC_GetInterruptMaskStatus( // \return PWM Interrupt Mask Status
+    AT91PS_PWMC pPwm)              // \arg  pointer to a PWM controller
 {
     return pPwm->PWMC_IMR;
 }
@@ -2592,10 +2579,10 @@ AT91F_PWMC_GetInterruptMaskStatus(      // \return PWM Interrupt Mask Status
 //* \brief Test if PWM Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PWMC_IsInterruptMasked( AT91PS_PWMC pPWM, // \arg  pointer to a PWM controller
-                              unsigned int flag )       // \arg  flag to be tested
+AT91F_PWMC_IsInterruptMasked(AT91PS_PWMC pPWM,  // \arg  pointer to a PWM controller
+                             unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PWMC_GetInterruptMaskStatus( pPWM ) & flag );
+    return (AT91F_PWMC_GetInterruptMaskStatus(pPWM) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -2603,10 +2590,10 @@ AT91F_PWMC_IsInterruptMasked( AT91PS_PWMC pPWM, // \arg  pointer to a PWM contro
 //* \brief Test if PWM Interrupt is Set
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_PWMC_IsStatusSet( AT91PS_PWMC pPWM,       // \arg  pointer to a PWM controller
-                        unsigned int flag )     // \arg  flag to be tested
+AT91F_PWMC_IsStatusSet(AT91PS_PWMC pPWM,  // \arg  pointer to a PWM controller
+                       unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_PWMC_GetStatus( pPWM ) & flag );
+    return (AT91F_PWMC_GetStatus(pPWM) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -2614,11 +2601,11 @@ AT91F_PWMC_IsStatusSet( AT91PS_PWMC pPWM,       // \arg  pointer to a PWM contro
 //* \brief Test if PWM Interrupt is Set
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_CfgChannel( AT91PS_PWMC pPWM,        // \arg  pointer to a PWM controller
-                       unsigned int channelId,  // \arg PWM channel ID
-                       unsigned int mode,       // \arg  PWM mode
-                       unsigned int period,     // \arg PWM period
-                       unsigned int duty )      // \arg PWM duty cycle
+AT91F_PWMC_CfgChannel(AT91PS_PWMC pPWM,       // \arg  pointer to a PWM controller
+                      unsigned int channelId, // \arg PWM channel ID
+                      unsigned int mode,      // \arg  PWM mode
+                      unsigned int period,    // \arg PWM period
+                      unsigned int duty)      // \arg PWM duty cycle
 {
     pPWM->PWMC_CH[channelId].PWMC_CMR = mode;
     pPWM->PWMC_CH[channelId].PWMC_CDTYR = duty;
@@ -2630,8 +2617,8 @@ AT91F_PWMC_CfgChannel( AT91PS_PWMC pPWM,        // \arg  pointer to a PWM contro
 //* \brief Enable channel
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_StartChannel( AT91PS_PWMC pPWM,      // \arg  pointer to a PWM controller
-                         unsigned int flag )    // \arg  Channels IDs to be enabled
+AT91F_PWMC_StartChannel(AT91PS_PWMC pPWM,  // \arg  pointer to a PWM controller
+                        unsigned int flag) // \arg  Channels IDs to be enabled
 {
     pPWM->PWMC_ENA = flag;
 }
@@ -2641,8 +2628,8 @@ AT91F_PWMC_StartChannel( AT91PS_PWMC pPWM,      // \arg  pointer to a PWM contro
 //* \brief Disable channel
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_StopChannel( AT91PS_PWMC pPWM,       // \arg  pointer to a PWM controller
-                        unsigned int flag )     // \arg  Channels IDs to be enabled
+AT91F_PWMC_StopChannel(AT91PS_PWMC pPWM,  // \arg  pointer to a PWM controller
+                       unsigned int flag) // \arg  Channels IDs to be enabled
 {
     pPWM->PWMC_DIS = flag;
 }
@@ -2652,9 +2639,9 @@ AT91F_PWMC_StopChannel( AT91PS_PWMC pPWM,       // \arg  pointer to a PWM contro
 //* \brief Update Period or Duty Cycle
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_UpdateChannel( AT91PS_PWMC pPWM,     // \arg  pointer to a PWM controller
-                          unsigned int channelId,       // \arg PWM channel ID
-                          unsigned int update ) // \arg  Channels IDs to be enabled
+AT91F_PWMC_UpdateChannel(AT91PS_PWMC pPWM,       // \arg  pointer to a PWM controller
+                         unsigned int channelId, // \arg PWM channel ID
+                         unsigned int update)    // \arg  Channels IDs to be enabled
 {
     pPWM->PWMC_CH[channelId].PWMC_CUPDR = update;
 }
@@ -2667,8 +2654,8 @@ AT91F_PWMC_UpdateChannel( AT91PS_PWMC pPWM,     // \arg  pointer to a PWM contro
 //* \brief Enable UDP IT
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_EnableIt( AT91PS_UDP pUDP,    // \arg pointer to a UDP controller
-                    unsigned int flag ) // \arg IT to be enabled
+AT91F_UDP_EnableIt(AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
+                   unsigned int flag) // \arg IT to be enabled
 {
     //* Write to the IER register
     pUDP->UDP_IER = flag;
@@ -2679,8 +2666,8 @@ AT91F_UDP_EnableIt( AT91PS_UDP pUDP,    // \arg pointer to a UDP controller
 //* \brief Disable UDP IT
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_DisableIt( AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
-                     unsigned int flag )        // \arg IT to be disabled
+AT91F_UDP_DisableIt(AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
+                    unsigned int flag) // \arg IT to be disabled
 {
     //* Write to the IDR register
     pUDP->UDP_IDR = flag;
@@ -2691,10 +2678,10 @@ AT91F_UDP_DisableIt( AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
 //* \brief Set UDP functional address
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_SetAddress( AT91PS_UDP pUDP,  // \arg pointer to a UDP controller
-                      unsigned char address )   // \arg new UDP address
+AT91F_UDP_SetAddress(AT91PS_UDP pUDP,       // \arg pointer to a UDP controller
+                     unsigned char address) // \arg new UDP address
 {
-    pUDP->UDP_FADDR = ( AT91C_UDP_FEN | address );
+    pUDP->UDP_FADDR = (AT91C_UDP_FEN | address);
 }
 
 //*----------------------------------------------------------------------------
@@ -2702,8 +2689,8 @@ AT91F_UDP_SetAddress( AT91PS_UDP pUDP,  // \arg pointer to a UDP controller
 //* \brief Enable Endpoint
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_EnableEp( AT91PS_UDP pUDP,    // \arg pointer to a UDP controller
-                    unsigned char endpoint )    // \arg endpoint number
+AT91F_UDP_EnableEp(AT91PS_UDP pUDP,        // \arg pointer to a UDP controller
+                   unsigned char endpoint) // \arg endpoint number
 {
     pUDP->UDP_CSR[endpoint] |= AT91C_UDP_EPEDS;
 }
@@ -2713,8 +2700,8 @@ AT91F_UDP_EnableEp( AT91PS_UDP pUDP,    // \arg pointer to a UDP controller
 //* \brief Enable Endpoint
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_DisableEp( AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
-                     unsigned char endpoint )   // \arg endpoint number
+AT91F_UDP_DisableEp(AT91PS_UDP pUDP,        // \arg pointer to a UDP controller
+                    unsigned char endpoint) // \arg endpoint number
 {
     pUDP->UDP_CSR[endpoint] &= ~AT91C_UDP_EPEDS;
 }
@@ -2724,10 +2711,10 @@ AT91F_UDP_DisableEp( AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
 //* \brief Set UDP Device state
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_SetState( AT91PS_UDP pUDP,    // \arg pointer to a UDP controller
-                    unsigned int flag ) // \arg new UDP address
+AT91F_UDP_SetState(AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
+                   unsigned int flag) // \arg new UDP address
 {
-    pUDP->UDP_GLBSTATE &= ~( AT91C_UDP_FADDEN | AT91C_UDP_CONFG );
+    pUDP->UDP_GLBSTATE &= ~(AT91C_UDP_FADDEN | AT91C_UDP_CONFG);
     pUDP->UDP_GLBSTATE |= flag;
 }
 
@@ -2736,10 +2723,10 @@ AT91F_UDP_SetState( AT91PS_UDP pUDP,    // \arg pointer to a UDP controller
 //* \brief return UDP Device state
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_UDP_GetState(             // \return the UDP device state
-                       AT91PS_UDP pUDP )        // \arg pointer to a UDP controller
+AT91F_UDP_GetState(  // \return the UDP device state
+    AT91PS_UDP pUDP) // \arg pointer to a UDP controller
 {
-    return ( pUDP->UDP_GLBSTATE & ( AT91C_UDP_FADDEN | AT91C_UDP_CONFG ) );
+    return (pUDP->UDP_GLBSTATE & (AT91C_UDP_FADDEN | AT91C_UDP_CONFG));
 }
 
 //*----------------------------------------------------------------------------
@@ -2747,9 +2734,9 @@ AT91F_UDP_GetState(             // \return the UDP device state
 //* \brief Reset UDP endpoint
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_ResetEp(              // \return the UDP device state
-                      AT91PS_UDP pUDP,  // \arg pointer to a UDP controller
-                      unsigned int flag )       // \arg Endpoints to be reset
+AT91F_UDP_ResetEp(     // \return the UDP device state
+    AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
+    unsigned int flag) // \arg Endpoints to be reset
 {
     pUDP->UDP_RSTEP = flag;
     pUDP->UDP_RSTEP = 0;
@@ -2760,8 +2747,8 @@ AT91F_UDP_ResetEp(              // \return the UDP device state
 //* \brief Endpoint will STALL requests
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_EpStall( AT91PS_UDP pUDP,     // \arg pointer to a UDP controller
-                   unsigned char endpoint )     // \arg endpoint number
+AT91F_UDP_EpStall(AT91PS_UDP pUDP,        // \arg pointer to a UDP controller
+                  unsigned char endpoint) // \arg endpoint number
 {
     pUDP->UDP_CSR[endpoint] |= AT91C_UDP_FORCESTALL;
 }
@@ -2771,9 +2758,9 @@ AT91F_UDP_EpStall( AT91PS_UDP pUDP,     // \arg pointer to a UDP controller
 //* \brief Write value in the DPR
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_EpWrite( AT91PS_UDP pUDP,     // \arg pointer to a UDP controller
-                   unsigned char endpoint,      // \arg endpoint number
-                   unsigned char value )        // \arg value to be written in the DPR
+AT91F_UDP_EpWrite(AT91PS_UDP pUDP,        // \arg pointer to a UDP controller
+                  unsigned char endpoint, // \arg endpoint number
+                  unsigned char value)    // \arg value to be written in the DPR
 {
     pUDP->UDP_FDR[endpoint] = value;
 }
@@ -2783,8 +2770,8 @@ AT91F_UDP_EpWrite( AT91PS_UDP pUDP,     // \arg pointer to a UDP controller
 //* \brief Return value from the DPR
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_UDP_EpRead( AT91PS_UDP pUDP,      // \arg pointer to a UDP controller
-                  unsigned char endpoint )      // \arg endpoint number
+AT91F_UDP_EpRead(AT91PS_UDP pUDP,        // \arg pointer to a UDP controller
+                 unsigned char endpoint) // \arg endpoint number
 {
     return pUDP->UDP_FDR[endpoint];
 }
@@ -2794,8 +2781,8 @@ AT91F_UDP_EpRead( AT91PS_UDP pUDP,      // \arg pointer to a UDP controller
 //* \brief Notify the UDP that values in DPR are ready to be sent
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_EpEndOfWr( AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
-                     unsigned char endpoint )   // \arg endpoint number
+AT91F_UDP_EpEndOfWr(AT91PS_UDP pUDP,        // \arg pointer to a UDP controller
+                    unsigned char endpoint) // \arg endpoint number
 {
     pUDP->UDP_CSR[endpoint] |= AT91C_UDP_TXPKTRDY;
 }
@@ -2805,11 +2792,11 @@ AT91F_UDP_EpEndOfWr( AT91PS_UDP pUDP,   // \arg pointer to a UDP controller
 //* \brief Clear flag in the endpoint CSR register
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_EpClear( AT91PS_UDP pUDP,     // \arg pointer to a UDP controller
-                   unsigned char endpoint,      // \arg endpoint number
-                   unsigned int flag )  // \arg flag to be cleared
+AT91F_UDP_EpClear(AT91PS_UDP pUDP,        // \arg pointer to a UDP controller
+                  unsigned char endpoint, // \arg endpoint number
+                  unsigned int flag)      // \arg flag to be cleared
 {
-    pUDP->UDP_CSR[endpoint] &= ~( flag );
+    pUDP->UDP_CSR[endpoint] &= ~(flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -2817,9 +2804,9 @@ AT91F_UDP_EpClear( AT91PS_UDP pUDP,     // \arg pointer to a UDP controller
 //* \brief Set flag in the endpoint CSR register
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_EpSet( AT91PS_UDP pUDP,       // \arg pointer to a UDP controller
-                 unsigned char endpoint,        // \arg endpoint number
-                 unsigned int flag )    // \arg flag to be cleared
+AT91F_UDP_EpSet(AT91PS_UDP pUDP,        // \arg pointer to a UDP controller
+                unsigned char endpoint, // \arg endpoint number
+                unsigned int flag)      // \arg flag to be cleared
 {
     pUDP->UDP_CSR[endpoint] |= flag;
 }
@@ -2829,8 +2816,8 @@ AT91F_UDP_EpSet( AT91PS_UDP pUDP,       // \arg pointer to a UDP controller
 //* \brief Return the endpoint CSR register
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_UDP_EpStatus( AT91PS_UDP pUDP,    // \arg pointer to a UDP controller
-                    unsigned char endpoint )    // \arg endpoint number
+AT91F_UDP_EpStatus(AT91PS_UDP pUDP,        // \arg pointer to a UDP controller
+                   unsigned char endpoint) // \arg endpoint number
 {
     return pUDP->UDP_CSR[endpoint];
 }
@@ -2840,20 +2827,20 @@ AT91F_UDP_EpStatus( AT91PS_UDP pUDP,    // \arg pointer to a UDP controller
 //* \brief Return UDP Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_UDP_GetInterruptMaskStatus( AT91PS_UDP pUdp )     // \arg  pointer to a UDP controller
+AT91F_UDP_GetInterruptMaskStatus(AT91PS_UDP pUdp) // \arg  pointer to a UDP controller
 {
     return pUdp->UDP_IMR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_UDP_IsInterruptMasked
-//* \brief Test if UDP Interrupt is Masked 
+//* \brief Test if UDP Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_UDP_IsInterruptMasked( AT91PS_UDP pUdp,   // \arg  pointer to a UDP controller
-                             unsigned int flag )        // \arg  flag to be tested
+AT91F_UDP_IsInterruptMasked(AT91PS_UDP pUdp,   // \arg  pointer to a UDP controller
+                            unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_UDP_GetInterruptMaskStatus( pUdp ) & flag );
+    return (AT91F_UDP_GetInterruptMaskStatus(pUdp) & flag);
 }
 
 // ----------------------------------------------------------------------------
@@ -2861,7 +2848,7 @@ AT91F_UDP_IsInterruptMasked( AT91PS_UDP pUdp,   // \arg  pointer to a UDP contro
 //  \brief Return the Interrupt Status Register
 // ----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_UDP_InterruptStatusRegister( AT91PS_UDP pUDP )    // \arg  pointer to a UDP controller
+AT91F_UDP_InterruptStatusRegister(AT91PS_UDP pUDP) // \arg  pointer to a UDP controller
 {
     return pUDP->UDP_ISR;
 }
@@ -2871,8 +2858,8 @@ AT91F_UDP_InterruptStatusRegister( AT91PS_UDP pUDP )    // \arg  pointer to a UD
 //  \brief Clear Interrupt Register
 // ----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_InterruptClearRegister( AT91PS_UDP pUDP,      // \arg pointer to UDP controller
-                                  unsigned int flag )   // \arg IT to be cleat
+AT91F_UDP_InterruptClearRegister(AT91PS_UDP pUDP,   // \arg pointer to UDP controller
+                                 unsigned int flag) // \arg IT to be cleat
 {
     pUDP->UDP_ICR = flag;
 }
@@ -2882,7 +2869,7 @@ AT91F_UDP_InterruptClearRegister( AT91PS_UDP pUDP,      // \arg pointer to UDP c
 //  \brief Enable transceiver
 // ----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_EnableTransceiver( AT91PS_UDP pUDP )  // \arg  pointer to a UDP controller
+AT91F_UDP_EnableTransceiver(AT91PS_UDP pUDP) // \arg  pointer to a UDP controller
 {
     pUDP->UDP_TXVC &= ~AT91C_UDP_TXVDIS;
 }
@@ -2892,7 +2879,7 @@ AT91F_UDP_EnableTransceiver( AT91PS_UDP pUDP )  // \arg  pointer to a UDP contro
 //  \brief Disable transceiver
 // ----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_DisableTransceiver( AT91PS_UDP pUDP ) // \arg  pointer to a UDP controller
+AT91F_UDP_DisableTransceiver(AT91PS_UDP pUDP) // \arg  pointer to a UDP controller
 {
     pUDP->UDP_TXVC = AT91C_UDP_TXVDIS;
 }
@@ -2905,8 +2892,8 @@ AT91F_UDP_DisableTransceiver( AT91PS_UDP pUDP ) // \arg  pointer to a UDP contro
 //* \brief Enable TC Interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TC_InterruptEnable( AT91PS_TC pTc,        // \arg  pointer to a TC controller
-                          unsigned int flag )   // \arg  TC interrupt to be enabled
+AT91F_TC_InterruptEnable(AT91PS_TC pTc,     // \arg  pointer to a TC controller
+                         unsigned int flag) // \arg  TC interrupt to be enabled
 {
     pTc->TC_IER = flag;
 }
@@ -2916,8 +2903,8 @@ AT91F_TC_InterruptEnable( AT91PS_TC pTc,        // \arg  pointer to a TC control
 //* \brief Disable TC Interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TC_InterruptDisable( AT91PS_TC pTc,       // \arg  pointer to a TC controller
-                           unsigned int flag )  // \arg  TC interrupt to be disabled
+AT91F_TC_InterruptDisable(AT91PS_TC pTc,     // \arg  pointer to a TC controller
+                          unsigned int flag) // \arg  TC interrupt to be disabled
 {
     pTc->TC_IDR = flag;
 }
@@ -2927,37 +2914,37 @@ AT91F_TC_InterruptDisable( AT91PS_TC pTc,       // \arg  pointer to a TC control
 //* \brief Return TC Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_TC_GetInterruptMaskStatus(        // \return TC Interrupt Mask Status
-                                    AT91PS_TC pTc )     // \arg  pointer to a TC controller
+AT91F_TC_GetInterruptMaskStatus( // \return TC Interrupt Mask Status
+    AT91PS_TC pTc)               // \arg  pointer to a TC controller
 {
     return pTc->TC_IMR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_TC_IsInterruptMasked
-//* \brief Test if TC Interrupt is Masked 
+//* \brief Test if TC Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline int
-AT91F_TC_IsInterruptMasked( AT91PS_TC pTc,      // \arg  pointer to a TC controller
-                            unsigned int flag ) // \arg  flag to be tested
+AT91F_TC_IsInterruptMasked(AT91PS_TC pTc,     // \arg  pointer to a TC controller
+                           unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_TC_GetInterruptMaskStatus( pTc ) & flag );
+    return (AT91F_TC_GetInterruptMaskStatus(pTc) & flag);
 }
 
 /* *****************************************************************************
                 SOFTWARE API FOR CAN
    ***************************************************************************** */
-#define	STANDARD_FORMAT 0
-#define	EXTENDED_FORMAT 1
+#define STANDARD_FORMAT 0
+#define EXTENDED_FORMAT 1
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_InitMailboxRegisters()
 //* \brief Configure the corresponding mailbox
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_InitMailboxRegisters( AT91PS_CAN_MB CAN_Mailbox,
-                            int mode_reg,
-                            int acceptance_mask_reg, int id_reg, int data_low_reg, int data_high_reg, int control_reg )
+AT91F_InitMailboxRegisters(AT91PS_CAN_MB CAN_Mailbox,
+                           int mode_reg,
+                           int acceptance_mask_reg, int id_reg, int data_low_reg, int data_high_reg, int control_reg)
 {
     CAN_Mailbox->CAN_MB_MCR = 0x0;
     CAN_Mailbox->CAN_MB_MMR = mode_reg;
@@ -2970,23 +2957,24 @@ AT91F_InitMailboxRegisters( AT91PS_CAN_MB CAN_Mailbox,
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_EnableCAN()
-//* \brief 
+//* \brief
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_EnableCAN( AT91PS_CAN pCAN )      // pointer to a CAN controller
+AT91F_EnableCAN(AT91PS_CAN pCAN) // pointer to a CAN controller
 {
     pCAN->CAN_MR |= AT91C_CAN_CANEN;
 
     // Wait for WAKEUP flag raising <=> 11-recessive-bit were scanned by the transceiver
-    while( ( pCAN->CAN_SR & AT91C_CAN_WAKEUP ) != AT91C_CAN_WAKEUP );
+    while ((pCAN->CAN_SR & AT91C_CAN_WAKEUP) != AT91C_CAN_WAKEUP)
+        ;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_DisableCAN()
-//* \brief 
+//* \brief
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_DisableCAN( AT91PS_CAN pCAN )     // pointer to a CAN controller
+AT91F_DisableCAN(AT91PS_CAN pCAN) // pointer to a CAN controller
 {
     pCAN->CAN_MR &= ~AT91C_CAN_CANEN;
 }
@@ -2996,8 +2984,8 @@ AT91F_DisableCAN( AT91PS_CAN pCAN )     // pointer to a CAN controller
 //* \brief Enable CAN interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_EnableIt( AT91PS_CAN pCAN,    // pointer to a CAN controller
-                    unsigned int flag ) // IT to be enabled
+AT91F_CAN_EnableIt(AT91PS_CAN pCAN,   // pointer to a CAN controller
+                   unsigned int flag) // IT to be enabled
 {
     //* Write to the IER register
     pCAN->CAN_IER = flag;
@@ -3008,8 +2996,8 @@ AT91F_CAN_EnableIt( AT91PS_CAN pCAN,    // pointer to a CAN controller
 //* \brief Disable CAN interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_DisableIt( AT91PS_CAN pCAN,   // pointer to a CAN controller
-                     unsigned int flag )        // IT to be disabled
+AT91F_CAN_DisableIt(AT91PS_CAN pCAN,   // pointer to a CAN controller
+                    unsigned int flag) // IT to be disabled
 {
     //* Write to the IDR register
     pCAN->CAN_IDR = flag;
@@ -3020,8 +3008,8 @@ AT91F_CAN_DisableIt( AT91PS_CAN pCAN,   // pointer to a CAN controller
 //* \brief Return CAN Interrupt Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetStatus(            // \return CAN Interrupt Status
-                        AT91PS_CAN pCAN )       // pointer to a CAN controller
+AT91F_CAN_GetStatus( // \return CAN Interrupt Status
+    AT91PS_CAN pCAN) // pointer to a CAN controller
 {
     return pCAN->CAN_SR;
 }
@@ -3031,21 +3019,21 @@ AT91F_CAN_GetStatus(            // \return CAN Interrupt Status
 //* \brief Return CAN Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetInterruptMaskStatus(       // \return CAN Interrupt Mask Status
-                                     AT91PS_CAN pCAN )  // pointer to a CAN controller
+AT91F_CAN_GetInterruptMaskStatus( // \return CAN Interrupt Mask Status
+    AT91PS_CAN pCAN)              // pointer to a CAN controller
 {
     return pCAN->CAN_IMR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_CAN_IsInterruptMasked
-//* \brief Test if CAN Interrupt is Masked 
+//* \brief Test if CAN Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_IsInterruptMasked( AT91PS_CAN pCAN,   // \arg  pointer to a CAN controller
-                             unsigned int flag )        // \arg  flag to be tested
+AT91F_CAN_IsInterruptMasked(AT91PS_CAN pCAN,   // \arg  pointer to a CAN controller
+                            unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_CAN_GetInterruptMaskStatus( pCAN ) & flag );
+    return (AT91F_CAN_GetInterruptMaskStatus(pCAN) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -3053,10 +3041,10 @@ AT91F_CAN_IsInterruptMasked( AT91PS_CAN pCAN,   // \arg  pointer to a CAN contro
 //* \brief Test if CAN Interrupt is Set
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_IsStatusSet( AT91PS_CAN pCAN, // \arg  pointer to a CAN controller
-                       unsigned int flag )      // \arg  flag to be tested
+AT91F_CAN_IsStatusSet(AT91PS_CAN pCAN,   // \arg  pointer to a CAN controller
+                      unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_CAN_GetStatus( pCAN ) & flag );
+    return (AT91F_CAN_GetStatus(pCAN) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -3064,8 +3052,8 @@ AT91F_CAN_IsStatusSet( AT91PS_CAN pCAN, // \arg  pointer to a CAN controller
 //* \brief Configure the Mode Register of the CAN controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgModeReg( AT91PS_CAN pCAN,  // pointer to a CAN controller
-                      unsigned int mode )       // mode register 
+AT91F_CAN_CfgModeReg(AT91PS_CAN pCAN,   // pointer to a CAN controller
+                     unsigned int mode) // mode register
 {
     //* Write to the MR register
     pCAN->CAN_MR = mode;
@@ -3076,8 +3064,8 @@ AT91F_CAN_CfgModeReg( AT91PS_CAN pCAN,  // pointer to a CAN controller
 //* \brief Return the Mode Register of the CAN controller value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetModeReg( AT91PS_CAN pCAN   // pointer to a CAN controller
-     )
+AT91F_CAN_GetModeReg(AT91PS_CAN pCAN // pointer to a CAN controller
+)
 {
     return pCAN->CAN_MR;
 }
@@ -3087,8 +3075,8 @@ AT91F_CAN_GetModeReg( AT91PS_CAN pCAN   // pointer to a CAN controller
 //* \brief Configure the Baudrate of the CAN controller for the network
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgBaudrateReg( AT91PS_CAN pCAN,      // pointer to a CAN controller
-                          unsigned int baudrate_cfg )
+AT91F_CAN_CfgBaudrateReg(AT91PS_CAN pCAN, // pointer to a CAN controller
+                         unsigned int baudrate_cfg)
 {
     //* Write to the BR register
     pCAN->CAN_BR = baudrate_cfg;
@@ -3099,8 +3087,8 @@ AT91F_CAN_CfgBaudrateReg( AT91PS_CAN pCAN,      // pointer to a CAN controller
 //* \brief Return the Baudrate of the CAN controller for the network value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetBaudrate( AT91PS_CAN pCAN  // pointer to a CAN controller
-     )
+AT91F_CAN_GetBaudrate(AT91PS_CAN pCAN // pointer to a CAN controller
+)
 {
     return pCAN->CAN_BR;
 }
@@ -3110,8 +3098,8 @@ AT91F_CAN_GetBaudrate( AT91PS_CAN pCAN  // pointer to a CAN controller
 //* \brief Return CAN Timer Regsiter Value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetInternalCounter( AT91PS_CAN pCAN   // pointer to a CAN controller
-     )
+AT91F_CAN_GetInternalCounter(AT91PS_CAN pCAN // pointer to a CAN controller
+)
 {
     return pCAN->CAN_TIM;
 }
@@ -3121,8 +3109,8 @@ AT91F_CAN_GetInternalCounter( AT91PS_CAN pCAN   // pointer to a CAN controller
 //* \brief Return CAN Timestamp Register Value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetTimestamp( AT91PS_CAN pCAN // pointer to a CAN controller
-     )
+AT91F_CAN_GetTimestamp(AT91PS_CAN pCAN // pointer to a CAN controller
+)
 {
     return pCAN->CAN_TIMESTP;
 }
@@ -3132,8 +3120,8 @@ AT91F_CAN_GetTimestamp( AT91PS_CAN pCAN // pointer to a CAN controller
 //* \brief Return CAN Error Counter Register Value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetErrorCounter( AT91PS_CAN pCAN      // pointer to a CAN controller
-     )
+AT91F_CAN_GetErrorCounter(AT91PS_CAN pCAN // pointer to a CAN controller
+)
 {
     return pCAN->CAN_ECR;
 }
@@ -3143,8 +3131,8 @@ AT91F_CAN_GetErrorCounter( AT91PS_CAN pCAN      // pointer to a CAN controller
 //* \brief Request for a transfer on the corresponding mailboxes
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_InitTransferRequest( AT91PS_CAN pCAN, // pointer to a CAN controller
-                               unsigned int transfer_cmd )
+AT91F_CAN_InitTransferRequest(AT91PS_CAN pCAN, // pointer to a CAN controller
+                              unsigned int transfer_cmd)
 {
     pCAN->CAN_TCR = transfer_cmd;
 }
@@ -3154,8 +3142,8 @@ AT91F_CAN_InitTransferRequest( AT91PS_CAN pCAN, // pointer to a CAN controller
 //* \brief Abort the corresponding mailboxes
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_InitAbortRequest( AT91PS_CAN pCAN,    // pointer to a CAN controller
-                            unsigned int abort_cmd )
+AT91F_CAN_InitAbortRequest(AT91PS_CAN pCAN, // pointer to a CAN controller
+                           unsigned int abort_cmd)
 {
     pCAN->CAN_ACR = abort_cmd;
 }
@@ -3165,8 +3153,8 @@ AT91F_CAN_InitAbortRequest( AT91PS_CAN pCAN,    // pointer to a CAN controller
 //* \brief Program the Message Mode Register
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgMessageModeReg( AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mailbox
-                             unsigned int mode )
+AT91F_CAN_CfgMessageModeReg(AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mailbox
+                            unsigned int mode)
 {
     CAN_Mailbox->CAN_MB_MMR = mode;
 }
@@ -3176,7 +3164,7 @@ AT91F_CAN_CfgMessageModeReg( AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mail
 //* \brief Return the Message Mode Register
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetMessageModeReg( AT91PS_CAN_MB CAN_Mailbox )        // pointer to a CAN Mailbox
+AT91F_CAN_GetMessageModeReg(AT91PS_CAN_MB CAN_Mailbox) // pointer to a CAN Mailbox
 {
     return CAN_Mailbox->CAN_MB_MMR;
 }
@@ -3184,16 +3172,16 @@ AT91F_CAN_GetMessageModeReg( AT91PS_CAN_MB CAN_Mailbox )        // pointer to a 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_CAN_CfgMessageIDReg
 //* \brief Program the Message ID Register
-//* \brief Version == 0 for Standard messsage, Version == 1 for Extended  
+//* \brief Version == 0 for Standard messsage, Version == 1 for Extended
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgMessageIDReg( AT91PS_CAN_MB CAN_Mailbox,   // pointer to a CAN Mailbox
-                           unsigned int id, unsigned char version )
+AT91F_CAN_CfgMessageIDReg(AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mailbox
+                          unsigned int id, unsigned char version)
 {
-    if( version == 0 )          // IDvA Standard Format
+    if (version == 0) // IDvA Standard Format
         CAN_Mailbox->CAN_MB_MID = id << 18;
-    else                        // IDvB Extended Format
-        CAN_Mailbox->CAN_MB_MID = id | ( 1 << 29 );     // set MIDE bit
+    else                                          // IDvB Extended Format
+        CAN_Mailbox->CAN_MB_MID = id | (1 << 29); // set MIDE bit
 }
 
 //*----------------------------------------------------------------------------
@@ -3201,7 +3189,7 @@ AT91F_CAN_CfgMessageIDReg( AT91PS_CAN_MB CAN_Mailbox,   // pointer to a CAN Mail
 //* \brief Return the Message ID Register
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetMessageIDReg( AT91PS_CAN_MB CAN_Mailbox )  // pointer to a CAN Mailbox
+AT91F_CAN_GetMessageIDReg(AT91PS_CAN_MB CAN_Mailbox) // pointer to a CAN Mailbox
 {
     return CAN_Mailbox->CAN_MB_MID;
 }
@@ -3211,8 +3199,8 @@ AT91F_CAN_GetMessageIDReg( AT91PS_CAN_MB CAN_Mailbox )  // pointer to a CAN Mail
 //* \brief Program the Message Acceptance Mask Register
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgMessageAcceptanceMaskReg( AT91PS_CAN_MB CAN_Mailbox,       // pointer to a CAN Mailbox
-                                       unsigned int mask )
+AT91F_CAN_CfgMessageAcceptanceMaskReg(AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mailbox
+                                      unsigned int mask)
 {
     CAN_Mailbox->CAN_MB_MAM = mask;
 }
@@ -3222,7 +3210,7 @@ AT91F_CAN_CfgMessageAcceptanceMaskReg( AT91PS_CAN_MB CAN_Mailbox,       // point
 //* \brief Return the Message Acceptance Mask Register
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetMessageAcceptanceMaskReg( AT91PS_CAN_MB CAN_Mailbox )      // pointer to a CAN Mailbox
+AT91F_CAN_GetMessageAcceptanceMaskReg(AT91PS_CAN_MB CAN_Mailbox) // pointer to a CAN Mailbox
 {
     return CAN_Mailbox->CAN_MB_MAM;
 }
@@ -3232,7 +3220,7 @@ AT91F_CAN_GetMessageAcceptanceMaskReg( AT91PS_CAN_MB CAN_Mailbox )      // point
 //* \brief Return the Message ID Register
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetFamilyID( AT91PS_CAN_MB CAN_Mailbox )      // pointer to a CAN Mailbox
+AT91F_CAN_GetFamilyID(AT91PS_CAN_MB CAN_Mailbox) // pointer to a CAN Mailbox
 {
     return CAN_Mailbox->CAN_MB_MFID;
 }
@@ -3242,8 +3230,8 @@ AT91F_CAN_GetFamilyID( AT91PS_CAN_MB CAN_Mailbox )      // pointer to a CAN Mail
 //* \brief Request and config for a transfer on the corresponding mailbox
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgMessageCtrlReg( AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mailbox
-                             unsigned int message_ctrl_cmd )
+AT91F_CAN_CfgMessageCtrlReg(AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mailbox
+                            unsigned int message_ctrl_cmd)
 {
     CAN_Mailbox->CAN_MB_MCR = message_ctrl_cmd;
 }
@@ -3253,7 +3241,7 @@ AT91F_CAN_CfgMessageCtrlReg( AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mail
 //* \brief Return CAN Mailbox Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetMessageStatus( AT91PS_CAN_MB CAN_Mailbox ) // pointer to a CAN Mailbox
+AT91F_CAN_GetMessageStatus(AT91PS_CAN_MB CAN_Mailbox) // pointer to a CAN Mailbox
 {
     return CAN_Mailbox->CAN_MB_MSR;
 }
@@ -3263,8 +3251,8 @@ AT91F_CAN_GetMessageStatus( AT91PS_CAN_MB CAN_Mailbox ) // pointer to a CAN Mail
 //* \brief Program data low value
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgMessageDataLow( AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mailbox
-                             unsigned int data )
+AT91F_CAN_CfgMessageDataLow(AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mailbox
+                            unsigned int data)
 {
     CAN_Mailbox->CAN_MB_MDL = data;
 }
@@ -3274,7 +3262,7 @@ AT91F_CAN_CfgMessageDataLow( AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mail
 //* \brief Return data low value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetMessageDataLow( AT91PS_CAN_MB CAN_Mailbox )        // pointer to a CAN Mailbox
+AT91F_CAN_GetMessageDataLow(AT91PS_CAN_MB CAN_Mailbox) // pointer to a CAN Mailbox
 {
     return CAN_Mailbox->CAN_MB_MDL;
 }
@@ -3284,8 +3272,8 @@ AT91F_CAN_GetMessageDataLow( AT91PS_CAN_MB CAN_Mailbox )        // pointer to a 
 //* \brief Program data high value
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgMessageDataHigh( AT91PS_CAN_MB CAN_Mailbox,        // pointer to a CAN Mailbox
-                              unsigned int data )
+AT91F_CAN_CfgMessageDataHigh(AT91PS_CAN_MB CAN_Mailbox, // pointer to a CAN Mailbox
+                             unsigned int data)
 {
     CAN_Mailbox->CAN_MB_MDH = data;
 }
@@ -3295,7 +3283,7 @@ AT91F_CAN_CfgMessageDataHigh( AT91PS_CAN_MB CAN_Mailbox,        // pointer to a 
 //* \brief Return data high value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_CAN_GetMessageDataHigh( AT91PS_CAN_MB CAN_Mailbox )       // pointer to a CAN Mailbox
+AT91F_CAN_GetMessageDataHigh(AT91PS_CAN_MB CAN_Mailbox) // pointer to a CAN Mailbox
 {
     return CAN_Mailbox->CAN_MB_MDH;
 }
@@ -3308,8 +3296,8 @@ AT91F_CAN_GetMessageDataHigh( AT91PS_CAN_MB CAN_Mailbox )       // pointer to a 
 //* \brief Enable ADC interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_EnableIt( AT91PS_ADC pADC,    // pointer to a ADC controller
-                    unsigned int flag ) // IT to be enabled
+AT91F_ADC_EnableIt(AT91PS_ADC pADC,   // pointer to a ADC controller
+                   unsigned int flag) // IT to be enabled
 {
     //* Write to the IER register
     pADC->ADC_IER = flag;
@@ -3320,8 +3308,8 @@ AT91F_ADC_EnableIt( AT91PS_ADC pADC,    // pointer to a ADC controller
 //* \brief Disable ADC interrupt
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_DisableIt( AT91PS_ADC pADC,   // pointer to a ADC controller
-                     unsigned int flag )        // IT to be disabled
+AT91F_ADC_DisableIt(AT91PS_ADC pADC,   // pointer to a ADC controller
+                    unsigned int flag) // IT to be disabled
 {
     //* Write to the IDR register
     pADC->ADC_IDR = flag;
@@ -3332,8 +3320,8 @@ AT91F_ADC_DisableIt( AT91PS_ADC pADC,   // pointer to a ADC controller
 //* \brief Return ADC Interrupt Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetStatus(            // \return ADC Interrupt Status
-                        AT91PS_ADC pADC )       // pointer to a ADC controller
+AT91F_ADC_GetStatus( // \return ADC Interrupt Status
+    AT91PS_ADC pADC) // pointer to a ADC controller
 {
     return pADC->ADC_SR;
 }
@@ -3343,21 +3331,21 @@ AT91F_ADC_GetStatus(            // \return ADC Interrupt Status
 //* \brief Return ADC Interrupt Mask Status
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetInterruptMaskStatus(       // \return ADC Interrupt Mask Status
-                                     AT91PS_ADC pADC )  // pointer to a ADC controller
+AT91F_ADC_GetInterruptMaskStatus( // \return ADC Interrupt Mask Status
+    AT91PS_ADC pADC)              // pointer to a ADC controller
 {
     return pADC->ADC_IMR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_ADC_IsInterruptMasked
-//* \brief Test if ADC Interrupt is Masked 
+//* \brief Test if ADC Interrupt is Masked
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_IsInterruptMasked( AT91PS_ADC pADC,   // \arg  pointer to a ADC controller
-                             unsigned int flag )        // \arg  flag to be tested
+AT91F_ADC_IsInterruptMasked(AT91PS_ADC pADC,   // \arg  pointer to a ADC controller
+                            unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_ADC_GetInterruptMaskStatus( pADC ) & flag );
+    return (AT91F_ADC_GetInterruptMaskStatus(pADC) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -3365,10 +3353,10 @@ AT91F_ADC_IsInterruptMasked( AT91PS_ADC pADC,   // \arg  pointer to a ADC contro
 //* \brief Test if ADC Status is Set
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_IsStatusSet( AT91PS_ADC pADC, // \arg  pointer to a ADC controller
-                       unsigned int flag )      // \arg  flag to be tested
+AT91F_ADC_IsStatusSet(AT91PS_ADC pADC,   // \arg  pointer to a ADC controller
+                      unsigned int flag) // \arg  flag to be tested
 {
-    return ( AT91F_ADC_GetStatus( pADC ) & flag );
+    return (AT91F_ADC_GetStatus(pADC) & flag);
 }
 
 //*----------------------------------------------------------------------------
@@ -3376,8 +3364,8 @@ AT91F_ADC_IsStatusSet( AT91PS_ADC pADC, // \arg  pointer to a ADC controller
 //* \brief Configure the Mode Register of the ADC controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_CfgModeReg( AT91PS_ADC pADC,  // pointer to a ADC controller
-                      unsigned int mode )       // mode register 
+AT91F_ADC_CfgModeReg(AT91PS_ADC pADC,   // pointer to a ADC controller
+                     unsigned int mode) // mode register
 {
     //* Write to the MR register
     pADC->ADC_MR = mode;
@@ -3388,8 +3376,8 @@ AT91F_ADC_CfgModeReg( AT91PS_ADC pADC,  // pointer to a ADC controller
 //* \brief Return the Mode Register of the ADC controller value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetModeReg( AT91PS_ADC pADC   // pointer to a ADC controller
-     )
+AT91F_ADC_GetModeReg(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_MR;
 }
@@ -3399,22 +3387,21 @@ AT91F_ADC_GetModeReg( AT91PS_ADC pADC   // pointer to a ADC controller
 //* \brief Configure the different necessary timings of the ADC controller
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_CfgTimings( AT91PS_ADC pADC,  // pointer to a ADC controller
-                      unsigned int mck_clock,   // in MHz 
-                      unsigned int adc_clock,   // in MHz 
-                      unsigned int startup_time,        // in us 
-                      unsigned int sample_and_hold_time )       // in ns  
+AT91F_ADC_CfgTimings(AT91PS_ADC pADC,                   // pointer to a ADC controller
+                     unsigned int mck_clock,            // in MHz
+                     unsigned int adc_clock,            // in MHz
+                     unsigned int startup_time,         // in us
+                     unsigned int sample_and_hold_time) // in ns
 {
-    unsigned int    prescal, startup, shtim;
+    unsigned int prescal, startup, shtim;
 
-    prescal = mck_clock / ( 2 * adc_clock ) - 1;
+    prescal = mck_clock / (2 * adc_clock) - 1;
     startup = adc_clock * startup_time / 8 - 1;
     shtim = adc_clock * sample_and_hold_time / 1000 - 1;
 
     //* Write to the MR register
     pADC->ADC_MR =
-        ( ( prescal << 8 ) & AT91C_ADC_PRESCAL ) | ( ( startup << 16 ) & AT91C_ADC_STARTUP ) | ( ( shtim << 24 ) &
-                                                                                                 AT91C_ADC_SHTIM );
+        ((prescal << 8) & AT91C_ADC_PRESCAL) | ((startup << 16) & AT91C_ADC_STARTUP) | ((shtim << 24) & AT91C_ADC_SHTIM);
 }
 
 //*----------------------------------------------------------------------------
@@ -3422,8 +3409,8 @@ AT91F_ADC_CfgTimings( AT91PS_ADC pADC,  // pointer to a ADC controller
 //* \brief Return ADC Timer Register Value
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_EnableChannel( AT91PS_ADC pADC,       // pointer to a ADC controller
-                         unsigned int channel ) // mode register 
+AT91F_ADC_EnableChannel(AT91PS_ADC pADC,      // pointer to a ADC controller
+                        unsigned int channel) // mode register
 {
     //* Write to the CHER register
     pADC->ADC_CHER = channel;
@@ -3434,8 +3421,8 @@ AT91F_ADC_EnableChannel( AT91PS_ADC pADC,       // pointer to a ADC controller
 //* \brief Return ADC Timer Register Value
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_DisableChannel( AT91PS_ADC pADC,      // pointer to a ADC controller
-                          unsigned int channel )        // mode register 
+AT91F_ADC_DisableChannel(AT91PS_ADC pADC,      // pointer to a ADC controller
+                         unsigned int channel) // mode register
 {
     //* Write to the CHDR register
     pADC->ADC_CHDR = channel;
@@ -3446,19 +3433,19 @@ AT91F_ADC_DisableChannel( AT91PS_ADC pADC,      // pointer to a ADC controller
 //* \brief Return ADC Timer Register Value
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetChannelStatus( AT91PS_ADC pADC     // pointer to a ADC controller
-     )
+AT91F_ADC_GetChannelStatus(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_CHSR;
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_ADC_StartConversion
-//* \brief Software request for a analog to digital conversion 
+//* \brief Software request for a analog to digital conversion
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_StartConversion( AT91PS_ADC pADC      // pointer to a ADC controller
-     )
+AT91F_ADC_StartConversion(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     pADC->ADC_CR = AT91C_ADC_START;
 }
@@ -3468,8 +3455,8 @@ AT91F_ADC_StartConversion( AT91PS_ADC pADC      // pointer to a ADC controller
 //* \brief Software reset
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_SoftReset( AT91PS_ADC pADC    // pointer to a ADC controller
-     )
+AT91F_ADC_SoftReset(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     pADC->ADC_CR = AT91C_ADC_SWRST;
 }
@@ -3479,8 +3466,8 @@ AT91F_ADC_SoftReset( AT91PS_ADC pADC    // pointer to a ADC controller
 //* \brief Return the Last Converted Data
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetLastConvertedData( AT91PS_ADC pADC // pointer to a ADC controller
-     )
+AT91F_ADC_GetLastConvertedData(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_LCDR;
 }
@@ -3490,8 +3477,8 @@ AT91F_ADC_GetLastConvertedData( AT91PS_ADC pADC // pointer to a ADC controller
 //* \brief Return the Channel 0 Converted Data
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetConvertedDataCH0( AT91PS_ADC pADC  // pointer to a ADC controller
-     )
+AT91F_ADC_GetConvertedDataCH0(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_CDR0;
 }
@@ -3501,8 +3488,8 @@ AT91F_ADC_GetConvertedDataCH0( AT91PS_ADC pADC  // pointer to a ADC controller
 //* \brief Return the Channel 1 Converted Data
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetConvertedDataCH1( AT91PS_ADC pADC  // pointer to a ADC controller
-     )
+AT91F_ADC_GetConvertedDataCH1(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_CDR1;
 }
@@ -3512,8 +3499,8 @@ AT91F_ADC_GetConvertedDataCH1( AT91PS_ADC pADC  // pointer to a ADC controller
 //* \brief Return the Channel 2 Converted Data
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetConvertedDataCH2( AT91PS_ADC pADC  // pointer to a ADC controller
-     )
+AT91F_ADC_GetConvertedDataCH2(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_CDR2;
 }
@@ -3523,8 +3510,8 @@ AT91F_ADC_GetConvertedDataCH2( AT91PS_ADC pADC  // pointer to a ADC controller
 //* \brief Return the Channel 3 Converted Data
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetConvertedDataCH3( AT91PS_ADC pADC  // pointer to a ADC controller
-     )
+AT91F_ADC_GetConvertedDataCH3(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_CDR3;
 }
@@ -3534,8 +3521,8 @@ AT91F_ADC_GetConvertedDataCH3( AT91PS_ADC pADC  // pointer to a ADC controller
 //* \brief Return the Channel 4 Converted Data
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetConvertedDataCH4( AT91PS_ADC pADC  // pointer to a ADC controller
-     )
+AT91F_ADC_GetConvertedDataCH4(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_CDR4;
 }
@@ -3545,8 +3532,8 @@ AT91F_ADC_GetConvertedDataCH4( AT91PS_ADC pADC  // pointer to a ADC controller
 //* \brief Return the Channel 5 Converted Data
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetConvertedDataCH5( AT91PS_ADC pADC  // pointer to a ADC controller
-     )
+AT91F_ADC_GetConvertedDataCH5(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_CDR5;
 }
@@ -3556,8 +3543,8 @@ AT91F_ADC_GetConvertedDataCH5( AT91PS_ADC pADC  // pointer to a ADC controller
 //* \brief Return the Channel 6 Converted Data
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetConvertedDataCH6( AT91PS_ADC pADC  // pointer to a ADC controller
-     )
+AT91F_ADC_GetConvertedDataCH6(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_CDR6;
 }
@@ -3567,8 +3554,8 @@ AT91F_ADC_GetConvertedDataCH6( AT91PS_ADC pADC  // pointer to a ADC controller
 //* \brief Return the Channel 7 Converted Data
 //*----------------------------------------------------------------------------
 static __inline unsigned int
-AT91F_ADC_GetConvertedDataCH7( AT91PS_ADC pADC  // pointer to a ADC controller
-     )
+AT91F_ADC_GetConvertedDataCH7(AT91PS_ADC pADC // pointer to a ADC controller
+)
 {
     return pADC->ADC_CDR7;
 }
@@ -3578,10 +3565,10 @@ AT91F_ADC_GetConvertedDataCH7( AT91PS_ADC pADC  // pointer to a ADC controller
 //* \brief Enable Peripheral clock in PMC for  MC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_MC_CfgPMC( void )
+AT91F_MC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SYS ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SYS));
 }
 
 //*----------------------------------------------------------------------------
@@ -3589,10 +3576,10 @@ AT91F_MC_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  DBGU
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_DBGU_CfgPMC( void )
+AT91F_DBGU_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SYS ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SYS));
 }
 
 //*----------------------------------------------------------------------------
@@ -3600,12 +3587,12 @@ AT91F_DBGU_CfgPMC( void )
 //* \brief Configure PIO controllers to drive DBGU signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_DBGU_CfgPIO( void )
+AT91F_DBGU_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PA28_DTXD ) | ( ( unsigned int )AT91C_PA27_DRXD ),     // Peripheral A
-                         0 );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                   // PIO controller base address
+                        ((unsigned int)AT91C_PA28_DTXD) | ((unsigned int)AT91C_PA27_DRXD), // Peripheral A
+                        0);                                                                // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3613,12 +3600,12 @@ AT91F_DBGU_CfgPIO( void )
 //* \brief Configure PIO controllers to drive PWMC_CH3 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_CH3_CfgPIO( void )
+AT91F_PWMC_CH3_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PB22_PWM3 ),   // Peripheral A
-                         ( ( unsigned int )AT91C_PB30_PWM3 ) ); // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                  // PIO controller base address
+                        ((unsigned int)AT91C_PB22_PWM3),  // Peripheral A
+                        ((unsigned int)AT91C_PB30_PWM3)); // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3626,12 +3613,12 @@ AT91F_PWMC_CH3_CfgPIO( void )
 //* \brief Configure PIO controllers to drive PWMC_CH2 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_CH2_CfgPIO( void )
+AT91F_PWMC_CH2_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PB21_PWM2 ),   // Peripheral A
-                         ( ( unsigned int )AT91C_PB29_PWM2 ) ); // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                  // PIO controller base address
+                        ((unsigned int)AT91C_PB21_PWM2),  // Peripheral A
+                        ((unsigned int)AT91C_PB29_PWM2)); // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3639,12 +3626,12 @@ AT91F_PWMC_CH2_CfgPIO( void )
 //* \brief Configure PIO controllers to drive PWMC_CH1 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_CH1_CfgPIO( void )
+AT91F_PWMC_CH1_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PB20_PWM1 ),   // Peripheral A
-                         ( ( unsigned int )AT91C_PB28_PWM1 ) ); // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                  // PIO controller base address
+                        ((unsigned int)AT91C_PB20_PWM1),  // Peripheral A
+                        ((unsigned int)AT91C_PB28_PWM1)); // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3652,12 +3639,12 @@ AT91F_PWMC_CH1_CfgPIO( void )
 //* \brief Configure PIO controllers to drive PWMC_CH0 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_CH0_CfgPIO( void )
+AT91F_PWMC_CH0_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PB19_PWM0 ),   // Peripheral A
-                         ( ( unsigned int )AT91C_PB27_PWM0 ) ); // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                  // PIO controller base address
+                        ((unsigned int)AT91C_PB19_PWM0),  // Peripheral A
+                        ((unsigned int)AT91C_PB27_PWM0)); // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3665,10 +3652,10 @@ AT91F_PWMC_CH0_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  EMAC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_EMAC_CfgPMC( void )
+AT91F_EMAC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_EMAC ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_EMAC));
 }
 
 //*----------------------------------------------------------------------------
@@ -3676,12 +3663,12 @@ AT91F_EMAC_CfgPMC( void )
 //* \brief Configure PIO controllers to drive EMAC signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_EMAC_CfgPIO( void )
+AT91F_EMAC_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PB9_EMDIO ) | ( ( unsigned int )AT91C_PB17_ERXCK ) | ( ( unsigned int )AT91C_PB15_ERXDV_ECRSDV ) | ( ( unsigned int )AT91C_PB8_EMDC ) | ( ( unsigned int )AT91C_PB16_ECOL ) | ( ( unsigned int )AT91C_PB7_ERXER ) | ( ( unsigned int )AT91C_PB5_ERX0 ) | ( ( unsigned int )AT91C_PB6_ERX1 ) | ( ( unsigned int )AT91C_PB13_ERX2 ) | ( ( unsigned int )AT91C_PB1_ETXEN ) | ( ( unsigned int )AT91C_PB14_ERX3 ) | ( ( unsigned int )AT91C_PB12_ETXER ) | ( ( unsigned int )AT91C_PB2_ETX0 ) | ( ( unsigned int )AT91C_PB3_ETX1 ) | ( ( unsigned int )AT91C_PB10_ETX2 ) | ( ( unsigned int )AT91C_PB18_EF100 ) | ( ( unsigned int )AT91C_PB11_ETX3 ) | ( ( unsigned int )AT91C_PB4_ECRS ) | ( ( unsigned int )AT91C_PB0_ETXCK_EREFCK ),   // Peripheral A
-                         0 );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 // PIO controller base address
+                        ((unsigned int)AT91C_PB9_EMDIO) | ((unsigned int)AT91C_PB17_ERXCK) | ((unsigned int)AT91C_PB15_ERXDV_ECRSDV) | ((unsigned int)AT91C_PB8_EMDC) | ((unsigned int)AT91C_PB16_ECOL) | ((unsigned int)AT91C_PB7_ERXER) | ((unsigned int)AT91C_PB5_ERX0) | ((unsigned int)AT91C_PB6_ERX1) | ((unsigned int)AT91C_PB13_ERX2) | ((unsigned int)AT91C_PB1_ETXEN) | ((unsigned int)AT91C_PB14_ERX3) | ((unsigned int)AT91C_PB12_ETXER) | ((unsigned int)AT91C_PB2_ETX0) | ((unsigned int)AT91C_PB3_ETX1) | ((unsigned int)AT91C_PB10_ETX2) | ((unsigned int)AT91C_PB18_EF100) | ((unsigned int)AT91C_PB11_ETX3) | ((unsigned int)AT91C_PB4_ECRS) | ((unsigned int)AT91C_PB0_ETXCK_EREFCK), // Peripheral A
+                        0);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3689,10 +3676,10 @@ AT91F_EMAC_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  VREG
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_VREG_CfgPMC( void )
+AT91F_VREG_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SYS ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SYS));
 }
 
 //*----------------------------------------------------------------------------
@@ -3700,10 +3687,10 @@ AT91F_VREG_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  SSC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_CfgPMC( void )
+AT91F_SSC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SSC ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SSC));
 }
 
 //*----------------------------------------------------------------------------
@@ -3711,12 +3698,12 @@ AT91F_SSC_CfgPMC( void )
 //* \brief Configure PIO controllers to drive SSC signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SSC_CfgPIO( void )
+AT91F_SSC_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PA23_TD ) | ( ( unsigned int )AT91C_PA21_TF ) | ( ( unsigned int )AT91C_PA25_RK ) | ( ( unsigned int )AT91C_PA24_RD ) | ( ( unsigned int )AT91C_PA26_RF ) | ( ( unsigned int )AT91C_PA22_TK ), // Peripheral A
-                         0 );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                                                                                                                                               // PIO controller base address
+                        ((unsigned int)AT91C_PA23_TD) | ((unsigned int)AT91C_PA21_TF) | ((unsigned int)AT91C_PA25_RK) | ((unsigned int)AT91C_PA24_RD) | ((unsigned int)AT91C_PA26_RF) | ((unsigned int)AT91C_PA22_TK), // Peripheral A
+                        0);                                                                                                                                                                                            // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3724,10 +3711,10 @@ AT91F_SSC_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  SPI1
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI1_CfgPMC( void )
+AT91F_SPI1_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SPI1 ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SPI1));
 }
 
 //*----------------------------------------------------------------------------
@@ -3735,16 +3722,16 @@ AT91F_SPI1_CfgPMC( void )
 //* \brief Configure PIO controllers to drive SPI1 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI1_CfgPIO( void )
+AT91F_SPI1_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         0,     // Peripheral A
-                         ( ( unsigned int )AT91C_PA23_SPI1_MOSI ) | ( ( unsigned int )AT91C_PA21_SPI1_NPCS0 ) | ( ( unsigned int )AT91C_PA25_SPI1_NPCS1 ) | ( ( unsigned int )AT91C_PA2_SPI1_NPCS1 ) | ( ( unsigned int )AT91C_PA24_SPI1_MISO ) | ( ( unsigned int )AT91C_PA22_SPI1_SPCK ) | ( ( unsigned int )AT91C_PA26_SPI1_NPCS2 ) | ( ( unsigned int )AT91C_PA3_SPI1_NPCS2 ) | ( ( unsigned int )AT91C_PA29_SPI1_NPCS3 ) | ( ( unsigned int )AT91C_PA4_SPI1_NPCS3 ) );     // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                                                                                                                                                                                                                                                                                                                                                          // PIO controller base address
+                        0,                                                                                                                                                                                                                                                                                                                                                                                                        // Peripheral A
+                        ((unsigned int)AT91C_PA23_SPI1_MOSI) | ((unsigned int)AT91C_PA21_SPI1_NPCS0) | ((unsigned int)AT91C_PA25_SPI1_NPCS1) | ((unsigned int)AT91C_PA2_SPI1_NPCS1) | ((unsigned int)AT91C_PA24_SPI1_MISO) | ((unsigned int)AT91C_PA22_SPI1_SPCK) | ((unsigned int)AT91C_PA26_SPI1_NPCS2) | ((unsigned int)AT91C_PA3_SPI1_NPCS2) | ((unsigned int)AT91C_PA29_SPI1_NPCS3) | ((unsigned int)AT91C_PA4_SPI1_NPCS3)); // Peripheral B
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         0,     // Peripheral A
-                         ( ( unsigned int )AT91C_PB10_SPI1_NPCS1 ) | ( ( unsigned int )AT91C_PB11_SPI1_NPCS2 ) | ( ( unsigned int )AT91C_PB16_SPI1_NPCS3 ) );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                                                                                                        // PIO controller base address
+                        0,                                                                                                                      // Peripheral A
+                        ((unsigned int)AT91C_PB10_SPI1_NPCS1) | ((unsigned int)AT91C_PB11_SPI1_NPCS2) | ((unsigned int)AT91C_PB16_SPI1_NPCS3)); // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3752,10 +3739,10 @@ AT91F_SPI1_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  SPI0
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI0_CfgPMC( void )
+AT91F_SPI0_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SPI0 ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SPI0));
 }
 
 //*----------------------------------------------------------------------------
@@ -3763,16 +3750,16 @@ AT91F_SPI0_CfgPMC( void )
 //* \brief Configure PIO controllers to drive SPI0 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_SPI0_CfgPIO( void )
+AT91F_SPI0_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PA17_SPI0_MOSI ) | ( ( unsigned int )AT91C_PA12_SPI0_NPCS0 ) | ( ( unsigned int )AT91C_PA13_SPI0_NPCS1 ) | ( ( unsigned int )AT91C_PA16_SPI0_MISO ) | ( ( unsigned int )AT91C_PA14_SPI0_NPCS2 ) | ( ( unsigned int )AT91C_PA18_SPI0_SPCK ) | ( ( unsigned int )AT91C_PA15_SPI0_NPCS3 ),        // Peripheral A
-                         ( ( unsigned int )AT91C_PA7_SPI0_NPCS1 ) | ( ( unsigned int )AT91C_PA8_SPI0_NPCS2 ) | ( ( unsigned int )AT91C_PA9_SPI0_NPCS3 ) );      // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                                                                                                                                                                                                                                    // PIO controller base address
+                        ((unsigned int)AT91C_PA17_SPI0_MOSI) | ((unsigned int)AT91C_PA12_SPI0_NPCS0) | ((unsigned int)AT91C_PA13_SPI0_NPCS1) | ((unsigned int)AT91C_PA16_SPI0_MISO) | ((unsigned int)AT91C_PA14_SPI0_NPCS2) | ((unsigned int)AT91C_PA18_SPI0_SPCK) | ((unsigned int)AT91C_PA15_SPI0_NPCS3), // Peripheral A
+                        ((unsigned int)AT91C_PA7_SPI0_NPCS1) | ((unsigned int)AT91C_PA8_SPI0_NPCS2) | ((unsigned int)AT91C_PA9_SPI0_NPCS3));                                                                                                                                                                // Peripheral B
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         0,     // Peripheral A
-                         ( ( unsigned int )AT91C_PB13_SPI0_NPCS1 ) | ( ( unsigned int )AT91C_PB14_SPI0_NPCS2 ) | ( ( unsigned int )AT91C_PB17_SPI0_NPCS3 ) );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                                                                                                        // PIO controller base address
+                        0,                                                                                                                      // Peripheral A
+                        ((unsigned int)AT91C_PB13_SPI0_NPCS1) | ((unsigned int)AT91C_PB14_SPI0_NPCS2) | ((unsigned int)AT91C_PB17_SPI0_NPCS3)); // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3780,10 +3767,10 @@ AT91F_SPI0_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  PWMC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PWMC_CfgPMC( void )
+AT91F_PWMC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_PWMC ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_PWMC));
 }
 
 //*----------------------------------------------------------------------------
@@ -3791,10 +3778,10 @@ AT91F_PWMC_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  TC0
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TC0_CfgPMC( void )
+AT91F_TC0_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_TC0 ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_TC0));
 }
 
 //*----------------------------------------------------------------------------
@@ -3802,12 +3789,12 @@ AT91F_TC0_CfgPMC( void )
 //* \brief Configure PIO controllers to drive TC0 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TC0_CfgPIO( void )
+AT91F_TC0_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PB23_TIOA0 ) | ( ( unsigned int )AT91C_PB24_TIOB0 ),   // Peripheral A
-                         ( ( unsigned int )AT91C_PB12_TCLK0 ) );        // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                                                     // PIO controller base address
+                        ((unsigned int)AT91C_PB23_TIOA0) | ((unsigned int)AT91C_PB24_TIOB0), // Peripheral A
+                        ((unsigned int)AT91C_PB12_TCLK0));                                   // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3815,10 +3802,10 @@ AT91F_TC0_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  TC1
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TC1_CfgPMC( void )
+AT91F_TC1_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_TC1 ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_TC1));
 }
 
 //*----------------------------------------------------------------------------
@@ -3826,12 +3813,12 @@ AT91F_TC1_CfgPMC( void )
 //* \brief Configure PIO controllers to drive TC1 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TC1_CfgPIO( void )
+AT91F_TC1_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PB25_TIOA1 ) | ( ( unsigned int )AT91C_PB26_TIOB1 ),   // Peripheral A
-                         ( ( unsigned int )AT91C_PB19_TCLK1 ) );        // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                                                     // PIO controller base address
+                        ((unsigned int)AT91C_PB25_TIOA1) | ((unsigned int)AT91C_PB26_TIOB1), // Peripheral A
+                        ((unsigned int)AT91C_PB19_TCLK1));                                   // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3839,10 +3826,10 @@ AT91F_TC1_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  TC2
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TC2_CfgPMC( void )
+AT91F_TC2_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_TC2 ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_TC2));
 }
 
 //*----------------------------------------------------------------------------
@@ -3850,16 +3837,16 @@ AT91F_TC2_CfgPMC( void )
 //* \brief Configure PIO controllers to drive TC2 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TC2_CfgPIO( void )
+AT91F_TC2_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         0,     // Peripheral A
-                         ( ( unsigned int )AT91C_PA15_TCLK2 ) );        // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                   // PIO controller base address
+                        0,                                 // Peripheral A
+                        ((unsigned int)AT91C_PA15_TCLK2)); // Peripheral B
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PB27_TIOA2 ) | ( ( unsigned int )AT91C_PB28_TIOB2 ),   // Peripheral A
-                         0 );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                                                     // PIO controller base address
+                        ((unsigned int)AT91C_PB27_TIOA2) | ((unsigned int)AT91C_PB28_TIOB2), // Peripheral A
+                        0);                                                                  // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3867,10 +3854,10 @@ AT91F_TC2_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  PITC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PITC_CfgPMC( void )
+AT91F_PITC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SYS ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SYS));
 }
 
 //*----------------------------------------------------------------------------
@@ -3878,10 +3865,10 @@ AT91F_PITC_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  ADC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_CfgPMC( void )
+AT91F_ADC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_ADC ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_ADC));
 }
 
 //*----------------------------------------------------------------------------
@@ -3889,12 +3876,12 @@ AT91F_ADC_CfgPMC( void )
 //* \brief Configure PIO controllers to drive ADC signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_ADC_CfgPIO( void )
+AT91F_ADC_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         0,     // Peripheral A
-                         ( ( unsigned int )AT91C_PB18_ADTRG ) );        // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                   // PIO controller base address
+                        0,                                 // Peripheral A
+                        ((unsigned int)AT91C_PB18_ADTRG)); // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3902,10 +3889,10 @@ AT91F_ADC_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  PMC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_CfgPMC( void )
+AT91F_PMC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SYS ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SYS));
 }
 
 //*----------------------------------------------------------------------------
@@ -3913,16 +3900,16 @@ AT91F_PMC_CfgPMC( void )
 //* \brief Configure PIO controllers to drive PMC signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PMC_CfgPIO( void )
+AT91F_PMC_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         0,     // Peripheral A
-                         ( ( unsigned int )AT91C_PA13_PCK1 ) | ( ( unsigned int )AT91C_PA30_PCK2 ) | ( ( unsigned int )AT91C_PA27_PCK3 ) );     // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                                                      // PIO controller base address
+                        0,                                                                                                    // Peripheral A
+                        ((unsigned int)AT91C_PA13_PCK1) | ((unsigned int)AT91C_PA30_PCK2) | ((unsigned int)AT91C_PA27_PCK3)); // Peripheral B
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PB29_PCK1 ) | ( ( unsigned int )AT91C_PB30_PCK2 ),     // Peripheral A
-                         ( ( unsigned int )AT91C_PB21_PCK1 ) | ( ( unsigned int )AT91C_PB22_PCK2 ) | ( ( unsigned int )AT91C_PB20_PCK0 ) | ( ( unsigned int )AT91C_PB0_PCK0 ) );        // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                                                                                                                       // PIO controller base address
+                        ((unsigned int)AT91C_PB29_PCK1) | ((unsigned int)AT91C_PB30_PCK2),                                                                     // Peripheral A
+                        ((unsigned int)AT91C_PB21_PCK1) | ((unsigned int)AT91C_PB22_PCK2) | ((unsigned int)AT91C_PB20_PCK0) | ((unsigned int)AT91C_PB0_PCK0)); // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3930,10 +3917,10 @@ AT91F_PMC_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  RSTC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_RSTC_CfgPMC( void )
+AT91F_RSTC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SYS ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SYS));
 }
 
 //*----------------------------------------------------------------------------
@@ -3941,10 +3928,10 @@ AT91F_RSTC_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  RTTC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_RTTC_CfgPMC( void )
+AT91F_RTTC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SYS ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SYS));
 }
 
 //*----------------------------------------------------------------------------
@@ -3952,10 +3939,10 @@ AT91F_RTTC_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  PIOA
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIOA_CfgPMC( void )
+AT91F_PIOA_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_PIOA ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_PIOA));
 }
 
 //*----------------------------------------------------------------------------
@@ -3963,10 +3950,10 @@ AT91F_PIOA_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  PIOB
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_PIOB_CfgPMC( void )
+AT91F_PIOB_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_PIOB ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_PIOB));
 }
 
 //*----------------------------------------------------------------------------
@@ -3974,10 +3961,10 @@ AT91F_PIOB_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  TWI
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TWI_CfgPMC( void )
+AT91F_TWI_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_TWI ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_TWI));
 }
 
 //*----------------------------------------------------------------------------
@@ -3985,12 +3972,12 @@ AT91F_TWI_CfgPMC( void )
 //* \brief Configure PIO controllers to drive TWI signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_TWI_CfgPIO( void )
+AT91F_TWI_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PA10_TWD ) | ( ( unsigned int )AT91C_PA11_TWCK ),      // Peripheral A
-                         0 );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                  // PIO controller base address
+                        ((unsigned int)AT91C_PA10_TWD) | ((unsigned int)AT91C_PA11_TWCK), // Peripheral A
+                        0);                                                               // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -3998,10 +3985,10 @@ AT91F_TWI_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  WDTC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_WDTC_CfgPMC( void )
+AT91F_WDTC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_SYS ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_SYS));
 }
 
 //*----------------------------------------------------------------------------
@@ -4009,10 +3996,10 @@ AT91F_WDTC_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  US1
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US1_CfgPMC( void )
+AT91F_US1_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_US1 ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_US1));
 }
 
 //*----------------------------------------------------------------------------
@@ -4020,16 +4007,16 @@ AT91F_US1_CfgPMC( void )
 //* \brief Configure PIO controllers to drive US1 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US1_CfgPIO( void )
+AT91F_US1_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PA5_RXD1 ) | ( ( unsigned int )AT91C_PA6_TXD1 ) | ( ( unsigned int )AT91C_PA8_RTS1 ) | ( ( unsigned int )AT91C_PA7_SCK1 ) | ( ( unsigned int )AT91C_PA9_CTS1 ),        // Peripheral A
-                         0 );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                                                                                                                    // PIO controller base address
+                        ((unsigned int)AT91C_PA5_RXD1) | ((unsigned int)AT91C_PA6_TXD1) | ((unsigned int)AT91C_PA8_RTS1) | ((unsigned int)AT91C_PA7_SCK1) | ((unsigned int)AT91C_PA9_CTS1), // Peripheral A
+                        0);                                                                                                                                                                 // Peripheral B
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOB,       // PIO controller base address
-                         0,     // Peripheral A
-                         ( ( unsigned int )AT91C_PB25_DTR1 ) | ( ( unsigned int )AT91C_PB23_DCD1 ) | ( ( unsigned int )AT91C_PB24_DSR1 ) | ( ( unsigned int )AT91C_PB26_RI1 ) );        // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOB,                                                                                                                       // PIO controller base address
+                        0,                                                                                                                                     // Peripheral A
+                        ((unsigned int)AT91C_PB25_DTR1) | ((unsigned int)AT91C_PB23_DCD1) | ((unsigned int)AT91C_PB24_DSR1) | ((unsigned int)AT91C_PB26_RI1)); // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -4037,10 +4024,10 @@ AT91F_US1_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  US0
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US0_CfgPMC( void )
+AT91F_US0_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_US0 ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_US0));
 }
 
 //*----------------------------------------------------------------------------
@@ -4048,12 +4035,12 @@ AT91F_US0_CfgPMC( void )
 //* \brief Configure PIO controllers to drive US0 signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_US0_CfgPIO( void )
+AT91F_US0_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PA0_RXD0 ) | ( ( unsigned int )AT91C_PA1_TXD0 ) | ( ( unsigned int )AT91C_PA3_RTS0 ) | ( ( unsigned int )AT91C_PA2_SCK0 ) | ( ( unsigned int )AT91C_PA4_CTS0 ),        // Peripheral A
-                         0 );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                                                                                                                    // PIO controller base address
+                        ((unsigned int)AT91C_PA0_RXD0) | ((unsigned int)AT91C_PA1_TXD0) | ((unsigned int)AT91C_PA3_RTS0) | ((unsigned int)AT91C_PA2_SCK0) | ((unsigned int)AT91C_PA4_CTS0), // Peripheral A
+                        0);                                                                                                                                                                 // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -4061,10 +4048,10 @@ AT91F_US0_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  UDP
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_UDP_CfgPMC( void )
+AT91F_UDP_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_UDP ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_UDP));
 }
 
 //*----------------------------------------------------------------------------
@@ -4072,11 +4059,11 @@ AT91F_UDP_CfgPMC( void )
 //* \brief Enable Peripheral clock in PMC for  AIC
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_AIC_CfgPMC( void )
+AT91F_AIC_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_IRQ0 ) |
-                                 ( ( unsigned int )1 << AT91C_ID_FIQ ) | ( ( unsigned int )1 << AT91C_ID_IRQ1 ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_IRQ0) |
+                                    ((unsigned int)1 << AT91C_ID_FIQ) | ((unsigned int)1 << AT91C_ID_IRQ1));
 }
 
 //*----------------------------------------------------------------------------
@@ -4084,12 +4071,12 @@ AT91F_AIC_CfgPMC( void )
 //* \brief Configure PIO controllers to drive AIC signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_AIC_CfgPIO( void )
+AT91F_AIC_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PA30_IRQ0 ) | ( ( unsigned int )AT91C_PA29_FIQ ),      // Peripheral A
-                         ( ( unsigned int )AT91C_PA14_IRQ1 ) ); // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                  // PIO controller base address
+                        ((unsigned int)AT91C_PA30_IRQ0) | ((unsigned int)AT91C_PA29_FIQ), // Peripheral A
+                        ((unsigned int)AT91C_PA14_IRQ1));                                 // Peripheral B
 }
 
 //*----------------------------------------------------------------------------
@@ -4097,10 +4084,10 @@ AT91F_AIC_CfgPIO( void )
 //* \brief Enable Peripheral clock in PMC for  CAN
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgPMC( void )
+AT91F_CAN_CfgPMC(void)
 {
-    AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC,        // PIO controller base address
-                                 ( ( unsigned int )1 << AT91C_ID_CAN ) );
+    AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, // PIO controller base address
+                                ((unsigned int)1 << AT91C_ID_CAN));
 }
 
 //*----------------------------------------------------------------------------
@@ -4108,12 +4095,12 @@ AT91F_CAN_CfgPMC( void )
 //* \brief Configure PIO controllers to drive CAN signals
 //*----------------------------------------------------------------------------
 static __inline void
-AT91F_CAN_CfgPIO( void )
+AT91F_CAN_CfgPIO(void)
 {
     // Configure PIO controllers to periph mode
-    AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA,       // PIO controller base address
-                         ( ( unsigned int )AT91C_PA20_CANTX ) | ( ( unsigned int )AT91C_PA19_CANRX ),   // Peripheral A
-                         0 );   // Peripheral B
+    AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA,                                                     // PIO controller base address
+                        ((unsigned int)AT91C_PA20_CANTX) | ((unsigned int)AT91C_PA19_CANRX), // Peripheral A
+                        0);                                                                  // Peripheral B
 }
 
 #endif // lib_AT91SAM7X256_H

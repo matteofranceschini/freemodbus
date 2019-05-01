@@ -39,27 +39,26 @@
 /* ------------------------ Static variables ------------------------------ */
 
 /* Buffer descriptor indexes */
-static uint8    tx_bd_idx;
-static uint8    rx_bd_idx;
+static uint8 tx_bd_idx;
+static uint8 rx_bd_idx;
 
 /* Buffer Descriptors -- must be aligned on a 4-byte boundary but a
  * 16-byte boundary is recommended. */
-static nbuf_t   tx_nbuf[sizeof( nbuf_t ) * NUM_TXBDS] ATTR_FECMEM;
-static nbuf_t   rx_nbuf[sizeof( nbuf_t ) * NUM_RXBDS] ATTR_FECMEM;
+static nbuf_t tx_nbuf[sizeof(nbuf_t) * NUM_TXBDS] ATTR_FECMEM;
+static nbuf_t rx_nbuf[sizeof(nbuf_t) * NUM_RXBDS] ATTR_FECMEM;
 
 /* Data Buffers -- must be aligned on a 16-byte boundary. */
-static uint8    tx_buf[TX_BUFFER_SIZE * NUM_TXBDS] ATTR_FECMEM;
-static uint8    rx_buf[RX_BUFFER_SIZE * NUM_RXBDS] ATTR_FECMEM;
+static uint8 tx_buf[TX_BUFFER_SIZE * NUM_TXBDS] ATTR_FECMEM;
+static uint8 rx_buf[RX_BUFFER_SIZE * NUM_RXBDS] ATTR_FECMEM;
 
 /* ------------------------ Start implementation -------------------------- */
-void
-nbuf_init(  )
+void nbuf_init()
 {
 
-    uint8           i;
+    uint8 i;
 
     /* Initialize receive descriptor ring */
-    for( i = 0; i < NUM_RXBDS; i++ )
+    for (i = 0; i < NUM_RXBDS; i++)
     {
         rx_nbuf[i].status = RX_BD_E;
         rx_nbuf[i].length = 0;
@@ -70,7 +69,7 @@ nbuf_init(  )
     rx_nbuf[NUM_RXBDS - 1].status |= RX_BD_W;
 
     /* Initialize transmit descriptor ring */
-    for( i = 0; i < NUM_TXBDS; i++ )
+    for (i = 0; i < NUM_TXBDS; i++)
     {
         tx_nbuf[i].status = TX_BD_L | TX_BD_TC;
         tx_nbuf[i].length = 0;
@@ -86,67 +85,63 @@ nbuf_init(  )
     return;
 }
 
-
 /********************************************************************/
 uint32
-nbuf_get_start( uint8 direction )
+nbuf_get_start(uint8 direction)
 {
     /*
      * Return the address of the first buffer descriptor in the ring.
      * This routine is needed by the FEC of the MPC860T , MCF5282, and MCF523x
      * in order to write the Rx/Tx descriptor ring start registers
      */
-    switch ( direction )
+    switch (direction)
     {
     case NBUF_RX:
-        return ( uint32 ) rx_nbuf;
+        return (uint32)rx_nbuf;
     case NBUF_TX:
     default:
-        return ( uint32 ) tx_nbuf;
+        return (uint32)tx_nbuf;
     }
 }
 
-
 /********************************************************************/
-nbuf_t         *
-nbuf_rx_allocate(  )
+nbuf_t *
+nbuf_rx_allocate()
 {
     /* This routine alters shared data. Disable interrupts! */
-    int             old_ipl = asm_set_ipl( 6 );
+    int old_ipl = asm_set_ipl(6);
 
     /* Return a pointer to the next empty Rx Buffer Descriptor */
-    int             i = rx_bd_idx;
-
+    int i = rx_bd_idx;
 
     /* Check to see if the ring of BDs is full */
-    if( rx_nbuf[i].status & RX_BD_INUSE )
+    if (rx_nbuf[i].status & RX_BD_INUSE)
         return NULL;
 
     /* Mark the buffer as in use */
     rx_nbuf[i].status |= RX_BD_INUSE;
 
     /* increment the circular index */
-    rx_bd_idx = ( uint8 ) ( ( rx_bd_idx + 1 ) % NUM_RXBDS );
+    rx_bd_idx = (uint8)((rx_bd_idx + 1) % NUM_RXBDS);
 
     /* Restore previous IPL */
-    asm_set_ipl( old_ipl );
+    asm_set_ipl(old_ipl);
 
     return &rx_nbuf[i];
 }
 
-
 /********************************************************************/
-nbuf_t         *
-nbuf_tx_allocate(  )
+nbuf_t *
+nbuf_tx_allocate()
 {
     /* This routine alters shared data. Disable interrupts! */
-    int             old_ipl = asm_set_ipl( 6 );
+    int old_ipl = asm_set_ipl(6);
 
     /* Return a pointer to the next empty Tx Buffer Descriptor */
-    int             i = tx_bd_idx;
+    int i = tx_bd_idx;
 
     /* Check to see if ring of BDs is full */
-    if( ( tx_nbuf[i].status & TX_BD_INUSE ) || ( tx_nbuf[i].status & TX_BD_R ) )
+    if ((tx_nbuf[i].status & TX_BD_INUSE) || (tx_nbuf[i].status & TX_BD_R))
         return NULL;
 
     /* Mark the buffer as Ready (in use) */
@@ -154,47 +149,43 @@ nbuf_tx_allocate(  )
     tx_nbuf[i].status |= TX_BD_INUSE;
 
     /* increment the circular index */
-    tx_bd_idx = ( uint8 ) ( ( tx_bd_idx + 1 ) % NUM_TXBDS );
+    tx_bd_idx = (uint8)((tx_bd_idx + 1) % NUM_TXBDS);
 
     /* Restore previous IPL */
-    asm_set_ipl( old_ipl );
+    asm_set_ipl(old_ipl);
 
     return &tx_nbuf[i];
 }
 
-
 /********************************************************************/
-void
-nbuf_rx_release( nbuf_t * pNbuf )
+void nbuf_rx_release(nbuf_t *pNbuf)
 {
     /* This routine alters shared data. Disable interrupts! */
-    int             old_ipl = asm_set_ipl( 6 );
+    int old_ipl = asm_set_ipl(6);
 
     /* Mark the buffer as empty and not in use */
     pNbuf->status |= RX_BD_E;
     pNbuf->status &= ~RX_BD_INUSE;
 
     /* Restore previous IPL */
-    asm_set_ipl( old_ipl );
+    asm_set_ipl(old_ipl);
 }
 
 /********************************************************************/
-void
-nbuf_tx_release( nbuf_t * pNbuf )
+void nbuf_tx_release(nbuf_t *pNbuf)
 {
     /* This routine alters shared data. Disable interrupts! */
-    int             old_ipl = asm_set_ipl( 6 );
+    int old_ipl = asm_set_ipl(6);
 
     /* Mark the buffer as not in use */
     pNbuf->status &= ~TX_BD_INUSE;
 
     /* Restore previous IPL */
-    asm_set_ipl( old_ipl );
+    asm_set_ipl(old_ipl);
 }
 
 /********************************************************************/
-int
-nbuf_rx_next_ready(  )
+int nbuf_rx_next_ready()
 {
     /****************************************************************
  This function checks the EMPTY bit of the next Rx buffer to be
@@ -208,5 +199,5 @@ nbuf_rx_next_ready(  )
  interrupt event.
  ****************************************************************/
 
-    return ( !( rx_nbuf[rx_bd_idx].status & RX_BD_E ) );
+    return (!(rx_nbuf[rx_bd_idx].status & RX_BD_E));
 }

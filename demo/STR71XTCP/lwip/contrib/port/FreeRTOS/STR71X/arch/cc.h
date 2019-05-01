@@ -42,25 +42,29 @@
 /* ------------------------ Defines --------------------------------------- */
 
 #define PACK_STRUCT_BEGIN
-#define PACK_STRUCT_STRUCT      __attribute__ ((__packed__))
+#define PACK_STRUCT_STRUCT __attribute__((__packed__))
 #define PACK_STRUCT_END
 
-#define PACK_STRUCT_FIELD( x )  x
+#define PACK_STRUCT_FIELD(x) x
 
 #define ALIGN_STRUCT_8_BEGIN
-#define ALIGN_STRUCT_8          __attribute__ ((aligned (8)))
+#define ALIGN_STRUCT_8 __attribute__((aligned(8)))
 #define ALIGN_STRUCT_8_END
 
-#define LWIP_PLATFORM_ASSERT( x ) sys_assert( x )
-#define LWIP_PLATFORM_DIAG( x, ... ) do{ sys_debug x; } while( 0 );
+#define LWIP_PLATFORM_ASSERT(x) sys_assert(x)
+#define LWIP_PLATFORM_DIAG(x, ...) \
+    do                             \
+    {                              \
+        sys_debug x;               \
+    } while (0);
 
 /* Define (sn)printf formatters for these lwIP types */
-#define U16_F                   "hu"
-#define S16_F                   "hd"
-#define X16_F                   "hx"
-#define U32_F                   "lu"
-#define S32_F                   "ld"
-#define X32_F                   "lx"
+#define U16_F "hu"
+#define S16_F "hd"
+#define X16_F "hx"
+#define U32_F "lu"
+#define S32_F "ld"
+#define X32_F "lx"
 
 /* ------------------------ Type definitions (lwIP) ----------------------- */
 typedef unsigned char u8_t;
@@ -69,8 +73,8 @@ typedef unsigned short u16_t;
 typedef signed short s16_t;
 typedef unsigned long u32_t;
 typedef signed long s32_t;
-typedef u32_t   mem_ptr_t;
-typedef int     sys_prot_t;
+typedef u32_t mem_ptr_t;
+typedef int sys_prot_t;
 
 /* ------------------------ Prototypes ------------------------------------ */
 

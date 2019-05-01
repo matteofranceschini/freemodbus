@@ -30,7 +30,7 @@
 /** \addtogroup ssc module Working with SSC
  * The SSC driver provides the interface to configure and use the SSC
  * peripheral.
- * 
+ *
  * !Usage
  *
  * -# Enable the SSC interface pins.
@@ -56,7 +56,6 @@
 */
 /*@{*/
 /*@}*/
-
 
 /**
  * \file
@@ -93,11 +92,13 @@ void SSC_Configure(uint32_t bitRate, uint32_t masterClock)
 
     SSC->SSC_PTCR = SSC_PTCR_RXTDIS | SSC_PTCR_TXTDIS;
     /* Configure clock frequency */
-    if (bitRate != 0) {
-    
+    if (bitRate != 0)
+    {
+
         SSC->SSC_CMR = masterClock / (2 * bitRate);
     }
-    else {
+    else
+    {
 
         SSC->SSC_CMR = 0;
     }
@@ -115,7 +116,7 @@ void SSC_ConfigureTransmitter(uint32_t tcmr, uint32_t tfmr)
 }
 
 /**
- * \brief Configures the receiver of a SSC peripheral. 
+ * \brief Configures the receiver of a SSC peripheral.
  * \param rcmr Receive Clock Mode Register value.
  * \param rfmr Receive Frame Mode Register value.
  */
@@ -182,7 +183,8 @@ void SSC_DisableInterrupts(uint32_t sources)
  */
 void SSC_Write(uint32_t frame)
 {
-    while ((SSC->SSC_SR & SSC_SR_TXRDY) == 0);
+    while ((SSC->SSC_SR & SSC_SR_TXRDY) == 0)
+        ;
     SSC->SSC_THR = frame;
 }
 
@@ -191,7 +193,8 @@ void SSC_Write(uint32_t frame)
  */
 uint32_t SSC_Read(void)
 {
-    while ((SSC->SSC_SR & SSC_SR_RXRDY) == 0);
+    while ((SSC->SSC_SR & SSC_SR_RXRDY) == 0)
+        ;
     return SSC->SSC_RHR;
 }
 
@@ -204,17 +207,19 @@ uint32_t SSC_Read(void)
 uint8_t SSC_WriteBuffer(void *buffer, uint32_t length)
 {
     /* Check if first bank is free*/
-    if (SSC->SSC_TCR == 0) {
+    if (SSC->SSC_TCR == 0)
+    {
 
-        SSC->SSC_TPR = (uint32_t) buffer;
+        SSC->SSC_TPR = (uint32_t)buffer;
         SSC->SSC_TCR = length;
         SSC->SSC_PTCR = SSC_PTCR_TXTEN;
         return 1;
     }
     /* Check if second bank is free*/
-    else if (SSC->SSC_TNCR == 0) {
+    else if (SSC->SSC_TNCR == 0)
+    {
 
-        SSC->SSC_TNPR = (uint32_t) buffer;
+        SSC->SSC_TNPR = (uint32_t)buffer;
         SSC->SSC_TNCR = length;
         return 1;
     }
@@ -222,7 +227,7 @@ uint8_t SSC_WriteBuffer(void *buffer, uint32_t length)
 }
 
 /**
- * \brief Reads data coming from a SSC peripheral receiver and stores it into the 
+ * \brief Reads data coming from a SSC peripheral receiver and stores it into the
  * giving buffer with PDC.
  * \param buffer ata buffer used for reception.
  * \param length Size of the data buffer.
@@ -231,16 +236,18 @@ uint8_t SSC_WriteBuffer(void *buffer, uint32_t length)
 uint8_t SSC_ReadBuffer(void *buffer, uint32_t length)
 {
     /* Check if the first bank is free*/
-    if (SSC->SSC_RCR == 0) {
+    if (SSC->SSC_RCR == 0)
+    {
 
-        SSC->SSC_RPR = (uint32_t) buffer;
+        SSC->SSC_RPR = (uint32_t)buffer;
         SSC->SSC_RCR = length;
         SSC->SSC_PTCR = SSC_PTCR_RXTEN;
         return 1;
     }
     /* Check if second bank is free*/
-    else if (SSC->SSC_RNCR == 0) {
-        SSC->SSC_RNPR = (uint32_t) buffer;
+    else if (SSC->SSC_RNCR == 0)
+    {
+        SSC->SSC_RNPR = (uint32_t)buffer;
         SSC->SSC_RNCR = length;
         return 1;
     }

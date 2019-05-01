@@ -26,13 +26,13 @@
 
 typedef enum
 {
-  I2C_CR   = 0x00,
-  I2C_SR1  = 0x04,
-  I2C_SR2  = 0x08,
-  I2C_CCR  = 0x0C,
+  I2C_CR = 0x00,
+  I2C_SR1 = 0x04,
+  I2C_SR2 = 0x08,
+  I2C_CCR = 0x0C,
   I2C_OAR1 = 0x10,
   I2C_OAR2 = 0x14,
-  I2C_DR   = 0x18,
+  I2C_DR = 0x18,
   I2C_ECCR = 0x1C
 } I2C_Registers;
 
@@ -50,22 +50,22 @@ typedef enum
 
 typedef enum
 {
-  I2C_SB    = 0x00001,
-  I2C_M_SL  = 0x00002,
-  I2C_ADSL  = 0x00004,
-  I2C_BTF   = 0x00008,
-  I2C_BUSY  = 0x00010,
-  I2C_TRA   = 0x00020,
+  I2C_SB = 0x00001,
+  I2C_M_SL = 0x00002,
+  I2C_ADSL = 0x00004,
+  I2C_BTF = 0x00008,
+  I2C_BUSY = 0x00010,
+  I2C_TRA = 0x00020,
   I2C_ADD10 = 0x00040,
-  I2C_EVF   = 0x00080,
-  I2C_GCAL  = 0x00100,
-  I2C_BERR  = 0x00200,
-  I2C_ARLO  = 0x00400,
+  I2C_EVF = 0x00080,
+  I2C_GCAL = 0x00100,
+  I2C_BERR = 0x00200,
+  I2C_ARLO = 0x00400,
   I2C_STOPF = 0x00800,
-  I2C_AF    = 0x01000,
+  I2C_AF = 0x01000,
   I2C_ENDAD = 0x02000,
-  I2C_STOP  = 0x08000,
-  I2C_ACK   = 0x10000,
+  I2C_STOP = 0x08000,
+  I2C_ACK = 0x10000,
   I2C_START = 0x20000
 } I2C_Flags;
 
@@ -94,12 +94,12 @@ typedef enum
 } I2C_Rx_Status;
 
 #define I2C_PESET_Mask 0x20
-#define I2C_PERESET    0xDF
-#define I2C_ENGC_Mask  0x10
+#define I2C_PERESET 0xDF
+#define I2C_ENGC_Mask 0x10
 #define I2C_START_Mask 0x08
-#define I2C_STOP_Mask  0x02
-#define I2C_ACK_Mask   0x04
-#define I2C_ITE_Mask   0x01
+#define I2C_STOP_Mask 0x02
+#define I2C_ACK_Mask 0x04
+#define I2C_ITE_Mask 0x01
 
 /*******************************************************************************
 * Function Name  : I2C_Init
@@ -108,7 +108,7 @@ typedef enum
 * Input          : I2Cx ( I2C0 or I2C1 )
 * Return         : None.
 *******************************************************************************/
-void I2C_Init (I2C_TypeDef *I2Cx);
+void I2C_Init(I2C_TypeDef *I2Cx);
 
 /*******************************************************************************
 * Function Name  : I2C_OnOffConfig
@@ -117,7 +117,7 @@ void I2C_Init (I2C_TypeDef *I2Cx);
 *                  condition(ENABLE or DISABLE).
 * Return         : None.
 *******************************************************************************/
-void I2C_OnOffConfig (I2C_TypeDef *I2Cx, FunctionalState NewState);
+void I2C_OnOffConfig(I2C_TypeDef *I2Cx, FunctionalState NewState);
 
 /*******************************************************************************
 * Function Name  : I2C_GeneralCallConfig
@@ -126,10 +126,12 @@ void I2C_OnOffConfig (I2C_TypeDef *I2Cx, FunctionalState NewState);
 *                  condition(ENABLE or DISABLE).
 * Return         : None.
 *******************************************************************************/
-INLINE void I2C_GeneralCallConfig (I2C_TypeDef *I2Cx, FunctionalState NewState)
+INLINE void I2C_GeneralCallConfig(I2C_TypeDef *I2Cx, FunctionalState NewState)
 {
-  if (NewState == ENABLE) I2Cx->CR |= I2C_ENGC_Mask;
-     else I2Cx->CR &= ~I2C_ENGC_Mask;
+  if (NewState == ENABLE)
+    I2Cx->CR |= I2C_ENGC_Mask;
+  else
+    I2Cx->CR &= ~I2C_ENGC_Mask;
 }
 
 /*******************************************************************************
@@ -139,10 +141,12 @@ INLINE void I2C_GeneralCallConfig (I2C_TypeDef *I2Cx, FunctionalState NewState)
 *                  condition(ENABLE or DISABLE).
 * Return         : None.
 *******************************************************************************/
-INLINE void I2C_STARTGenerate (I2C_TypeDef *I2Cx, FunctionalState NewState)
+INLINE void I2C_STARTGenerate(I2C_TypeDef *I2Cx, FunctionalState NewState)
 {
-  if (NewState == ENABLE) I2Cx->CR |= I2C_START_Mask;
-    else I2Cx->CR &= ~I2C_START_Mask;
+  if (NewState == ENABLE)
+    I2Cx->CR |= I2C_START_Mask;
+  else
+    I2Cx->CR &= ~I2C_START_Mask;
 }
 
 /*******************************************************************************
@@ -152,10 +156,12 @@ INLINE void I2C_STARTGenerate (I2C_TypeDef *I2Cx, FunctionalState NewState)
 *                  condition(ENABLE or DISABLE).
 * Return         : None.
 *******************************************************************************/
-INLINE void I2C_STOPGenerate (I2C_TypeDef *I2Cx, FunctionalState NewState)
+INLINE void I2C_STOPGenerate(I2C_TypeDef *I2Cx, FunctionalState NewState)
 {
-  if (NewState == ENABLE) I2Cx->CR |= I2C_STOP_Mask;
-    else I2Cx->CR &= ~I2C_STOP_Mask;
+  if (NewState == ENABLE)
+    I2Cx->CR |= I2C_STOP_Mask;
+  else
+    I2Cx->CR &= ~I2C_STOP_Mask;
 }
 
 /*******************************************************************************
@@ -165,10 +171,12 @@ INLINE void I2C_STOPGenerate (I2C_TypeDef *I2Cx, FunctionalState NewState)
 *                  condition(ENABLE or DISABLE).
 * Return         : None.
 *******************************************************************************/
-INLINE void I2C_AcknowledgeConfig (I2C_TypeDef *I2Cx, FunctionalState NewState)
+INLINE void I2C_AcknowledgeConfig(I2C_TypeDef *I2Cx, FunctionalState NewState)
 {
-  if (NewState == ENABLE) I2Cx->CR |= I2C_ACK_Mask;
-    else I2Cx->CR &= ~I2C_ACK_Mask;
+  if (NewState == ENABLE)
+    I2Cx->CR |= I2C_ACK_Mask;
+  else
+    I2Cx->CR &= ~I2C_ACK_Mask;
 }
 
 /*******************************************************************************
@@ -178,10 +186,12 @@ INLINE void I2C_AcknowledgeConfig (I2C_TypeDef *I2Cx, FunctionalState NewState)
 *                  condition(ENABLE or DISABLE).
 * Return         : None.
 *******************************************************************************/
-INLINE void I2C_ITConfig (I2C_TypeDef *I2Cx, FunctionalState NewState)
+INLINE void I2C_ITConfig(I2C_TypeDef *I2Cx, FunctionalState NewState)
 {
-  if (NewState == ENABLE) I2Cx->CR |= I2C_ITE_Mask;
-    else I2Cx->CR &= ~I2C_ITE_Mask;
+  if (NewState == ENABLE)
+    I2Cx->CR |= I2C_ITE_Mask;
+  else
+    I2Cx->CR &= ~I2C_ITE_Mask;
 }
 
 /*******************************************************************************
@@ -192,7 +202,7 @@ INLINE void I2C_ITConfig (I2C_TypeDef *I2Cx, FunctionalState NewState)
 *                                                I2COAR1,I2COAR2,I2CDR,I2CECCR)
 * Return         : the value of the register passed as parameter(u8)
 *******************************************************************************/
-INLINE u8 I2C_RegisterRead (I2C_TypeDef *I2Cx, I2C_Registers reg)
+INLINE u8 I2C_RegisterRead(I2C_TypeDef *I2Cx, I2C_Registers reg)
 {
   return (*(u8 *)(*((u32 *)&I2Cx) + reg));
 }
@@ -207,7 +217,7 @@ INLINE u8 I2C_RegisterRead (I2C_TypeDef *I2Cx, I2C_Registers reg)
 *                                     of the INDIRECT access
 * Return         : the NewState of the Flag (SET or RESET).
 *******************************************************************************/
-FlagStatus I2C_FlagStatus (I2C_TypeDef *I2Cx, RegisterAccess Access, I2C_Flags Flag,...);
+FlagStatus I2C_FlagStatus(I2C_TypeDef *I2Cx, RegisterAccess Access, I2C_Flags Flag, ...);
 
 /*******************************************************************************
 * Function Name  :  I2C_FlagClear
@@ -218,7 +228,7 @@ FlagStatus I2C_FlagStatus (I2C_TypeDef *I2Cx, RegisterAccess Access, I2C_Flags F
 *                         to be cleared need a write in one register
 * Return         : None.
 *******************************************************************************/
-void I2C_FlagClear (I2C_TypeDef *I2Cx, I2C_Flags Flag,...);
+void I2C_FlagClear(I2C_TypeDef *I2Cx, I2C_Flags Flag, ...);
 
 /*******************************************************************************
 * Function Name  : I2C_SpeedConfig
@@ -227,7 +237,7 @@ void I2C_FlagClear (I2C_TypeDef *I2Cx, I2C_Flags Flag,...);
 *                  Clock: I2C expected clock in Hertz.
 * Return         : None.
 *******************************************************************************/
-void I2C_SpeedConfig (I2C_TypeDef *I2Cx, u32 Clock);
+void I2C_SpeedConfig(I2C_TypeDef *I2Cx, u32 Clock);
 
 /*******************************************************************************
 * Function Name  : I2C_AddressConfig
@@ -238,7 +248,7 @@ void I2C_SpeedConfig (I2C_TypeDef *I2Cx, u32 Clock);
 *                  Mode (I2C_Mode10,I2C_Mode7).
 * Return         : None.
 *******************************************************************************/
-void I2C_AddressConfig (I2C_TypeDef *I2Cx, u16 Address, I2C_Addressing Mode);
+void I2C_AddressConfig(I2C_TypeDef *I2Cx, u16 Address, I2C_Addressing Mode);
 
 /*******************************************************************************
 * Function Name  : I2C_FCLKConfig
@@ -247,7 +257,7 @@ void I2C_AddressConfig (I2C_TypeDef *I2Cx, u16 Address, I2C_Addressing Mode);
 * Input          : I2Cx ( I2C0 or I2C1 )
 * Return         : None.
 *******************************************************************************/
-void I2C_FCLKConfig (I2C_TypeDef *I2Cx);
+void I2C_FCLKConfig(I2C_TypeDef *I2Cx);
 
 /*******************************************************************************
 * Function Name  : I2C_AddressSend
@@ -258,7 +268,7 @@ void I2C_FCLKConfig (I2C_TypeDef *I2Cx);
 *                  Direction (I2C_RX,I2C_TX).
 * Return         : None.
 ********************************************************************************/
-void I2C_AddressSend (I2C_TypeDef *I2Cx, u16 Address, I2C_Addressing Mode, I2C_Direction Direction);
+void I2C_AddressSend(I2C_TypeDef *I2Cx, u16 Address, I2C_Addressing Mode, I2C_Direction Direction);
 
 /*******************************************************************************
 * Function Name  : I2C_ByteSend
@@ -267,7 +277,7 @@ void I2C_AddressSend (I2C_TypeDef *I2Cx, u16 Address, I2C_Addressing Mode, I2C_D
 *                  Data : the byte to be sent to the slave
 * Return         : None.
 *******************************************************************************/
-void I2C_ByteSend (I2C_TypeDef *I2Cx, u8 Data);
+void I2C_ByteSend(I2C_TypeDef *I2Cx, u8 Data);
 
 /*******************************************************************************
 * Function Name  : I2C_BufferSend
@@ -278,7 +288,7 @@ void I2C_ByteSend (I2C_TypeDef *I2Cx, u8 Data);
 * Return         : I2C_Tx_Status :transmission status (I2C_TX_AF, I2C_TX_ARLO,
 *                  I2C_TX_BERR,I2C_TX_DATA_OK)
 *******************************************************************************/
-I2C_Tx_Status I2C_BufferSend (I2C_TypeDef *I2Cx, u8 *PtrToBuffer, u8 NbOfBytes);
+I2C_Tx_Status I2C_BufferSend(I2C_TypeDef *I2Cx, u8 *PtrToBuffer, u8 NbOfBytes);
 
 /*******************************************************************************
 * Function Name  : I2C_StringSend
@@ -288,7 +298,7 @@ I2C_Tx_Status I2C_BufferSend (I2C_TypeDef *I2Cx, u8 *PtrToBuffer, u8 NbOfBytes);
 * Return         : I2C_Tx_Status :transmission status (I2C_TX_AF, I2C_TX_ARLO,
 *                  I2C_TX_BERR,I2C_TX_DATA_OK)
 *******************************************************************************/
-I2C_Tx_Status I2C_StringSend (I2C_TypeDef *I2Cx, char *PtrToString);
+I2C_Tx_Status I2C_StringSend(I2C_TypeDef *I2Cx, char *PtrToString);
 
 /*******************************************************************************
 * Function Name  : I2C_TransmissionStatus
@@ -298,7 +308,7 @@ I2C_Tx_Status I2C_StringSend (I2C_TypeDef *I2Cx, char *PtrToString);
 *                   I2C_TX_AF, I2C_TX_ARLO, I2C_TX_BERR,I2C_TX_ADD_OK,
 *                   I2C_TX_DATA_OK,I2C_TX_ONGOING)
 *******************************************************************************/
-I2C_Tx_Status I2C_TransmissionStatus (I2C_TypeDef *I2Cx);
+I2C_Tx_Status I2C_TransmissionStatus(I2C_TypeDef *I2Cx);
 
 /*******************************************************************************
 * Function Name  : I2C_ByteReceive
@@ -306,7 +316,7 @@ I2C_Tx_Status I2C_TransmissionStatus (I2C_TypeDef *I2Cx);
 * Input          : I2Cx ( I2C0 or I2C1 )
 * Return         : the byte received
 *******************************************************************************/
-u8 I2C_ByteReceive (I2C_TypeDef *I2Cx);
+u8 I2C_ByteReceive(I2C_TypeDef *I2Cx);
 
 /*******************************************************************************
 * Function Name  : I2C_BufferReceive
@@ -317,7 +327,7 @@ u8 I2C_ByteReceive (I2C_TypeDef *I2Cx);
 * Return         : I2C_Rx_Status:the NewState of the reception (,I2C_RX_AF,
 *                               I2C_RX_ARLO,I2C_RX_BERR, I2C_RX_DATA_OK)
 *******************************************************************************/
-I2C_Rx_Status I2C_BufferReceive (I2C_TypeDef *I2Cx, u8 *PtrToBuffer, u8 NbOfBytes);
+I2C_Rx_Status I2C_BufferReceive(I2C_TypeDef *I2Cx, u8 *PtrToBuffer, u8 NbOfBytes);
 
 /*******************************************************************************
 * Function Name  :I2C_ReceptionStatus
@@ -327,7 +337,7 @@ I2C_Rx_Status I2C_BufferReceive (I2C_TypeDef *I2Cx, u8 *PtrToBuffer, u8 NbOfByte
 *                  I2C_RX_SB,I2C_RX_AF,I2C_RX_ARLO,I2C_RX_BERR,I2C_RX_ADD_OK,
 *                  I2C_RX_DATA_OK, I2C_RX_ONGOING)
 *******************************************************************************/
-I2C_Rx_Status I2C_ReceptionStatus (I2C_TypeDef *I2Cx);
+I2C_Rx_Status I2C_ReceptionStatus(I2C_TypeDef *I2Cx);
 
 /*******************************************************************************
 * Function Name  : I2C_ErrorClear
@@ -335,7 +345,7 @@ I2C_Rx_Status I2C_ReceptionStatus (I2C_TypeDef *I2Cx);
 * Input          : I2Cx ( I2C0 or I2C1 )
 * Return         : None.
 *******************************************************************************/
-INLINE void I2C_ErrorClear (I2C_TypeDef *I2Cx)
+INLINE void I2C_ErrorClear(I2C_TypeDef *I2Cx)
 {
   // Clear all error flags by reading the SR2 register
   (void)I2Cx->SR2;
@@ -349,7 +359,7 @@ INLINE void I2C_ErrorClear (I2C_TypeDef *I2Cx)
 *******************************************************************************/
 INLINE u32 I2C_GetStatus(I2C_TypeDef *I2Cx)
 {
- return (((I2Cx->CR&0x04)<<14)|(I2Cx->SR1|(I2Cx->SR2<<8))&0x3FFF);
+  return (((I2Cx->CR & 0x04) << 14) | (I2Cx->SR1 | (I2Cx->SR2 << 8)) & 0x3FFF);
 }
 
 #endif /* __i2c_H */

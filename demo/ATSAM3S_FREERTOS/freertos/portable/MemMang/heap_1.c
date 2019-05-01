@@ -33,9 +33,9 @@
     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-    more details. You should have received a copy of the GNU General Public 
-    License and the FreeRTOS license exception along with FreeRTOS; if not it 
-    can be viewed here: http://www.freertos.org/a00114.html and also obtained 
+    more details. You should have received a copy of the GNU General Public
+    License and the FreeRTOS license exception along with FreeRTOS; if not it
+    can be viewed here: http://www.freertos.org/a00114.html and also obtained
     by writing to Richard Barry, contact details for whom are available on the
     FreeRTOS WEB site.
 
@@ -50,7 +50,6 @@
     http://www.OpenRTOS.com - Commercial support, development, porting,
     licensing and training services.
 */
-
 
 /*
  * The simplest possible implementation of pvPortMalloc().  Note that this
@@ -73,80 +72,76 @@ task.h is included from an application file. */
 
 /* Allocate the memory for the heap.  The struct is used to force byte
 alignment without using any non-portable code. */
-static union xRTOS_HEAP
-{
-	#if portBYTE_ALIGNMENT == 8
-		volatile portDOUBLE dDummy;
-	#else
-		volatile unsigned long ulDummy;
-	#endif	
-	unsigned char ucHeap[ configTOTAL_HEAP_SIZE ];
+static union xRTOS_HEAP {
+#if portBYTE_ALIGNMENT == 8
+	volatile portDOUBLE dDummy;
+#else
+	volatile unsigned long ulDummy;
+#endif
+	unsigned char ucHeap[configTOTAL_HEAP_SIZE];
 } xHeap;
 
-static size_t xNextFreeByte = ( size_t ) 0;
+static size_t xNextFreeByte = (size_t)0;
 /*-----------------------------------------------------------*/
 
-void *pvPortMalloc( size_t xWantedSize )
+void *pvPortMalloc(size_t xWantedSize)
 {
-void *pvReturn = NULL; 
+	void *pvReturn = NULL;
 
-	/* Ensure that blocks are always aligned to the required number of bytes. */
-	#if portBYTE_ALIGNMENT != 1
-		if( xWantedSize & portBYTE_ALIGNMENT_MASK )
-		{
-			/* Byte alignment required. */
-			xWantedSize += ( portBYTE_ALIGNMENT - ( xWantedSize & portBYTE_ALIGNMENT_MASK ) );
-		}
-	#endif
+/* Ensure that blocks are always aligned to the required number of bytes. */
+#if portBYTE_ALIGNMENT != 1
+	if (xWantedSize & portBYTE_ALIGNMENT_MASK)
+	{
+		/* Byte alignment required. */
+		xWantedSize += (portBYTE_ALIGNMENT - (xWantedSize & portBYTE_ALIGNMENT_MASK));
+	}
+#endif
 
 	vTaskSuspendAll();
 	{
 		/* Check there is enough room left for the allocation. */
-		if( ( ( xNextFreeByte + xWantedSize ) < configTOTAL_HEAP_SIZE ) &&
-			( ( xNextFreeByte + xWantedSize ) > xNextFreeByte )	)/* Check for overflow. */
+		if (((xNextFreeByte + xWantedSize) < configTOTAL_HEAP_SIZE) &&
+			((xNextFreeByte + xWantedSize) > xNextFreeByte)) /* Check for overflow. */
 		{
 			/* Return the next free byte then increment the index past this
 			block. */
-			pvReturn = &( xHeap.ucHeap[ xNextFreeByte ] );
-			xNextFreeByte += xWantedSize;			
-		}	
+			pvReturn = &(xHeap.ucHeap[xNextFreeByte]);
+			xNextFreeByte += xWantedSize;
+		}
 	}
 	xTaskResumeAll();
-	
-	#if( configUSE_MALLOC_FAILED_HOOK == 1 )
+
+#if (configUSE_MALLOC_FAILED_HOOK == 1)
 	{
-		if( pvReturn == NULL )
+		if (pvReturn == NULL)
 		{
-			extern void vApplicationMallocFailedHook( void );
+			extern void vApplicationMallocFailedHook(void);
 			vApplicationMallocFailedHook();
 		}
 	}
-	#endif	
+#endif
 
 	return pvReturn;
 }
 /*-----------------------------------------------------------*/
 
-void vPortFree( void *pv )
+void vPortFree(void *pv)
 {
-	/* Memory cannot be freed using this scheme.  See heap_2.c and heap_3.c 
-	for alternative implementations, and the memory management pages of 
+	/* Memory cannot be freed using this scheme.  See heap_2.c and heap_3.c
+	for alternative implementations, and the memory management pages of
 	http://www.FreeRTOS.org for more information. */
-	( void ) pv;
+	(void)pv;
 }
 /*-----------------------------------------------------------*/
 
-void vPortInitialiseBlocks( void )
+void vPortInitialiseBlocks(void)
 {
 	/* Only required when static memory is not cleared. */
-	xNextFreeByte = ( size_t ) 0;
+	xNextFreeByte = (size_t)0;
 }
 /*-----------------------------------------------------------*/
 
-size_t xPortGetFreeHeapSize( void )
+size_t xPortGetFreeHeapSize(void)
 {
-	return ( configTOTAL_HEAP_SIZE - xNextFreeByte );
+	return (configTOTAL_HEAP_SIZE - xNextFreeByte);
 }
-
-
-

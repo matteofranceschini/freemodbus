@@ -26,18 +26,18 @@
 
 typedef enum
 {
-  GPIO_HI_AIN_TRI, /*HIGH IMPEDANCE ANALOG INPUT TRISTATE*/
-  GPIO_IN_TRI_TTL, /* INPUT TRISTATE TTL*/
-  GPIO_IN_TRI_CMOS,/*INPUT TRSISTATE CMOS*/
-  GPIO_IPUPD_WP,   /*INPUT PULL UP/PULL DOWN WEAK PUSH PULL*/
-  GPIO_OUT_OD,     /* OUTPUT OPEN DRAIN*/
-  GPIO_OUT_PP,     /* OUTPUT PUSH PULL*/
-  GPIO_AF_OD,      /*ALTERNATE FUNCTION OPEN DRAIN */
-  GPIO_AF_PP       /* ALTERNATE FUNCTION PUSH PULL*/
+  GPIO_HI_AIN_TRI,  /*HIGH IMPEDANCE ANALOG INPUT TRISTATE*/
+  GPIO_IN_TRI_TTL,  /* INPUT TRISTATE TTL*/
+  GPIO_IN_TRI_CMOS, /*INPUT TRSISTATE CMOS*/
+  GPIO_IPUPD_WP,    /*INPUT PULL UP/PULL DOWN WEAK PUSH PULL*/
+  GPIO_OUT_OD,      /* OUTPUT OPEN DRAIN*/
+  GPIO_OUT_PP,      /* OUTPUT PUSH PULL*/
+  GPIO_AF_OD,       /*ALTERNATE FUNCTION OPEN DRAIN */
+  GPIO_AF_PP        /* ALTERNATE FUNCTION PUSH PULL*/
 } GpioPinMode_TypeDef;
 
-#define GPIO_LSB  0x00
-#define GPIO_MSB  0x08
+#define GPIO_LSB 0x00
+#define GPIO_MSB 0x08
 
 /*******************************************************************************
 * Function Name  : GPIO_Config
@@ -49,7 +49,7 @@ typedef enum
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void GPIO_Config (GPIO_TypeDef *GPIOx, u16 Port_Pins, GpioPinMode_TypeDef GPIO_Mode);
+void GPIO_Config(GPIO_TypeDef *GPIOx, u16 Port_Pins, GpioPinMode_TypeDef GPIO_Mode);
 
 /*******************************************************************************
 * Function Name  : GPIO_BitRead

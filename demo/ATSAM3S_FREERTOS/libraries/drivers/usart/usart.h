@@ -73,11 +73,10 @@
  */
 
 /** Basic asynchronous mode, i.e. 8 bits no parity.*/
-#define USART_MODE_ASYNCHRONOUS        (AT91C_US_CHRL_8_BITS | AT91C_US_PAR_NONE)
+#define USART_MODE_ASYNCHRONOUS (AT91C_US_CHRL_8_BITS | AT91C_US_PAR_NONE)
 
 /** IRDA mode*/
-#define USART_MODE_IRDA                (AT91C_US_USMODE_IRDA | AT91C_US_CHRL_8_BITS | AT91C_US_PAR_NONE | AT91C_US_FILTER)
-
+#define USART_MODE_IRDA (AT91C_US_USMODE_IRDA | AT91C_US_CHRL_8_BITS | AT91C_US_PAR_NONE | AT91C_US_FILTER)
 
 /*------------------------------------------------------------------------------*/
 /*         Exported functions*/
@@ -89,8 +88,8 @@ extern void USART_Configure(
     uint32_t baudrate,
     uint32_t masterClock);
 extern uint32_t USART_GetStatus(Usart *usart);
-extern void USART_EnableIt(Usart *usart,uint32_t mode);
-extern void USART_DisableIt(Usart *usart,uint32_t mode);
+extern void USART_EnableIt(Usart *usart, uint32_t mode);
+extern void USART_DisableIt(Usart *usart, uint32_t mode);
 extern void USART_SetTransmitterEnabled(Usart *usart, uint8_t enabled);
 
 extern void USART_SetReceiverEnabled(Usart *usart, uint8_t enabled);
@@ -124,6 +123,4 @@ extern uint32_t USART_IsRxReady(Usart *usart);
 
 extern uint8_t USART_GetChar(Usart *usart);
 
-
 #endif /*#ifndef USART_H*/
-

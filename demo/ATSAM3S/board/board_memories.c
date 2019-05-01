@@ -40,15 +40,14 @@
  *        Exported functions
  *----------------------------------------------------------------------------*/
 
-
 /**
  * \brief Configures the EBI for NandFlash access.
  *
  */
-extern void BOARD_ConfigureNandFlash( void )
+extern void BOARD_ConfigureNandFlash(void)
 {
     // Open EBI clock
-    PMC->PMC_PCER0 = (1<< ID_SMC);
+    PMC->PMC_PCER0 = (1 << ID_SMC);
     // NCS0 is assigned to a NAND Flash (NANDOE and NANWE used for NCS0)
     MATRIX->CCFG_SMCNFCS = CCFG_SMCNFCS_SMC_NFCS0;
 
@@ -71,26 +70,12 @@ extern void BOARD_ConfigureNandFlash( void )
 
     SMC->SMC_CS_NUMBER[0].SMC_MODE = SMC_MODE0_READ_MODE | SMC_MODE0_WRITE_MODE;
 #else
-    SMC->SMC_CS_NUMBER[0].SMC_SETUP = 0
-                    | ((0 <<  0) & SMC_SETUP0_NWE_SETUP)
-                    | ((0 <<  8) & SMC_SETUP0_NCS_WR_SETUP)
-                    | ((0 << 16) & SMC_SETUP0_NRD_SETUP)
-                    | ((0 << 24) & SMC_SETUP0_NCS_RD_SETUP);
+    SMC->SMC_CS_NUMBER[0].SMC_SETUP = 0 | ((0 << 0) & SMC_SETUP0_NWE_SETUP) | ((0 << 8) & SMC_SETUP0_NCS_WR_SETUP) | ((0 << 16) & SMC_SETUP0_NRD_SETUP) | ((0 << 24) & SMC_SETUP0_NCS_RD_SETUP);
 
-    SMC->SMC_CS_NUMBER[0].SMC_PULSE = 0
-                    | ((2 <<  0) & SMC_PULSE0_NWE_PULSE)
-                    | ((2 <<  8) & SMC_PULSE0_NCS_WR_PULSE)
-                    | ((2 << 16) & SMC_PULSE0_NRD_PULSE)
-                    | ((2 << 24) & SMC_PULSE0_NCS_RD_PULSE);
+    SMC->SMC_CS_NUMBER[0].SMC_PULSE = 0 | ((2 << 0) & SMC_PULSE0_NWE_PULSE) | ((2 << 8) & SMC_PULSE0_NCS_WR_PULSE) | ((2 << 16) & SMC_PULSE0_NRD_PULSE) | ((2 << 24) & SMC_PULSE0_NCS_RD_PULSE);
 
-    SMC->SMC_CS_NUMBER[0].SMC_CYCLE = 0
-                  | ((3 <<  0) & SMC_CYCLE0_NWE_CYCLE)
-                  | ((3 << 16) & SMC_CYCLE0_NRD_CYCLE);
+    SMC->SMC_CS_NUMBER[0].SMC_CYCLE = 0 | ((3 << 0) & SMC_CYCLE0_NWE_CYCLE) | ((3 << 16) & SMC_CYCLE0_NRD_CYCLE);
 
     SMC->SMC_CS_NUMBER[0].SMC_MODE = SMC_MODE1_READ_MODE | SMC_MODE1_WRITE_MODE;
 #endif
-
-
-
 }
-

@@ -30,14 +30,14 @@
 /** \addtogroup pwm_module Working with PWM
  * The PWM driver provides the interface to configure and use the PWM
  * peripheral.
- * 
+ *
  * The PWM macrocell controls square output waveforms of 4 channels.
- * Characteristics of output waveforms such as period, duty-cycle, 
+ * Characteristics of output waveforms such as period, duty-cycle,
  * dead-time can be configured.\n
- * Some of PWM channels can be linked together as synchronous channel and 
+ * Some of PWM channels can be linked together as synchronous channel and
  * duty-cycle of synchronous channels can be updated by PDC automaticly.
  *
- * Before enabling the channels, they must have been configured first. 
+ * Before enabling the channels, they must have been configured first.
  * The main settings include:
  * <ul>
  * <li>Configuration of the clock generator.</li>
@@ -45,7 +45,7 @@
  * <li>Configuration of output waveform characteristics, such as period, duty-cycle etc.</li>
  * <li>Configuration for synchronous channels if needed.</li>
  *    - Selection of the synchronous channels.
- *    - Selection of the moment when the WRDY flag and the corresponding PDC 
+ *    - Selection of the moment when the WRDY flag and the corresponding PDC
  *      transfer request are set (PTRM and PTRCS in the PWM_SCM register).
  *    - Configuration of the update mode (UPDM in the PWM_SCM register).
  *    - Configuration of the update period (UPR in the PWM_SCUP register).
@@ -111,20 +111,23 @@ static uint16_t FindClockConfiguration(
 
     /* Find prescaler and divisor values */
     prescaler = (mck / divisors[divisor]) / frequency;
-    while ((prescaler > 255) && (divisor < 11)) {
+    while ((prescaler > 255) && (divisor < 11))
+    {
 
         divisor++;
         prescaler = (mck / divisors[divisor]) / frequency;
     }
 
     /* Return result */
-    if (divisor < 11) {
+    if (divisor < 11)
+    {
 
         TRACE_DEBUG("Found divisor=%u and prescaler=%u for freq=%uHz\n\r",
-                  divisors[divisor], prescaler, frequency);
+                    divisors[divisor], prescaler, frequency);
         return prescaler | (divisor << 8);
     }
-    else {
+    else
+    {
 
         return 0;
     }
@@ -157,9 +160,11 @@ void PWMC_ConfigureChannel(
     SANITY_CHECK((polarity & ~PWM_CMR0_CPOL) == 0);
 
     /* Disable channel (effective at the end of the current period) */
-    if ((PWM->PWM_SR & (1 << channel)) != 0) {
+    if ((PWM->PWM_SR & (1 << channel)) != 0)
+    {
         PWM->PWM_DIS = 1 << channel;
-        while ((PWM->PWM_SR & (1 << channel)) != 0);
+        while ((PWM->PWM_SR & (1 << channel)) != 0)
+            ;
     }
 
     /* Configure channel */
@@ -201,14 +206,16 @@ void PWMC_ConfigureChannelExt(
     SANITY_CHECK((DTLInverte & ~PWM_CMR0_DTLI) == 0);
 
     /* Disable channel (effective at the end of the current period) */
-    if ((PWM->PWM_SR & (1 << channel)) != 0) {
+    if ((PWM->PWM_SR & (1 << channel)) != 0)
+    {
         PWM->PWM_DIS = 1 << channel;
-        while ((PWM->PWM_SR & (1 << channel)) != 0);
+        while ((PWM->PWM_SR & (1 << channel)) != 0)
+            ;
     }
 
     /* Configure channel */
     PWM->PWM_CH_NUM[channel].PWM_CMR = prescaler | alignment | polarity |
-        countEventSelect | DTEnable | DTHInverte | DTLInverte;
+                                       countEventSelect | DTEnable | DTHInverte | DTLInverte;
 }
 
 /**
@@ -226,7 +233,8 @@ void PWMC_ConfigureClocks(uint32_t clka, uint32_t clkb, uint32_t mck)
     uint32_t result;
 
     /* Clock A */
-    if (clka != 0) {
+    if (clka != 0)
+    {
 
         result = FindClockConfiguration(clka, mck);
         ASSERT(result != 0, "-F- Could not generate the desired PWM frequency (%uHz)\n\r", (unsigned int)clka);
@@ -234,7 +242,8 @@ void PWMC_ConfigureClocks(uint32_t clka, uint32_t clkb, uint32_t mck)
     }
 
     /* Clock B */
-    if (clkb != 0) {
+    if (clkb != 0)
+    {
 
         result = FindClockConfiguration(clkb, mck);
         ASSERT(result != 0, "-F- Could not generate the desired PWM frequency (%uHz)\n\r", (unsigned int)clkb);
@@ -258,12 +267,14 @@ void PWMC_ConfigureClocks(uint32_t clka, uint32_t clkb, uint32_t mck)
 void PWMC_SetPeriod(uint8_t channel, uint16_t period)
 {
     /* If channel is disabled, write to CPRD */
-    if ((PWM->PWM_SR & (1 << channel)) == 0) {
+    if ((PWM->PWM_SR & (1 << channel)) == 0)
+    {
 
         PWM->PWM_CH_NUM[channel].PWM_CPRD = period;
     }
     /* Otherwise use update register */
-    else {
+    else
+    {
 
         PWM->PWM_CH_NUM[channel].PWM_CPRDUPD = period;
     }
@@ -284,12 +295,14 @@ void PWMC_SetDutyCycle(uint8_t channel, uint16_t duty)
     SANITY_CHECK(duty <= PWM->PWM_CH_NUM[channel].PWM_CPRD);
 
     /* If channel is disabled, write to CDTY */
-    if ((PWM->PWM_SR & (1 << channel)) == 0) {
+    if ((PWM->PWM_SR & (1 << channel)) == 0)
+    {
 
         PWM->PWM_CH_NUM[channel].PWM_CDTY = duty;
     }
     /* Otherwise use update register */
-    else {
+    else
+    {
 
         PWM->PWM_CH_NUM[channel].PWM_CDTYUPD = duty;
     }
@@ -312,12 +325,14 @@ void PWMC_SetDeadTime(uint8_t channel, uint16_t timeH, uint16_t timeL)
     SANITY_CHECK(timeL <= PWM->PWM_CH_NUM[channel].PWM_CPRD);
 
     /* If channel is disabled, write to DT */
-    if ((PWM->PWM_SR & (1 << channel)) == 0) {
+    if ((PWM->PWM_SR & (1 << channel)) == 0)
+    {
 
         PWM->PWM_CH_NUM[channel].PWM_DT = timeH | (timeL << 16);
     }
     /* Otherwise use update register */
-    else {
+    else
+    {
         PWM->PWM_CH_NUM[channel].PWM_DTUPD = timeH | (timeL << 16);
     }
 }
@@ -337,8 +352,7 @@ void PWMC_ConfigureSyncChannel(
     uint32_t requestMode,
     uint32_t requestComparisonSelect)
 {
-    PWM->PWM_SCM = channels | updateMode | requestMode
-        | requestComparisonSelect;
+    PWM->PWM_SCM = channels | updateMode | requestMode | requestComparisonSelect;
 }
 
 /**
@@ -351,12 +365,14 @@ void PWMC_ConfigureSyncChannel(
 void PWMC_SetSyncChannelUpdatePeriod(uint8_t period)
 {
     /* If channel is disabled, write to SCUP */
-    if ((PWM->PWM_SR & (1 << 0)) == 0) {
+    if ((PWM->PWM_SR & (1 << 0)) == 0)
+    {
 
         PWM->PWM_SCUP = period;
     }
     /* Otherwise use update register */
-    else {
+    else
+    {
 
         PWM->PWM_SCUPUPD = period;
     }
@@ -460,21 +476,23 @@ void PWMC_DisableIt(uint32_t sources1, uint32_t sources2)
  * \param length  Length of the data buffer.
  */
 uint8_t PWMC_WriteBuffer(Pwm *pwmc,
-    void *buffer,
-    uint32_t length)
+                         void *buffer,
+                         uint32_t length)
 {
     /* Check if first bank is free */
-    if (pwmc->PWM_TCR == 0) {
+    if (pwmc->PWM_TCR == 0)
+    {
 
-        pwmc->PWM_TPR = (uint32_t) buffer;
+        pwmc->PWM_TPR = (uint32_t)buffer;
         pwmc->PWM_TCR = length;
         pwmc->PWM_PTCR = PERIPH_PTCR_TXTEN;
         return 1;
     }
     /* Check if second bank is free */
-    else if (pwmc->PWM_TNCR == 0) {
+    else if (pwmc->PWM_TNCR == 0)
+    {
 
-        pwmc->PWM_TNPR = (uint32_t) buffer;
+        pwmc->PWM_TNPR = (uint32_t)buffer;
         pwmc->PWM_TNCR = length;
         return 1;
     }
@@ -501,10 +519,13 @@ void PWMC_SetOverrideValue(uint32_t value)
  */
 void PWMC_EnableOverrideOutput(uint32_t value, uint32_t sync)
 {
-    if (sync) {
+    if (sync)
+    {
 
         PWM->PWM_OSSUPD = value;
-    } else {
+    }
+    else
+    {
 
         PWM->PWM_OSS = value;
     }
@@ -518,10 +539,13 @@ void PWMC_EnableOverrideOutput(uint32_t value, uint32_t sync)
  */
 void PWMC_DisableOverrideOutput(uint32_t value, uint32_t sync)
 {
-    if (sync) {
+    if (sync)
+    {
 
         PWM->PWM_OSCUPD = value;
-    } else {
+    }
+    else
+    {
 
         PWM->PWM_OSC = value;
     }
@@ -577,57 +601,89 @@ void PWMC_EnableFaultProtection(uint32_t value)
 void PWMC_ConfigureComparisonUnit(uint32_t x, uint32_t value, uint32_t mode)
 {
     /* If channel is disabled, write to CMPxM & CMPxV */
-    if ((PWM->PWM_SR & (1 << 0)) == 0) {
-        if (x == 0) {
+    if ((PWM->PWM_SR & (1 << 0)) == 0)
+    {
+        if (x == 0)
+        {
             PWM->PWM_CMP0M = mode;
             PWM->PWM_CMP0V = value;
-        } else if (x == 1) {
+        }
+        else if (x == 1)
+        {
             PWM->PWM_CMP1M = mode;
             PWM->PWM_CMP1V = value;
-        } else if (x == 2) {
+        }
+        else if (x == 2)
+        {
             PWM->PWM_CMP2M = mode;
             PWM->PWM_CMP2V = value;
-        } else if (x == 3) {
+        }
+        else if (x == 3)
+        {
             PWM->PWM_CMP3M = mode;
             PWM->PWM_CMP3V = value;
-        } else if (x == 4) {
+        }
+        else if (x == 4)
+        {
             PWM->PWM_CMP4M = mode;
             PWM->PWM_CMP4V = value;
-        } else if (x == 5) {
+        }
+        else if (x == 5)
+        {
             PWM->PWM_CMP5M = mode;
             PWM->PWM_CMP5V = value;
-        } else if (x == 6) {
+        }
+        else if (x == 6)
+        {
             PWM->PWM_CMP6M = mode;
             PWM->PWM_CMP6V = value;
-        } else if (x == 7) {
+        }
+        else if (x == 7)
+        {
             PWM->PWM_CMP7M = mode;
             PWM->PWM_CMP7V = value;
         }
     }
     /* Otherwise use update register */
-    else {
-        if (x == 0) {
+    else
+    {
+        if (x == 0)
+        {
             PWM->PWM_CMP0MUPD = mode;
             PWM->PWM_CMP0VUPD = value;
-        } else if (x == 1) {
+        }
+        else if (x == 1)
+        {
             PWM->PWM_CMP1MUPD = mode;
             PWM->PWM_CMP1VUPD = value;
-        } else if (x == 2) {
+        }
+        else if (x == 2)
+        {
             PWM->PWM_CMP2MUPD = mode;
             PWM->PWM_CMP2VUPD = value;
-        } else if (x == 3) {
+        }
+        else if (x == 3)
+        {
             PWM->PWM_CMP3MUPD = mode;
             PWM->PWM_CMP3VUPD = value;
-        } else if (x == 4) {
+        }
+        else if (x == 4)
+        {
             PWM->PWM_CMP4MUPD = mode;
             PWM->PWM_CMP4VUPD = value;
-        } else if (x == 5) {
+        }
+        else if (x == 5)
+        {
             PWM->PWM_CMP5MUPD = mode;
             PWM->PWM_CMP5VUPD = value;
-        } else if (x == 6) {
+        }
+        else if (x == 6)
+        {
             PWM->PWM_CMP6MUPD = mode;
             PWM->PWM_CMP6VUPD = value;
-        } else if (x == 7) {
+        }
+        else if (x == 7)
+        {
             PWM->PWM_CMP7MUPD = mode;
             PWM->PWM_CMP7VUPD = value;
         }

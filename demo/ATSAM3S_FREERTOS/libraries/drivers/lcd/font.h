@@ -32,7 +32,7 @@
  *
  * Interface for draw font on LCD.
  *
- */ 
+ */
 
 /**
  *
@@ -61,11 +61,11 @@
  *        Types
  *----------------------------------------------------------------------------*/
 
-
 /** Describes the font (width, height, supported characters, etc.) used by
  * the LCD driver draw API.
  */
-typedef struct _Font {
+typedef struct _Font
+{
 	/* Font width in pixels. */
 	uint8_t width;
 	/* Font height in pixels. */

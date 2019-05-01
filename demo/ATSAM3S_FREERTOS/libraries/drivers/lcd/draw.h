@@ -27,7 +27,7 @@
  * ----------------------------------------------------------------------------
  */
 
- /**
+/**
  * \file
  *
  * Interface for draw function on LCD.
@@ -48,9 +48,9 @@
  *----------------------------------------------------------------------------*/
 
 /** Horizontal direction line definition */
-#define DIRECTION_HLINE   0
+#define DIRECTION_HLINE 0
 /** Vertical direction line definition */
-#define DIRECTION_VLINE   1
+#define DIRECTION_VLINE 1
 
 /*----------------------------------------------------------------------------
  *        Exported functions

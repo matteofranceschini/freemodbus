@@ -27,24 +27,22 @@
 #include "mbport.h"
 
 /* ----------------------- static functions ---------------------------------*/
-static void prvvTIMERExpiredISR( void );
+static void prvvTIMERExpiredISR(void);
 
 /* ----------------------- Start implementation -----------------------------*/
-BOOL
-xMBPortTimersInit( USHORT usTim1Timerout50us )
+BOOL xMBPortTimersInit(USHORT usTim1Timerout50us)
 {
     return FALSE;
 }
 
-
 inline void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable()
 {
     /* Enable the timer with the timeout passed to xMBPortTimersInit( ) */
 }
 
 inline void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable()
 {
     /* Disable any pending timers. */
 }
@@ -53,8 +51,7 @@ vMBPortTimersDisable(  )
  * must then call pxMBPortCBTimerExpired( ) to notify the protocol stack that
  * the timer has expired.
  */
-static void prvvTIMERExpiredISR( void )
+static void prvvTIMERExpiredISR(void)
 {
-    ( void )pxMBPortCBTimerExpired(  );
+    (void)pxMBPortCBTimerExpired();
 }
-

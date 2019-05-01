@@ -27,11 +27,6 @@
  * ----------------------------------------------------------------------------
  */
 
-
-
-
-
-
 /*----------------------------------------------------------------------------
  *        Headers
  *----------------------------------------------------------------------------*/
@@ -54,7 +49,8 @@
 typedef void (*TwiCallback)(Async *);
 
 /** TWI asynchronous transfer descriptor.*/
-typedef struct _AsyncTwi {
+typedef struct _AsyncTwi
+{
 
     /** Asynchronous transfer status. */
     volatile uint8_t status;
@@ -89,7 +85,6 @@ void TWID_Initialize(Twid *pTwid, Twi *pTwi)
     pTwid->pTransfer = 0;
 }
 
-
 /**
  * \brief Interrupt handler for a TWI peripheral. Manages asynchronous transfer
  * occuring on the bus. This function MUST be called by the interrupt service
@@ -99,7 +94,7 @@ void TWID_Initialize(Twid *pTwid, Twi *pTwi)
 void TWID_Handler(Twid *pTwid)
 {
     uint8_t status;
-    AsyncTwi *pTransfer = (AsyncTwi *) pTwid->pTransfer;
+    AsyncTwi *pTransfer = (AsyncTwi *)pTwid->pTransfer;
     Twi *pTwi = pTwid->pTwi;
 
     SANITY_CHECK(pTwid);
@@ -108,48 +103,56 @@ void TWID_Handler(Twid *pTwid)
     status = TWI_GetMaskedStatus(pTwi);
 
     /* Byte received */
-    if (TWI_STATUS_RXRDY(status)) {
+    if (TWI_STATUS_RXRDY(status))
+    {
 
         pTransfer->pData[pTransfer->transferred] = TWI_ReadByte(pTwi);
         pTransfer->transferred++;
 
         /* check for transfer finish */
-        if (pTransfer->transferred == pTransfer->num) {
+        if (pTransfer->transferred == pTransfer->num)
+        {
 
             TWI_DisableIt(pTwi, TWI_IDR_RXRDY);
             TWI_EnableIt(pTwi, TWI_IER_TXCOMP);
         }
         /* Last byte? */
-        else if (pTransfer->transferred == (pTransfer->num - 1)) {
+        else if (pTransfer->transferred == (pTransfer->num - 1))
+        {
 
             TWI_Stop(pTwi);
         }
     }
     /* Byte sent*/
-    else if (TWI_STATUS_TXRDY(status)) {
+    else if (TWI_STATUS_TXRDY(status))
+    {
 
         /* Transfer finished ? */
-        if (pTransfer->transferred == pTransfer->num) {
+        if (pTransfer->transferred == pTransfer->num)
+        {
 
             TWI_DisableIt(pTwi, TWI_IDR_TXRDY);
             TWI_EnableIt(pTwi, TWI_IER_TXCOMP);
             TWI_SendSTOPCondition(pTwi);
         }
         /* Bytes remaining */
-        else {
+        else
+        {
 
             TWI_WriteByte(pTwi, pTransfer->pData[pTransfer->transferred]);
             pTransfer->transferred++;
         }
     }
     /* Transfer complete*/
-    else if (TWI_STATUS_TXCOMP(status)) {
+    else if (TWI_STATUS_TXCOMP(status))
+    {
 
         TWI_DisableIt(pTwi, TWI_IDR_TXCOMP);
         pTransfer->status = 0;
-        if (pTransfer->callback) {
+        if (pTransfer->callback)
+        {
 
-            pTransfer->callback((Async *) pTransfer);
+            pTransfer->callback((Async *)pTransfer);
         }
         pTwid->pTransfer = 0;
     }
@@ -177,7 +180,7 @@ uint8_t TWID_Read(
     Async *pAsync)
 {
     Twi *pTwi = pTwid->pTwi;
-    AsyncTwi *pTransfer = (AsyncTwi *) pTwid->pTransfer;
+    AsyncTwi *pTransfer = (AsyncTwi *)pTwid->pTransfer;
     uint32_t timeout;
 
     SANITY_CHECK(pTwid);
@@ -186,24 +189,27 @@ uint8_t TWID_Read(
     SANITY_CHECK(isize < 4);
 
     /* Check that no transfer is already pending*/
-    if (pTransfer) {
+    if (pTransfer)
+    {
 
         TRACE_ERROR("TWID_Read: A transfer is already pending\n\r");
         return TWID_ERROR_BUSY;
     }
 
     /* Set STOP signal if only one byte is sent*/
-    if (num == 1) {
+    if (num == 1)
+    {
 
         TWI_Stop(pTwi);
     }
 
     /* Asynchronous transfer*/
-    if (pAsync) {
+    if (pAsync)
+    {
 
         /* Update the transfer descriptor */
         pTwid->pTransfer = pAsync;
-        pTransfer = (AsyncTwi *) pAsync;
+        pTransfer = (AsyncTwi *)pAsync;
         pTransfer->status = ASYNC_STATUS_PENDING;
         pTransfer->pData = pData;
         pTransfer->num = num;
@@ -214,24 +220,29 @@ uint8_t TWID_Read(
         TWI_StartRead(pTwi, address, iaddress, isize);
     }
     /* Synchronous transfer*/
-    else {
+    else
+    {
 
         /* Start read*/
         TWI_StartRead(pTwi, address, iaddress, isize);
 
         /* Read all bytes, setting STOP before the last byte*/
-        while (num > 0) {
+        while (num > 0)
+        {
 
             /* Last byte ?*/
-            if (num == 1) {
+            if (num == 1)
+            {
 
                 TWI_Stop(pTwi);
             }
 
             /* Wait for byte then read and store it*/
             timeout = 0;
-            while( !TWI_ByteReceived(pTwi) && (++timeout<TWITIMEOUTMAX) );
-            if (timeout == TWITIMEOUTMAX) {
+            while (!TWI_ByteReceived(pTwi) && (++timeout < TWITIMEOUTMAX))
+                ;
+            if (timeout == TWITIMEOUTMAX)
+            {
                 TRACE_ERROR("TWID Timeout BR\n\r");
             }
             *pData++ = TWI_ReadByte(pTwi);
@@ -240,8 +251,10 @@ uint8_t TWID_Read(
 
         /* Wait for transfer to be complete */
         timeout = 0;
-        while( !TWI_TransferComplete(pTwi) && (++timeout<TWITIMEOUTMAX) );
-        if (timeout == TWITIMEOUTMAX) {
+        while (!TWI_TransferComplete(pTwi) && (++timeout < TWITIMEOUTMAX))
+            ;
+        if (timeout == TWITIMEOUTMAX)
+        {
             TRACE_ERROR("TWID Timeout TC\n\r");
         }
     }
@@ -271,7 +284,7 @@ uint8_t TWID_Write(
     Async *pAsync)
 {
     Twi *pTwi = pTwid->pTwi;
-    AsyncTwi *pTransfer = (AsyncTwi *) pTwid->pTransfer;
+    AsyncTwi *pTransfer = (AsyncTwi *)pTwid->pTransfer;
     uint32_t timeout;
 
     SANITY_CHECK(pTwi);
@@ -280,18 +293,20 @@ uint8_t TWID_Write(
     SANITY_CHECK(isize < 4);
 
     /* Check that no transfer is already pending */
-    if (pTransfer) {
+    if (pTransfer)
+    {
 
         TRACE_ERROR("TWI_Write: A transfer is already pending\n\r");
         return TWID_ERROR_BUSY;
     }
 
     /* Asynchronous transfer */
-    if (pAsync) {
+    if (pAsync)
+    {
 
         /* Update the transfer descriptor */
         pTwid->pTransfer = pAsync;
-        pTransfer = (AsyncTwi *) pAsync;
+        pTransfer = (AsyncTwi *)pAsync;
         pTransfer->status = ASYNC_STATUS_PENDING;
         pTransfer->pData = pData;
         pTransfer->num = num;
@@ -302,19 +317,23 @@ uint8_t TWID_Write(
         TWI_EnableIt(pTwi, TWI_IER_TXRDY);
     }
     /* Synchronous transfer*/
-    else {
+    else
+    {
 
         // Start write
         TWI_StartWrite(pTwi, address, iaddress, isize, *pData++);
         num--;
 
         /* Send all bytes */
-        while (num > 0) {
+        while (num > 0)
+        {
 
             /* Wait before sending the next byte */
             timeout = 0;
-            while( !TWI_ByteSent(pTwi) && (++timeout<TWITIMEOUTMAX) );
-            if (timeout == TWITIMEOUTMAX) {
+            while (!TWI_ByteSent(pTwi) && (++timeout < TWITIMEOUTMAX))
+                ;
+            if (timeout == TWITIMEOUTMAX)
+            {
                 TRACE_ERROR("TWID Timeout BS\n\r");
             }
 
@@ -330,13 +349,13 @@ uint8_t TWID_Write(
         TWI_SendSTOPCondition(pTwi);
 #endif
 
-        while( !TWI_TransferComplete(pTwi) && (++timeout<TWITIMEOUTMAX) );
-        if (timeout == TWITIMEOUTMAX) {
+        while (!TWI_TransferComplete(pTwi) && (++timeout < TWITIMEOUTMAX))
+            ;
+        if (timeout == TWITIMEOUTMAX)
+        {
             TRACE_ERROR("TWID Timeout TC2\n\r");
         }
-
     }
 
     return 0;
 }
-

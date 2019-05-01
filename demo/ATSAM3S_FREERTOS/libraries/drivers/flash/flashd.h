@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2009, Atmel Corporation
  *
@@ -33,7 +33,7 @@
  * The flash driver provides the unified interface for flash program operations.
  *
  */
- 
+
 #ifndef FLASHD_H
 #define FLASHD_H
 
@@ -76,9 +76,8 @@ extern uint8_t FLASHD_IsGPNVMSet(uint8_t gpnvm);
 
 #define FLASHD_IsSecurityBitSet() FLASHD_IsGPNVMSet(0)
 
-#define FLASHD_SetSecurityBit()   FLASHD_SetGPNVM(0)
+#define FLASHD_SetSecurityBit() FLASHD_SetGPNVM(0)
 
-extern uint8_t FLASHD_ReadUniqueID(uint32_t * uniqueID);
+extern uint8_t FLASHD_ReadUniqueID(uint32_t *uniqueID);
 
 #endif //#ifndef FLASHD_H
-

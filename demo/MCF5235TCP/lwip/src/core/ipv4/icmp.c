@@ -43,8 +43,7 @@
 #include "lwip/stats.h"
 #include "lwip/snmp.h"
 
-void
-icmp_input(struct pbuf *p, struct netif *inp)
+void icmp_input(struct pbuf *p, struct netif *inp)
 {
   u8_t type;
   u8_t code;
@@ -56,11 +55,11 @@ icmp_input(struct pbuf *p, struct netif *inp)
   ICMP_STATS_INC(icmp.recv);
   snmp_inc_icmpinmsgs();
 
-
   iphdr = p->payload;
   hlen = IPH_HL(iphdr) * 4;
-  if (pbuf_header(p, -((s16_t)hlen)) || (p->tot_len < sizeof(u16_t)*2)) {
-    LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: short ICMP (%"U16_F" bytes) received\n", p->tot_len));
+  if (pbuf_header(p, -((s16_t)hlen)) || (p->tot_len < sizeof(u16_t) * 2))
+  {
+    LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: short ICMP (%" U16_F " bytes) received\n", p->tot_len));
     pbuf_free(p);
     ICMP_STATS_INC(icmp.lenerr);
     snmp_inc_icmpinerrors();
@@ -68,18 +67,21 @@ icmp_input(struct pbuf *p, struct netif *inp)
   }
 
   type = *((u8_t *)p->payload);
-  code = *(((u8_t *)p->payload)+1);
-  switch (type) {
+  code = *(((u8_t *)p->payload) + 1);
+  switch (type)
+  {
   case ICMP_ECHO:
     /* broadcast or multicast destination address? */
-    if (ip_addr_isbroadcast(&iphdr->dest, inp) || ip_addr_ismulticast(&iphdr->dest)) {
+    if (ip_addr_isbroadcast(&iphdr->dest, inp) || ip_addr_ismulticast(&iphdr->dest))
+    {
       LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: Not echoing to multicast or broadcast pings\n"));
       ICMP_STATS_INC(icmp.err);
       pbuf_free(p);
       return;
     }
     LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: ping\n"));
-    if (p->tot_len < sizeof(struct icmp_echo_hdr)) {
+    if (p->tot_len < sizeof(struct icmp_echo_hdr))
+    {
       LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: bad ICMP echo received\n"));
       pbuf_free(p);
       ICMP_STATS_INC(icmp.lenerr);
@@ -88,7 +90,8 @@ icmp_input(struct pbuf *p, struct netif *inp)
       return;
     }
     iecho = p->payload;
-    if (inet_chksum_pbuf(p) != 0) {
+    if (inet_chksum_pbuf(p) != 0)
+    {
       LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: checksum failed for received ICMP echo\n"));
       pbuf_free(p);
       ICMP_STATS_INC(icmp.chkerr);
@@ -100,9 +103,12 @@ icmp_input(struct pbuf *p, struct netif *inp)
     iphdr->dest.addr = tmpaddr.addr;
     ICMPH_TYPE_SET(iecho, ICMP_ER);
     /* adjust the checksum */
-    if (iecho->chksum >= htons(0xffff - (ICMP_ECHO << 8))) {
+    if (iecho->chksum >= htons(0xffff - (ICMP_ECHO << 8)))
+    {
       iecho->chksum += htons(ICMP_ECHO << 8) + 1;
-    } else {
+    }
+    else
+    {
       iecho->chksum += htons(ICMP_ECHO << 8);
     }
     ICMP_STATS_INC(icmp.xmit);
@@ -113,18 +119,17 @@ icmp_input(struct pbuf *p, struct netif *inp)
 
     pbuf_header(p, hlen);
     ip_output_if(p, &(iphdr->src), IP_HDRINCL,
-		 IPH_TTL(iphdr), 0, IP_PROTO_ICMP, inp);
+                 IPH_TTL(iphdr), 0, IP_PROTO_ICMP, inp);
     break;
   default:
-  LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: ICMP type %"S16_F" code %"S16_F" not supported.\n", (s16_t)type, (s16_t)code));
+    LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: ICMP type %" S16_F " code %" S16_F " not supported.\n", (s16_t)type, (s16_t)code));
     ICMP_STATS_INC(icmp.proterr);
     ICMP_STATS_INC(icmp.drop);
   }
   pbuf_free(p);
 }
 
-void
-icmp_dest_unreach(struct pbuf *p, enum icmp_dur_type t)
+void icmp_dest_unreach(struct pbuf *p, enum icmp_dur_type t)
 {
   struct pbuf *q;
   struct ip_hdr *iphdr;
@@ -151,13 +156,12 @@ icmp_dest_unreach(struct pbuf *p, enum icmp_dur_type t)
   snmp_inc_icmpoutdestunreachs();
 
   ip_output(q, NULL, &(iphdr->src),
-	    ICMP_TTL, 0, IP_PROTO_ICMP);
+            ICMP_TTL, 0, IP_PROTO_ICMP);
   pbuf_free(q);
 }
 
 #if IP_FORWARD
-void
-icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t)
+void icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t)
 {
   struct pbuf *q;
   struct ip_hdr *iphdr;
@@ -188,15 +192,8 @@ icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t)
   /* increase number of destination unreachable messages attempted to send */
   snmp_inc_icmpouttimeexcds();
   ip_output(q, NULL, &(iphdr->src),
-	    ICMP_TTL, 0, IP_PROTO_ICMP);
+            ICMP_TTL, 0, IP_PROTO_ICMP);
   pbuf_free(q);
 }
 
 #endif /* IP_FORWARD */
-
-
-
-
-
-
-

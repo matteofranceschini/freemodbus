@@ -21,25 +21,25 @@
 #include "rtc.h"
 
 // Global interrupt
-#define RTC_GI_Mask   0x0008
-#define RTC_GI_Index  3
+#define RTC_GI_Mask 0x0008
+#define RTC_GI_Index 3
 
 // OverFlow interrupt
-#define RTC_OWI_Mask  0x0004
+#define RTC_OWI_Mask 0x0004
 #define RTC_OWI_Index 2
 
 // Alarm interrupt
-#define RTC_AI_Mask   0x0002
-#define RTC_AI_Index  1
+#define RTC_AI_Mask 0x0002
+#define RTC_AI_Index 1
 
 // Second interrupt
-#define RTC_SI_Mask   0x0001
+#define RTC_SI_Mask 0x0001
 
 // Configuration Flag Mask
-#define RTC_CNF_Mask  0x0010
+#define RTC_CNF_Mask 0x0010
 
 // Operation OFF flag
-#define RTC_RTOFF_Mask   0x0020
+#define RTC_RTOFF_Mask 0x0020
 
 /*******************************************************************************
 * Function Name  : RTC_Delay
@@ -47,10 +47,11 @@
 * Input          : None
 * Return         : None
 *******************************************************************************/
-void RTC_Delay( void )
+void RTC_Delay(void)
 {
   u16 _Tmp;
-  for (_Tmp = 0x0; _Tmp < 0x7F; _Tmp ++);
+  for (_Tmp = 0x0; _Tmp < 0x7F; _Tmp++)
+    ;
 }
 
 /*******************************************************************************
@@ -59,7 +60,7 @@ void RTC_Delay( void )
 * Input          : The new counter value.
 * Return         : None
 *******************************************************************************/
-void RTC_CounterConfig (u32 CounterValue)
+void RTC_CounterConfig(u32 CounterValue)
 {
   /*  Wait For Last Task Completition */
   RTC_WaitForLastTask();
@@ -70,7 +71,7 @@ void RTC_CounterConfig (u32 CounterValue)
   /*  Wait For Last Task Completition */
   RTC_WaitForLastTask();
 
-/* Update the RTC counter register with the new time and date */
+  /* Update the RTC counter register with the new time and date */
   /* Update the CNTL register */
   RTC->CNTL = (u16)CounterValue;
 
@@ -78,13 +79,13 @@ void RTC_CounterConfig (u32 CounterValue)
   RTC_WaitForLastTask();
 
   /* Update the CNTH register */
-  RTC->CNTH = (u16)(CounterValue  >> 16);
+  RTC->CNTH = (u16)(CounterValue >> 16);
 
   /*  Wait For Last Task Completition */
   RTC_WaitForLastTask();
 
   /*  Exit From Configuration Mode */
-  RTC_ExitCfgMode ();
+  RTC_ExitCfgMode();
 }
 
 /*******************************************************************************
@@ -93,14 +94,14 @@ void RTC_CounterConfig (u32 CounterValue)
 * Input          : The New prescaler Value
 * Return         : None
 *******************************************************************************/
-void RTC_PrescalerConfig (u32 Xprescaler)
+void RTC_PrescalerConfig(u32 Xprescaler)
 {
-  if ( RTC_PrescalerValue () != Xprescaler )
+  if (RTC_PrescalerValue() != Xprescaler)
   {
     // Wait For Last Task Completion
-    RTC_WaitForLastTask ();
+    RTC_WaitForLastTask();
     // Enter In Configuration Mode
-    RTC_EnterCfgMode ();
+    RTC_EnterCfgMode();
     // Wait For Last Task Completion
     RTC_WaitForLastTask();
     // Set the prescaler MSB  part
@@ -112,9 +113,9 @@ void RTC_PrescalerConfig (u32 Xprescaler)
     // Wait For Last Task Completion
     RTC_WaitForLastTask();
     // Exit From Configuration Mode
-    RTC_ExitCfgMode ();
+    RTC_ExitCfgMode();
     // Wait For Last Task Completion
-    RTC_WaitForLastTask ();
+    RTC_WaitForLastTask();
   }
 }
 
@@ -124,12 +125,12 @@ void RTC_PrescalerConfig (u32 Xprescaler)
 * Input          : an u32 value that holds the Real Time clock alarm time.
 * Return         : None
 *******************************************************************************/
-void RTC_AlarmConfig (u32 Xalarm)
+void RTC_AlarmConfig(u32 Xalarm)
 {
   // Wait For Last Task Completion
-  RTC_WaitForLastTask ();
+  RTC_WaitForLastTask();
   // Enter In Configuration Mode
-  RTC_EnterCfgMode ();
+  RTC_EnterCfgMode();
   // Wait For Last Task Completion
   RTC_WaitForLastTask();
   // Set The MSB part of the Alarm Time
@@ -141,9 +142,9 @@ void RTC_AlarmConfig (u32 Xalarm)
   // Wait For Last Task Completion
   RTC_WaitForLastTask();
   // Exit From Configuration Mode
-  RTC_ExitCfgMode ();
+  RTC_ExitCfgMode();
   // Wait For Last Task Completion
-  RTC_WaitForLastTask ();
+  RTC_WaitForLastTask();
 }
 
 /*******************************************************************************
@@ -152,7 +153,7 @@ void RTC_AlarmConfig (u32 Xalarm)
 * Input          : an RTC flag
 * Return         : None
 *******************************************************************************/
-void RTC_FlagClear (RTC_FLAGS Xflag)
+void RTC_FlagClear(RTC_FLAGS Xflag)
 {
   // Wait For Last Task Completion
   RTC_WaitForLastTask();
@@ -165,7 +166,7 @@ void RTC_FlagClear (RTC_FLAGS Xflag)
   // Wait For Last Task Completion
   RTC_WaitForLastTask();
   // Exit From Configuration Mode
-  RTC_ExitCfgMode ();
+  RTC_ExitCfgMode();
   // Wait For Last Task Completion
   RTC_WaitForLastTask();
 }
@@ -176,7 +177,7 @@ void RTC_FlagClear (RTC_FLAGS Xflag)
 * Input          : an RTC interrupt
 * Return         : None
 *******************************************************************************/
-void RTC_ITClear (RTC_IT Xrtcit)
+void RTC_ITClear(RTC_IT Xrtcit)
 {
   // Wait For Last Task Completion
   RTC_WaitForLastTask();
@@ -185,9 +186,9 @@ void RTC_ITClear (RTC_IT Xrtcit)
   // Clears an RTC interrupt
   RTC->CRL &= ~Xrtcit;
   // Exit From Configuration Mode
-  RTC_ExitCfgMode ();
+  RTC_ExitCfgMode();
   // Wait For Last Task Completion
-  RTC_WaitForLastTask ();
+  RTC_WaitForLastTask();
 }
 
 /*******************************************************************************
@@ -201,7 +202,7 @@ void RTC_EnterCfgMode(void)
   // Set the CNF flag to enter in the Configuration Mode
   RTC->CRL |= RTC_CNF_Mask;
   // Wait For Last Task Completion
-  RTC_WaitForLastTask ();
+  RTC_WaitForLastTask();
 }
 
 /*******************************************************************************
@@ -215,7 +216,7 @@ void RTC_ExitCfgMode(void)
   // Reset the CNF flag to exit from the Configuration Mode
   RTC->CRL &= ~RTC_CNF_Mask;
   // Wait For Last Task Completion
-  RTC_WaitForLastTask ();
+  RTC_WaitForLastTask();
 }
 
 /*******************************************************************************
@@ -227,6 +228,7 @@ void RTC_ExitCfgMode(void)
 void RTC_WaitForLastTask(void)
 {
   // Loop until the Last operation Completion
-  while (!(RTC->CRL & RTC_RTOFF_Mask));
+  while (!(RTC->CRL & RTC_RTOFF_Mask))
+    ;
 }
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

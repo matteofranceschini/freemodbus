@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -51,21 +51,27 @@
 #include <stdio.h>
 
 // Disable semihosting
-#pragma import(__use_no_semihosting_swi) 
+#pragma import(__use_no_semihosting_swi)
 
-struct __FILE { int handle;} ;
+struct __FILE
+{
+    int handle;
+};
 FILE __stdout;
 FILE __stderr;
 
 //------------------------------------------------------------------------------
 ///  Outputs a character to a file.
 //------------------------------------------------------------------------------
-int fputc(int ch, FILE *f) {
-    if ((f == stdout) || (f == stderr)) {
+int fputc(int ch, FILE *f)
+{
+    if ((f == stdout) || (f == stderr))
+    {
         DBGU_PutChar(ch);
         return ch;
     }
-    else {
+    else
+    {
         return EOF;
     }
 }
@@ -73,16 +79,18 @@ int fputc(int ch, FILE *f) {
 //------------------------------------------------------------------------------
 ///  Returns the error status accumulated during file I/O.
 //------------------------------------------------------------------------------
-int ferror(FILE *f) {
+int ferror(FILE *f)
+{
     return EOF;
 }
 
-
-void _ttywrch(int ch) {
+void _ttywrch(int ch)
+{
     DBGU_PutChar((unsigned char)ch);
 }
 
-
-void _sys_exit(int return_code) {
-    label:  goto label;  /* endless loop */
+void _sys_exit(int return_code)
+{
+label:
+    goto label; /* endless loop */
 }

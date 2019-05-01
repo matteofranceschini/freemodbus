@@ -30,7 +30,7 @@
 /** \addtogroup rtt_module Working with RTT
  * The RTT driver provides the interface to configure and use the RTT
  * peripheral.
- * 
+ *
  * The Real-time Timer is used to count elapsed seconds.\n
  * This timer is clocked by the 32kHz system clock divided by a programmable
  * 16-bit balue. To be accurate, it is better to use an
@@ -86,7 +86,7 @@
  */
 void RTT_SetPrescaler(Rtt *rtt, uint16_t prescaler)
 {
-    rtt->RTT_MR = (prescaler |  RTT_MR_RTTRST);
+    rtt->RTT_MR = (prescaler | RTT_MR_RTTRST);
 }
 
 /**

@@ -33,73 +33,76 @@
 
 /* ----------------------- Defines ------------------------------------------*/
 
-#define USART_INTERRUPT_LEVEL           ( 7 )
-#define USART_USART0_IDX                ( 0 )
-#define USART_USART1_IDX                ( 1 )
+#define USART_INTERRUPT_LEVEL (7)
+#define USART_USART0_IDX (0)
+#define USART_USART1_IDX (1)
 
-#define IDX_INVALID                     ( 255 )
-#define UART_BAUDRATE_MIN               ( 300 )
-#define UART_BAUDRATE_MAX               ( 115200 )
+#define IDX_INVALID (255)
+#define UART_BAUDRATE_MIN (300)
+#define UART_BAUDRATE_MAX (115200)
 
-#define UART_INIT( ubIdx )      do { \
-    if( AT91C_ID_US0 == ubIdx ) \
-    { \
-        AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA, AT91C_PA0_RXD0 | AT91C_PA1_TXD0 | AT91C_PA3_RTS0, 0 ); \
-    } \
-    else if( AT91C_ID_US1 == ubIdx ) \
-    { \
-        AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA, AT91C_PA5_RXD1 | AT91C_PA6_TXD1 | AT91C_PA8_RTS1, 0 ); \
-    } \
-    else \
-    { \
-        assert( 0 ); \
-    } \
-} while( 0 )
+#define UART_INIT(ubIdx)                                                                               \
+    do                                                                                                 \
+    {                                                                                                  \
+        if (AT91C_ID_US0 == ubIdx)                                                                     \
+        {                                                                                              \
+            AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA, AT91C_PA0_RXD0 | AT91C_PA1_TXD0 | AT91C_PA3_RTS0, 0); \
+        }                                                                                              \
+        else if (AT91C_ID_US1 == ubIdx)                                                                \
+        {                                                                                              \
+            AT91F_PIO_CfgPeriph(AT91C_BASE_PIOA, AT91C_PA5_RXD1 | AT91C_PA6_TXD1 | AT91C_PA8_RTS1, 0); \
+        }                                                                                              \
+        else                                                                                           \
+        {                                                                                              \
+            assert(0);                                                                                 \
+        }                                                                                              \
+    } while (0)
 
-#define HDL_RESET( x ) do { \
-    ( x )->pxCOM = NULL; \
-    ( x )->uiAT91C_ID_USX = 0; \
-    ( x )->pvIRQHandlerFN = NULL; \
-    ( x )->bIsRxEnabled = FALSE; \
-    ( x )->bIsTxEnabled = FALSE; \
-} while( 0 );
+#define HDL_RESET(x)                \
+    do                              \
+    {                               \
+        (x)->pxCOM = NULL;          \
+        (x)->uiAT91C_ID_USX = 0;    \
+        (x)->pvIRQHandlerFN = NULL; \
+        (x)->bIsRxEnabled = FALSE;  \
+        (x)->bIsTxEnabled = FALSE;  \
+    } while (0);
 
 /* ----------------------- Type definitions ---------------------------------*/
 
 typedef struct
 {
-    AT91PS_USART    pxCOM;
-    unsigned int    uiAT91C_ID_USX;
-    volatile BOOL   bIsRxEnabled;
-    volatile BOOL   bIsTxEnabled;
-    void            ( *pvIRQHandlerFN ) ( void );
+    AT91PS_USART pxCOM;
+    unsigned int uiAT91C_ID_USX;
+    volatile BOOL bIsRxEnabled;
+    volatile BOOL bIsTxEnabled;
+    void (*pvIRQHandlerFN)(void);
 } xMBPSerialIntHandle;
 
 /* ----------------------- Static variables ---------------------------------*/
 STATIC xMBPSerialIntHandle xSerialHdls[1];
-STATIC BOOL     bIsInitalized = FALSE;
+STATIC BOOL bIsInitalized = FALSE;
 
 /* ----------------------- Static functions ---------------------------------*/
-STATIC void     vUSART0ISR( void ) __attribute__ ( ( interrupt( "IRQ" ) ) );
-STATIC void     vUSART1ISR( void ) __attribute__ ( ( interrupt( "IRQ" ) ) );
+STATIC void vUSART0ISR(void) __attribute__((interrupt("IRQ")));
+STATIC void vUSART1ISR(void) __attribute__((interrupt("IRQ")));
 
 /* ----------------------- Start implementation -----------------------------*/
 
-BOOL
-xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
+BOOL xMBPortSerialInit(UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity)
 {
-    BOOL            bOkay = TRUE;
-    unsigned int    uiUARTMode = 0;
+    BOOL bOkay = TRUE;
+    unsigned int uiUARTMode = 0;
 
-    ENTER_CRITICAL_SECTION(  );
-    if( !bIsInitalized )
+    ENTER_CRITICAL_SECTION();
+    if (!bIsInitalized)
     {
-        HDL_RESET( &xSerialHdls[0] );
+        HDL_RESET(&xSerialHdls[0]);
         bIsInitalized = TRUE;
     }
 
     uiUARTMode = AT91C_US_USMODE_RS485 | AT91C_US_CLKS_CLOCK;
-    switch ( eParity )
+    switch (eParity)
     {
     case MB_PAR_NONE:
         uiUARTMode |= AT91C_US_PAR_NONE;
@@ -116,7 +119,7 @@ xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     default:
         break;
     }
-    switch ( ucDataBits )
+    switch (ucDataBits)
     {
     case 8:
         uiUARTMode |= AT91C_US_CHRL_8_BITS;
@@ -127,15 +130,15 @@ xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     default:
         break;
     }
-    if( bOkay )
+    if (bOkay)
     {
-        if( ( ucPort == USART_USART0_IDX ) && ( NULL == xSerialHdls[0].pxCOM ) )
+        if ((ucPort == USART_USART0_IDX) && (NULL == xSerialHdls[0].pxCOM))
         {
             xSerialHdls[0].pxCOM = AT91C_BASE_US0;
             xSerialHdls[0].uiAT91C_ID_USX = AT91C_ID_US0;
             xSerialHdls[0].pvIRQHandlerFN = vUSART0ISR;
         }
-        else if( ( ucPort == USART_USART1_IDX ) && ( NULL == xSerialHdls[0].pxCOM ) )
+        else if ((ucPort == USART_USART1_IDX) && (NULL == xSerialHdls[0].pxCOM))
         {
             xSerialHdls[0].pxCOM = AT91C_BASE_US1;
             xSerialHdls[0].uiAT91C_ID_USX = AT91C_ID_US1;
@@ -146,17 +149,17 @@ xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
             bOkay = FALSE;
         }
 
-        if( bOkay )
+        if (bOkay)
         {
-            AT91F_PMC_EnablePeriphClock( AT91C_BASE_PMC, 1 << xSerialHdls[0].uiAT91C_ID_USX );
-            AT91F_US_Configure( xSerialHdls[0].pxCOM, configCPU_CLOCK_HZ, uiUARTMode, ulBaudRate,
-                                0 );
+            AT91F_PMC_EnablePeriphClock(AT91C_BASE_PMC, 1 << xSerialHdls[0].uiAT91C_ID_USX);
+            AT91F_US_Configure(xSerialHdls[0].pxCOM, configCPU_CLOCK_HZ, uiUARTMode, ulBaudRate,
+                               0);
             xSerialHdls[0].pxCOM->US_CR = AT91C_US_TXEN | AT91C_US_RXEN;
-            AT91F_AIC_ConfigureIt( AT91C_BASE_AIC, xSerialHdls[0].uiAT91C_ID_USX,
-                                   USART_INTERRUPT_LEVEL, AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL,
-                                   xSerialHdls[0].pvIRQHandlerFN );
-            AT91F_AIC_EnableIt( AT91C_BASE_AIC, xSerialHdls[0].uiAT91C_ID_USX );
-            UART_INIT( xSerialHdls[0].uiAT91C_ID_USX );
+            AT91F_AIC_ConfigureIt(AT91C_BASE_AIC, xSerialHdls[0].uiAT91C_ID_USX,
+                                  USART_INTERRUPT_LEVEL, AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL,
+                                  xSerialHdls[0].pvIRQHandlerFN);
+            AT91F_AIC_EnableIt(AT91C_BASE_AIC, xSerialHdls[0].uiAT91C_ID_USX);
+            UART_INIT(xSerialHdls[0].uiAT91C_ID_USX);
         }
     }
     else
@@ -164,96 +167,90 @@ xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         bOkay = FALSE;
     }
 
-    EXIT_CRITICAL_SECTION(  );
+    EXIT_CRITICAL_SECTION();
     return bOkay;
 }
 
-void
-vMBPortSerialClose( void )
+void vMBPortSerialClose(void)
 {
-    if( bIsInitalized )
+    if (bIsInitalized)
     {
-        if( NULL != xSerialHdls[0].pxCOM )
+        if (NULL != xSerialHdls[0].pxCOM)
         {
-            AT91F_AIC_DisableIt( AT91C_BASE_AIC, xSerialHdls[0].uiAT91C_ID_USX );
-            AT91F_US_Close( xSerialHdls[0].pxCOM );
-            HDL_RESET( &xSerialHdls[0] );
+            AT91F_AIC_DisableIt(AT91C_BASE_AIC, xSerialHdls[0].uiAT91C_ID_USX);
+            AT91F_US_Close(xSerialHdls[0].pxCOM);
+            HDL_RESET(&xSerialHdls[0]);
         }
     }
 }
 
-void
-vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
+void vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
 {
-    ENTER_CRITICAL_SECTION(  );
-    assert( NULL != xSerialHdls[0].pxCOM );
-    if( xRxEnable )
+    ENTER_CRITICAL_SECTION();
+    assert(NULL != xSerialHdls[0].pxCOM);
+    if (xRxEnable)
     {
-        AT91F_US_EnableIt( xSerialHdls[0].pxCOM, AT91C_US_RXRDY );
+        AT91F_US_EnableIt(xSerialHdls[0].pxCOM, AT91C_US_RXRDY);
         xSerialHdls[0].bIsRxEnabled = TRUE;
     }
     else
     {
-        AT91F_US_DisableIt( xSerialHdls[0].pxCOM, AT91C_US_RXRDY );
+        AT91F_US_DisableIt(xSerialHdls[0].pxCOM, AT91C_US_RXRDY);
         xSerialHdls[0].bIsRxEnabled = FALSE;
     }
 
-    if( xTxEnable )
+    if (xTxEnable)
     {
-        AT91F_US_EnableIt( xSerialHdls[0].pxCOM, AT91C_US_TXRDY );
+        AT91F_US_EnableIt(xSerialHdls[0].pxCOM, AT91C_US_TXRDY);
         xSerialHdls[0].bIsTxEnabled = TRUE;
     }
     else
     {
-        AT91F_US_DisableIt( xSerialHdls[0].pxCOM, AT91C_US_TXRDY );
+        AT91F_US_DisableIt(xSerialHdls[0].pxCOM, AT91C_US_TXRDY);
         xSerialHdls[0].bIsTxEnabled = FALSE;
     }
-    EXIT_CRITICAL_SECTION(  );
+    EXIT_CRITICAL_SECTION();
 }
 
 STATIC INLINE void
-vUSARTIRQHandler( void )
+vUSARTIRQHandler(void)
 {
-    unsigned int    uiUSARTStatus = xSerialHdls[0].pxCOM->US_CSR;
+    unsigned int uiUSARTStatus = xSerialHdls[0].pxCOM->US_CSR;
 
-    if( xSerialHdls[0].bIsRxEnabled && ( uiUSARTStatus & AT91C_US_RXRDY ) )
+    if (xSerialHdls[0].bIsRxEnabled && (uiUSARTStatus & AT91C_US_RXRDY))
     {
-        pxMBFrameCBByteReceived(  );
+        pxMBFrameCBByteReceived();
     }
-    if( xSerialHdls[0].bIsTxEnabled && ( uiUSARTStatus & AT91C_US_TXRDY ) )
+    if (xSerialHdls[0].bIsTxEnabled && (uiUSARTStatus & AT91C_US_TXRDY))
     {
-        pxMBFrameCBTransmitterEmpty(  );
+        pxMBFrameCBTransmitterEmpty();
     }
 }
 
-BOOL
-xMBPortSerialPutByte( CHAR ucByte )
+BOOL xMBPortSerialPutByte(CHAR ucByte)
 {
-    assert( NULL != xSerialHdls[0].pxCOM );
-    AT91F_US_PutChar( xSerialHdls[0].pxCOM, ucByte );
+    assert(NULL != xSerialHdls[0].pxCOM);
+    AT91F_US_PutChar(xSerialHdls[0].pxCOM, ucByte);
     return TRUE;
 }
 
-BOOL
-xMBPortSerialGetByte( CHAR * pucByte )
+BOOL xMBPortSerialGetByte(CHAR *pucByte)
 {
-    assert( NULL != xSerialHdls[0].pxCOM );
-    *pucByte = ( CHAR ) AT91F_US_GetChar( xSerialHdls[0].pxCOM );
+    assert(NULL != xSerialHdls[0].pxCOM);
+    *pucByte = (CHAR)AT91F_US_GetChar(xSerialHdls[0].pxCOM);
     return TRUE;
 }
 
-void
-vUSART0ISR( void )
+void vUSART0ISR(void)
 {
-    assert( NULL != xSerialHdls[0].pxCOM );
-    vUSARTIRQHandler(  );
+    assert(NULL != xSerialHdls[0].pxCOM);
+    vUSARTIRQHandler();
     AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
-void
-vUSART1ISR( void )
+void vUSART1ISR(void)
 {
-    assert( NULL != xSerialHdls[0].pxCOM );
-    vUSARTIRQHandler(  );
+    assert(NULL != xSerialHdls[0].pxCOM);
+    vUSARTIRQHandler();
     AT91C_BASE_AIC->AIC_EOICR = 0;
 }

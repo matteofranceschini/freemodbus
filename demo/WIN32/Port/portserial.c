@@ -30,33 +30,32 @@
 
 /* ----------------------- Defines  -----------------------------------------*/
 #if MB_ASCII_ENABLED == 1
-#define	BUF_SIZE	513     /* must hold a complete ASCII frame. */
+#define BUF_SIZE 513 /* must hold a complete ASCII frame. */
 #else
-#define	BUF_SIZE	256     /* must hold a complete RTU frame. */
+#define BUF_SIZE 256 /* must hold a complete RTU frame. */
 #endif
 
 /* ----------------------- Static variables ---------------------------------*/
-static HANDLE   g_hSerial;
-static BOOL     bRxEnabled;
-static BOOL     bTxEnabled;
+static HANDLE g_hSerial;
+static BOOL bRxEnabled;
+static BOOL bTxEnabled;
 
-static UCHAR    ucBuffer[BUF_SIZE];
-static INT      uiRxBufferPos;
-static INT      uiTxBufferPos;
+static UCHAR ucBuffer[BUF_SIZE];
+static INT uiRxBufferPos;
+static INT uiTxBufferPos;
 
 /* ----------------------- Function prototypes ------------------------------*/
-LPTSTR          Error2String( DWORD dwError );
+LPTSTR Error2String(DWORD dwError);
 
 /* ----------------------- Begin implementation -----------------------------*/
-void
-vMBPortSerialEnable( BOOL bEnableRx, BOOL bEnableTx )
+void vMBPortSerialEnable(BOOL bEnableRx, BOOL bEnableTx)
 {
     /* it is not allowed that both receiver and transmitter are enabled. */
-    assert( !bEnableRx || !bEnableTx );
+    assert(!bEnableRx || !bEnableTx);
 
-    if( bEnableRx )
+    if (bEnableRx)
     {
-        PurgeComm( g_hSerial, PURGE_RXCLEAR );
+        PurgeComm(g_hSerial, PURGE_RXCLEAR);
         uiRxBufferPos = 0;
         bRxEnabled = TRUE;
     }
@@ -64,7 +63,7 @@ vMBPortSerialEnable( BOOL bEnableRx, BOOL bEnableTx )
     {
         bRxEnabled = FALSE;
     }
-    if( bEnableTx )
+    if (bEnableTx)
     {
         bTxEnabled = TRUE;
         uiTxBufferPos = 0;
@@ -75,56 +74,51 @@ vMBPortSerialEnable( BOOL bEnableRx, BOOL bEnableTx )
     }
 }
 
-BOOL
-xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits,
-                   eMBParity eParity )
+BOOL xMBPortSerialInit(UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits,
+                       eMBParity eParity)
 {
-    TCHAR           szDevice[8];
-    BOOL            bStatus = TRUE;
-    DCB             dcb;
+    TCHAR szDevice[8];
+    BOOL bStatus = TRUE;
+    DCB dcb;
 
+    memset(&dcb, 0, sizeof(dcb));
 
-
-    memset( &dcb, 0, sizeof( dcb ) );
-
-    dcb.DCBlength = sizeof( dcb );
+    dcb.DCBlength = sizeof(dcb);
     dcb.BaudRate = ulBaudRate;
 
-    _stprintf_s( szDevice, 8, _T( "COM%d" ), ucPort );
+    _stprintf_s(szDevice, 8, _T( "COM%d" ), ucPort);
 
-    switch ( eParity )
+    switch (eParity)
     {
-        case MB_PAR_NONE:
-            dcb.Parity = NOPARITY;
-            dcb.fParity = 0;
-            break;
-        case MB_PAR_EVEN:
-            dcb.Parity = EVENPARITY;
-            dcb.fParity = 1;
-            break;
-        case MB_PAR_ODD:
-            dcb.Parity = ODDPARITY;
-            dcb.fParity = 1;
-            break;
-        default:
-            bStatus = FALSE;
+    case MB_PAR_NONE:
+        dcb.Parity = NOPARITY;
+        dcb.fParity = 0;
+        break;
+    case MB_PAR_EVEN:
+        dcb.Parity = EVENPARITY;
+        dcb.fParity = 1;
+        break;
+    case MB_PAR_ODD:
+        dcb.Parity = ODDPARITY;
+        dcb.fParity = 1;
+        break;
+    default:
+        bStatus = FALSE;
     }
 
-    switch ( ucDataBits )
+    switch (ucDataBits)
     {
-        case 8:
-            dcb.ByteSize = 8;
-            break;
-        case 7:
-            dcb.ByteSize = 7;
-            break;
-        default:
-            bStatus = FALSE;
+    case 8:
+        dcb.ByteSize = 8;
+        break;
+    case 7:
+        dcb.ByteSize = 7;
+        break;
+    default:
+        bStatus = FALSE;
     }
 
-
-
-    if( bStatus )
+    if (bStatus)
     {
         /* we don't use XON/XOFF flow control. */
         dcb.fInX = dcb.fOutX = FALSE;
@@ -147,47 +141,45 @@ xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits,
 
         /* Open the serial device. */
         g_hSerial =
-            CreateFile( szDevice, GENERIC_READ | GENERIC_WRITE, 0, NULL,
-                        OPEN_EXISTING, 0, NULL );
+            CreateFile(szDevice, GENERIC_READ | GENERIC_WRITE, 0, NULL,
+                       OPEN_EXISTING, 0, NULL);
 
-
-        if( g_hSerial == INVALID_HANDLE_VALUE )
+        if (g_hSerial == INVALID_HANDLE_VALUE)
         {
-            vMBPortLog( MB_LOG_ERROR, _T( "SER-INIT" ), _T( "Can't open serial port %s: %s" ),
-                        szDevice, Error2String( GetLastError( ) ) );
+            vMBPortLog(MB_LOG_ERROR, _T( "SER-INIT" ), _T( "Can't open serial port %s: %s" ),
+                       szDevice, Error2String(GetLastError()));
             bStatus = FALSE;
         }
-        else if( !SetCommState( g_hSerial, &dcb ) )
+        else if (!SetCommState(g_hSerial, &dcb))
         {
-            vMBPortLog( MB_LOG_ERROR, _T( "SER-INIT" ),
-                        _T( "Can't set settings for serial device %s: %s" ), 
-                        szDevice, Error2String( GetLastError( ) ) );
+            vMBPortLog(MB_LOG_ERROR, _T( "SER-INIT" ),
+                       _T( "Can't set settings for serial device %s: %s" ),
+                       szDevice, Error2String(GetLastError()));
             bStatus = FALSE;
         }
-        else if( !SetCommMask( g_hSerial, 0 ) )
+        else if (!SetCommMask(g_hSerial, 0))
         {
-            vMBPortLog( MB_LOG_ERROR, _T( "SER-INIT" ),
-                        _T( "Can't set communication event mask for serial device %s: %s" ),
-                        szDevice, Error2String( GetLastError( ) ) );
+            vMBPortLog(MB_LOG_ERROR, _T( "SER-INIT" ),
+                       _T( "Can't set communication event mask for serial device %s: %s" ),
+                       szDevice, Error2String(GetLastError()));
             bStatus = FALSE;
         }
 
         else
         {
-            vMBPortSerialEnable( FALSE, FALSE );
+            vMBPortSerialEnable(FALSE, FALSE);
             bStatus = TRUE;
         }
     }
     return bStatus;
 }
 
-BOOL
-xMBPortSerialSetTimeout( DWORD dwTimeoutMs )
+BOOL xMBPortSerialSetTimeout(DWORD dwTimeoutMs)
 {
-    BOOL            bStatus;
-    COMMTIMEOUTS    cto;
+    BOOL bStatus;
+    COMMTIMEOUTS cto;
 
-    /* usTimeOut is the inter character timeout used to detect the end 
+    /* usTimeOut is the inter character timeout used to detect the end
      * of frame. The total timeout is set to 50ms to make sure we
      * can exit the blocking read. */
     cto.ReadIntervalTimeout = dwTimeoutMs;
@@ -196,11 +188,11 @@ xMBPortSerialSetTimeout( DWORD dwTimeoutMs )
     cto.WriteTotalTimeoutConstant = 0;
     cto.WriteTotalTimeoutMultiplier = 0;
 
-    if( !SetCommTimeouts( g_hSerial, &cto ) )
+    if (!SetCommTimeouts(g_hSerial, &cto))
     {
-         vMBPortLog( MB_LOG_ERROR, _T( "SER-INIT" ),
-                     _T( "Can't set timeouts for serial device: %s" ),
-                     Error2String( GetLastError( ) ) );
+        vMBPortLog(MB_LOG_ERROR, _T( "SER-INIT" ),
+                   _T( "Can't set timeouts for serial device: %s" ),
+                   Error2String(GetLastError()));
         bStatus = FALSE;
     }
     else
@@ -211,66 +203,62 @@ xMBPortSerialSetTimeout( DWORD dwTimeoutMs )
     return bStatus;
 }
 
-void
-vMBPortClose ( void )
+void vMBPortClose(void)
 {
-    ( void )CloseHandle( g_hSerial );
+    (void)CloseHandle(g_hSerial);
 }
 
-BOOL
-xMBPortSerialPoll(  )
+BOOL xMBPortSerialPoll()
 {
-    BOOL            bStatus = TRUE;
-    DWORD           dwBytesRead;
-    DWORD           dwBytesWritten;
-    DWORD           i;
+    BOOL bStatus = TRUE;
+    DWORD dwBytesRead;
+    DWORD dwBytesWritten;
+    DWORD i;
 
-    while( bRxEnabled )
+    while (bRxEnabled)
     {
         /* buffer wrap around. */
-        if( uiRxBufferPos >= BUF_SIZE )
+        if (uiRxBufferPos >= BUF_SIZE)
             uiRxBufferPos = 0;
 
-        if( ReadFile( g_hSerial, &ucBuffer[uiRxBufferPos],
-                      BUF_SIZE - uiRxBufferPos, &dwBytesRead, NULL ) )
+        if (ReadFile(g_hSerial, &ucBuffer[uiRxBufferPos],
+                     BUF_SIZE - uiRxBufferPos, &dwBytesRead, NULL))
         {
-            if( dwBytesRead == 0 )
+            if (dwBytesRead == 0)
             {
                 /* timeout with no bytes. */
                 break;
             }
-            else if( dwBytesRead > 0 )
+            else if (dwBytesRead > 0)
             {
-                vMBPortLog( MB_LOG_DEBUG, _T( "SER-POLL" ),
-                            _T( "detected end of frame (t3.5 expired.)\r\n" ) );
-                for( i = 0; i < dwBytesRead; i++ )
+                vMBPortLog(MB_LOG_DEBUG, _T( "SER-POLL" ),
+                           _T( "detected end of frame (t3.5 expired.)\r\n" ));
+                for (i = 0; i < dwBytesRead; i++)
                 {
                     /* Call the modbus stack and let him fill the buffers. */
-                    ( void )pxMBFrameCBByteReceived(  );
+                    (void)pxMBFrameCBByteReceived();
                 }
             }
         }
         else
         {
-            vMBPortLog( MB_LOG_ERROR, _T( "SER-POLL" ), _T( "I/O error on serial device: %s" ),
-                        Error2String( GetLastError ( ) ) );
+            vMBPortLog(MB_LOG_ERROR, _T( "SER-POLL" ), _T( "I/O error on serial device: %s" ),
+                       Error2String(GetLastError()));
             bStatus = FALSE;
         }
     }
-    if( bTxEnabled )
+    if (bTxEnabled)
     {
-        while( bTxEnabled )
+        while (bTxEnabled)
         {
-            ( void )pxMBFrameCBTransmitterEmpty(  );
+            (void)pxMBFrameCBTransmitterEmpty();
             /* Call the modbus stack to let him fill the buffer. */
         }
         dwBytesWritten = 0;
-        if( !WriteFile
-            ( g_hSerial, &ucBuffer[0], uiTxBufferPos, &dwBytesWritten, NULL )
-            || ( dwBytesWritten != uiTxBufferPos ) )
+        if (!WriteFile(g_hSerial, &ucBuffer[0], uiTxBufferPos, &dwBytesWritten, NULL) || (dwBytesWritten != uiTxBufferPos))
         {
-            vMBPortLog( MB_LOG_ERROR, _T( "SER-POLL" ), _T( "I/O error on serial device: %s" ),
-                        Error2String( GetLastError ( ) ) );
+            vMBPortLog(MB_LOG_ERROR, _T( "SER-POLL" ), _T( "I/O error on serial device: %s" ),
+                       Error2String(GetLastError()));
             bStatus = FALSE;
         }
     }
@@ -278,21 +266,18 @@ xMBPortSerialPoll(  )
     return bStatus;
 }
 
-BOOL
-xMBPortSerialPutByte( CHAR ucByte )
+BOOL xMBPortSerialPutByte(CHAR ucByte)
 {
-    assert( uiTxBufferPos < BUF_SIZE );
+    assert(uiTxBufferPos < BUF_SIZE);
     ucBuffer[uiTxBufferPos] = ucByte;
     uiTxBufferPos++;
     return TRUE;
 }
 
-BOOL
-xMBPortSerialGetByte( CHAR * pucByte )
+BOOL xMBPortSerialGetByte(CHAR *pucByte)
 {
-    assert( uiRxBufferPos < BUF_SIZE );
+    assert(uiRxBufferPos < BUF_SIZE);
     *pucByte = ucBuffer[uiRxBufferPos];
     uiRxBufferPos++;
     return TRUE;
 }
-

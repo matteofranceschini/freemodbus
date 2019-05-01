@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -59,20 +59,20 @@
 /// \param pSource  Source buffer.
 /// \param num  Number of bytes to copy.
 //------------------------------------------------------------------------------
-void * memcpy(void *pDestination, const void *pSource, size_t num)
+void *memcpy(void *pDestination, const void *pSource, size_t num)
 {
     unsigned char *pByteDestination;
     unsigned char *pByteSource;
-    unsigned int *pAlignedSource = (unsigned int *) pSource;
-    unsigned int *pAlignedDestination = (unsigned int *) pDestination;
+    unsigned int *pAlignedSource = (unsigned int *)pSource;
+    unsigned int *pAlignedDestination = (unsigned int *)pDestination;
 
     // If num is more than 4 bytes, and both dest. and source are aligned,
     // then copy dwords
-    if ((((unsigned int) pAlignedDestination & 0x3) == 0)
-        && (((unsigned int) pAlignedSource & 0x3) == 0)
-        && (num >= 4)) {
+    if ((((unsigned int)pAlignedDestination & 0x3) == 0) && (((unsigned int)pAlignedSource & 0x3) == 0) && (num >= 4))
+    {
 
-        while (num >= 4) {
+        while (num >= 4)
+        {
 
             *pAlignedDestination++ = *pAlignedSource++;
             num -= 4;
@@ -80,9 +80,10 @@ void * memcpy(void *pDestination, const void *pSource, size_t num)
     }
 
     // Copy remaining bytes
-    pByteDestination = (unsigned char *) pAlignedDestination;
-    pByteSource = (unsigned char *) pAlignedSource;
-    while (num--) {
+    pByteDestination = (unsigned char *)pAlignedDestination;
+    pByteSource = (unsigned char *)pAlignedSource;
+    while (num--)
+    {
 
         *pByteDestination++ = *pByteSource++;
     }
@@ -97,22 +98,25 @@ void * memcpy(void *pDestination, const void *pSource, size_t num)
 /// \param value    Value to fill the region with
 /// \param num      Size to fill in bytes
 //------------------------------------------------------------------------------
-void * memset(void *pBuffer, int value, size_t num)
+void *memset(void *pBuffer, int value, size_t num)
 {
     unsigned char *pByteDestination;
-    unsigned int  *pAlignedDestination = (unsigned int *) pBuffer;
-    unsigned int  alignedValue = (value << 24) | (value << 16) | (value << 8) | value;
+    unsigned int *pAlignedDestination = (unsigned int *)pBuffer;
+    unsigned int alignedValue = (value << 24) | (value << 16) | (value << 8) | value;
 
     // Set words if possible
-    if ((((unsigned int) pAlignedDestination & 0x3) == 0) && (num >= 4)) {
-        while (num >= 4) {
+    if ((((unsigned int)pAlignedDestination & 0x3) == 0) && (num >= 4))
+    {
+        while (num >= 4)
+        {
             *pAlignedDestination++ = alignedValue;
             num -= 4;
         }
     }
     // Set remaining bytes
-    pByteDestination = (unsigned char *) pAlignedDestination;
-    while (num--) {
+    pByteDestination = (unsigned char *)pAlignedDestination;
+    while (num--)
+    {
         *pByteDestination++ = value;
     }
     return pBuffer;
@@ -124,13 +128,15 @@ void * memset(void *pBuffer, int value, size_t num)
 /// \param pString   Pointer to the start of the string to search.
 /// \param character The character to find.
 //-----------------------------------------------------------------------------
-char * strchr(const char *pString, int character)
+char *strchr(const char *pString, int character)
 {
-    char * p = (char *)pString;
-    char   c = character & 0xFF;
+    char *p = (char *)pString;
+    char c = character & 0xFF;
 
-    while(*p != c) {
-        if (*p == 0) {
+    while (*p != c)
+    {
+        if (*p == 0)
+        {
             return 0;
         }
         p++;
@@ -146,12 +152,12 @@ size_t strlen(const char *pString)
 {
     unsigned int length = 0;
 
-    while(*pString++ != 0) {
+    while (*pString++ != 0)
+    {
         length++;
     }
     return length;
 }
-
 
 //-----------------------------------------------------------------------------
 /// Search a character backword from the end of given string.
@@ -159,13 +165,15 @@ size_t strlen(const char *pString)
 /// \param pString   Pointer to the start of the string to search.
 /// \param character The character to find.
 //-----------------------------------------------------------------------------
-char * strrchr(const char *pString, int character)
+char *strrchr(const char *pString, int character)
 {
     char *p = 0;
 
-    while(*pString != 0) {
-        if (*pString++ == character) {
-            p = (char*)pString;
+    while (*pString != 0)
+    {
+        if (*pString++ == character)
+        {
+            p = (char *)pString;
         }
     }
     return p;
@@ -177,11 +185,12 @@ char * strrchr(const char *pString, int character)
 /// \param pDestination Pointer to the destination string.
 /// \param pSource      Pointer to the source string.
 //-----------------------------------------------------------------------------
-char * strcpy(char *pDestination, const char *pSource)
+char *strcpy(char *pDestination, const char *pSource)
 {
     char *pSaveDest = pDestination;
 
-    for(; (*pDestination = *pSource) != 0; ++pSource, ++pDestination);
+    for (; (*pDestination = *pSource) != 0; ++pSource, ++pDestination)
+        ;
     return pSaveDest;
 }
 
@@ -198,10 +207,13 @@ int strncmp(const char *pString1, const char *pString2, size_t count)
 {
     int r;
 
-    while(count) {
+    while (count)
+    {
         r = *pString1 - *pString2;
-        if (r == 0) {
-            if (*pString1 == 0) {
+        if (r == 0)
+        {
+            if (*pString1 == 0)
+            {
                 break;
             }
             pString1++;
@@ -221,13 +233,15 @@ int strncmp(const char *pString1, const char *pString2, size_t count)
 /// \param pSource      Pointer to the start of the source string.
 /// \param count        Number of bytes that should be copied.
 //-----------------------------------------------------------------------------
-char * strncpy(char *pDestination, const char *pSource, size_t count)
+char *strncpy(char *pDestination, const char *pSource, size_t count)
 {
     char *pSaveDest = pDestination;
 
-    while (count) {
+    while (count)
+    {
         *pDestination = *pSource;
-        if (*pSource == 0) {
+        if (*pSource == 0)
+        {
             break;
         }
         pDestination++;
@@ -236,4 +250,3 @@ char * strncpy(char *pDestination, const char *pSource, size_t count)
     }
     return pSaveDest;
 }
-

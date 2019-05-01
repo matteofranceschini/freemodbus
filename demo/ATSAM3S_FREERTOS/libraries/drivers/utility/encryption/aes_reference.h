@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -31,12 +31,12 @@
 /// \unit
 ///
 /// !Purpose
-/// 
+///
 /// Firmware encryption using AES reference implementation
-/// 
+///
 /// !Usage
-/// 
-/// -# aes_ref_init: Initialize AES hardware 
+///
+/// -# aes_ref_init: Initialize AES hardware
 /// -# aes_ref_init_CBC: for the CBC mode
 /// -# aes_ref_init_ECB: for the CTR mode
 /// -# aes_ref_init_CTR: for the ECB mode
@@ -55,7 +55,6 @@
 //------------------------------------------------------------------------------
 #include "config.h"
 
-
 #if defined(USE_ENCRYPTION) && defined(ENCRYPTION_AES_REF)
 
 //------------------------------------------------------------------------------
@@ -66,42 +65,42 @@
 #if !defined(ENCRYPTION_ECB) && \
     !defined(ENCRYPTION_CBC) && \
     !defined(ENCRYPTION_CTR)
-  #error No other mode than ECB, CBC & CTR are supported.
+#error No other mode than ECB, CBC & CTR are supported.
 #endif
 
 // Supported key length
 #if (ENCRYPTION_KEY_LENGTH != 16) && \
     (ENCRYPTION_KEY_LENGTH != 24) && \
-    (ENCRYPTION_KEY_LENGTH != 32) 
-  #error Only key lengths of 128, 192 or 256 bits are supported.
+    (ENCRYPTION_KEY_LENGTH != 32)
+#error Only key lengths of 128, 192 or 256 bits are supported.
 #endif
 
 // Supported block length
 #if (ENCRYPTION_BLOCK_LENGTH != 16)
-  #error Only block length of 128 bits is supported.
+#error Only block length of 128 bits is supported.
 #endif
 
 //------------------------------------------------------------------------------
 // Definitions
 //------------------------------------------------------------------------------
-#define BC     (ENCRYPTION_BLOCK_LENGTH / 4)
-#define SC     ((BC - 4) >> 1)
-#define KC     (ENCRYPTION_KEY_LENGTH / 4)
-#define t0f    0x000000FF & tf
-#define t1f    0x0000FF00 & tf
-#define t2f    0x00FF0000 & tf
-#define t3f    0xFF000000 & tf
+#define BC (ENCRYPTION_BLOCK_LENGTH / 4)
+#define SC ((BC - 4) >> 1)
+#define KC (ENCRYPTION_KEY_LENGTH / 4)
+#define t0f 0x000000FF & tf
+#define t1f 0x0000FF00 & tf
+#define t2f 0x00FF0000 & tf
+#define t3f 0xFF000000 & tf
 
 #if (KC >= BC)
-  #define ROUNDS            (KC + 6)
+#define ROUNDS (KC + 6)
 #else
-  #define ROUNDS            (BC + 6)
+#define ROUNDS (BC + 6)
 #endif
 
 #ifdef ONLY_ONE_ENCRYPTION
-#define ENCRYPTION_INIT     aes_ref_init
-#define ENCRYPTION_CLEANUP  aes_ref_cleanup
-#define ENCRYPTION_DECRYPT  aes_ref_decrypt
+#define ENCRYPTION_INIT aes_ref_init
+#define ENCRYPTION_CLEANUP aes_ref_cleanup
+#define ENCRYPTION_DECRYPT aes_ref_decrypt
 #endif
 
 //------------------------------------------------------------------------------
@@ -112,21 +111,19 @@ extern void aes_ref_init_CBC(void);
 extern void aes_ref_init_ECB(void);
 extern void aes_ref_init_CTR(void);
 extern void aes_ref_cleanup(void);
-extern int aes_ref_decrypt(const unsigned char * cipherText,
-                    unsigned char * plainText,
-                    unsigned int length);
-extern int aes_ref_decrypt_CBC(const unsigned char * cipherText,
-                    unsigned char * plainText,
-                    unsigned int length);
-extern int aes_ref_decrypt_ECB(const unsigned char * cipherText,
-                    unsigned char * plainText,
-                    unsigned int length);
-extern int aes_ref_decrypt_CTR(const unsigned char * cipherText,
-                    unsigned char * plainText,
-                    unsigned int length);
+extern int aes_ref_decrypt(const unsigned char *cipherText,
+                           unsigned char *plainText,
+                           unsigned int length);
+extern int aes_ref_decrypt_CBC(const unsigned char *cipherText,
+                               unsigned char *plainText,
+                               unsigned int length);
+extern int aes_ref_decrypt_ECB(const unsigned char *cipherText,
+                               unsigned char *plainText,
+                               unsigned int length);
+extern int aes_ref_decrypt_CTR(const unsigned char *cipherText,
+                               unsigned char *plainText,
+                               unsigned int length);
 
 #endif // defined(USE_ENCRYPTION) && defined(ENCRYPTION_AES_REF)
 
 #endif // BOOTLOADER_AES_REFERENCE_H
-
-

@@ -40,15 +40,15 @@
  *----------------------------------------------------------------------------*/
 
 /* Function prototype for exception table items (interrupt handler). */
-typedef void( *IntFunc )( void );
+typedef void (*IntFunc)(void);
 
 /* Define WEAK attribute */
-#if defined   ( __CC_ARM   )
-    #define WEAK __attribute__ ((weak))
-#elif defined ( __ICCARM__ )
-    #define WEAK __weak
-#elif defined (  __GNUC__  )
-    #define WEAK __attribute__ ((weak))
+#if defined(__CC_ARM)
+#define WEAK __attribute__((weak))
+#elif defined(__ICCARM__)
+#define WEAK __weak
+#elif defined(__GNUC__)
+#define WEAK __attribute__((weak))
 #endif
 
 /*----------------------------------------------------------------------------
@@ -57,15 +57,15 @@ typedef void( *IntFunc )( void );
 
 extern void IrqHandlerNotUsed(void);
 
-extern WEAK void NMI_Handler( void );
-extern WEAK void HardFault_Handler( void );
-extern WEAK void MemManage_Handler( void );
-extern WEAK void BusFault_Handler( void );
-extern WEAK void UsageFault_Handler( void );
-extern WEAK void SVC_Handler( void );
-extern WEAK void DebugMon_Handler( void );
-extern WEAK void PendSV_Handler( void );
-extern WEAK void SysTick_Handler( void );
+extern WEAK void NMI_Handler(void);
+extern WEAK void HardFault_Handler(void);
+extern WEAK void MemManage_Handler(void);
+extern WEAK void BusFault_Handler(void);
+extern WEAK void UsageFault_Handler(void);
+extern WEAK void SVC_Handler(void);
+extern WEAK void DebugMon_Handler(void);
+extern WEAK void PendSV_Handler(void);
+extern WEAK void SysTick_Handler(void);
 
 extern WEAK void SUPC_IrqHandler(void);
 extern WEAK void RSTC_IrqHandler(void);

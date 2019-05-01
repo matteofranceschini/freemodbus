@@ -30,56 +30,55 @@
 #include "port.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_FRAME_LOG_BUFSIZE    512
+#define MB_FRAME_LOG_BUFSIZE 512
 
 /* ----------------------- Start implementation -----------------------------*/
 
 #ifdef MB_TCP_DEBUG
-void
-prvvMBTCPLogFrame( UCHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen )
+void prvvMBTCPLogFrame(UCHAR *pucMsg, UCHAR *pucFrame, USHORT usFrameLen)
 {
-    int             i;
-    int             res;
-    int             iBufPos = 0;
-    size_t          iBufLeft = MB_FRAME_LOG_BUFSIZE;
-    static CHAR     arcBuffer[MB_FRAME_LOG_BUFSIZE];
+    int i;
+    int res;
+    int iBufPos = 0;
+    size_t iBufLeft = MB_FRAME_LOG_BUFSIZE;
+    static CHAR arcBuffer[MB_FRAME_LOG_BUFSIZE];
 
-    assert( pucFrame != NULL );
+    assert(pucFrame != NULL);
 
-    for( i = 0; i < usFrameLen; i++ )
+    for (i = 0; i < usFrameLen; i++)
     {
         /* Print some additional frame information. */
-        switch ( i )
+        switch (i)
         {
         case 0:
             /* TID = Transaction Identifier. */
-            res = snprintf( &arcBuffer[iBufPos], iBufLeft, "| TID = " );
+            res = snprintf(&arcBuffer[iBufPos], iBufLeft, "| TID = ");
             break;
         case 2:
             /* PID = Protocol Identifier. */
-            res = snprintf( &arcBuffer[iBufPos], iBufLeft, " | PID = " );
+            res = snprintf(&arcBuffer[iBufPos], iBufLeft, " | PID = ");
             break;
         case 4:
             /* Length */
-            res = snprintf( &arcBuffer[iBufPos], iBufLeft, " | LEN = " );
+            res = snprintf(&arcBuffer[iBufPos], iBufLeft, " | LEN = ");
             break;
         case 6:
             /* UID = Unit Identifier. */
-            res = snprintf( &arcBuffer[iBufPos], iBufLeft, " | UID = " );
+            res = snprintf(&arcBuffer[iBufPos], iBufLeft, " | UID = ");
             break;
         case 7:
             /* MB Function Code. */
-            res = snprintf( &arcBuffer[iBufPos], iBufLeft, "|| FUNC = " );
+            res = snprintf(&arcBuffer[iBufPos], iBufLeft, "|| FUNC = ");
             break;
         case 8:
             /* MB PDU rest. */
-            res = snprintf( &arcBuffer[iBufPos], iBufLeft, " | DATA = " );
+            res = snprintf(&arcBuffer[iBufPos], iBufLeft, " | DATA = ");
             break;
         default:
             res = 0;
             break;
         }
-        if( res == -1 )
+        if (res == -1)
         {
             break;
         }
@@ -90,8 +89,8 @@ prvvMBTCPLogFrame( UCHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen )
         }
 
         /* Print the data. */
-        res = snprintf( &arcBuffer[iBufPos], iBufLeft, "%02X", pucFrame[i] );
-        if( res == -1 )
+        res = snprintf(&arcBuffer[iBufPos], iBufLeft, "%02X", pucFrame[i]);
+        if (res == -1)
         {
             break;
         }
@@ -102,28 +101,27 @@ prvvMBTCPLogFrame( UCHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen )
         }
     }
 
-    if( res != -1 )
+    if (res != -1)
     {
         /* Append an end of frame string. */
-        res = snprintf( &arcBuffer[iBufPos], iBufLeft, " |\r\n" );
-        if( res != -1 )
+        res = snprintf(&arcBuffer[iBufPos], iBufLeft, " |\r\n");
+        if (res != -1)
         {
-            vMBPortLog( MB_LOG_DEBUG, pucMsg, "%s", arcBuffer );
+            vMBPortLog(MB_LOG_DEBUG, pucMsg, "%s", arcBuffer);
         }
     }
 }
 #endif
 
 #ifdef MB_TCP_DEBUG
-void
-vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule, const CHAR * szFmt, ... )
+void vMBPortLog(eMBPortLogLevel eLevel, const CHAR *szModule, const CHAR *szFmt, ...)
 {
-    va_list         args;
-    static const char *arszLevel2Str[] = { "DEBUG", "INFO", "WARN", "ERROR" };
+    va_list args;
+    static const char *arszLevel2Str[] = {"DEBUG", "INFO", "WARN", "ERROR"};
 
-    ( void )printf( "%s: %s: ", arszLevel2Str[eLevel], szModule );
-    va_start( args, szFmt );
-    vprintf( szFmt, args );
-    va_end( args );
+    (void)printf("%s: %s: ", arszLevel2Str[eLevel], szModule);
+    va_start(args, szFmt);
+    vprintf(szFmt, args);
+    va_end(args);
 }
 #endif

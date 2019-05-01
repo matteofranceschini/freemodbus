@@ -34,44 +34,42 @@ typedef enum
 typedef enum
 {
   UART_EVEN_PARITY = 0x0000,
-  UART_ODD_PARITY  = 0x0020,
-  UART_NO_PARITY  = 0x0000 
+  UART_ODD_PARITY = 0x0020,
+  UART_NO_PARITY = 0x0000
 } UARTParity_TypeDef;
 
 typedef enum
 {
-  UART_0_5_StopBits  = 0x00,
-  UART_1_StopBits    = 0x08,
-  UART_1_5_StopBits  = 0x10,
-  UART_2_StopBits    = 0x18
+  UART_0_5_StopBits = 0x00,
+  UART_1_StopBits = 0x08,
+  UART_1_5_StopBits = 0x10,
+  UART_2_StopBits = 0x18
 } UARTStopBits_TypeDef;
 
 typedef enum
 {
-  UARTM_8D   = 0x01,
+  UARTM_8D = 0x01,
   UARTM_7D_P = 0x03,
-  UARTM_9D   = 0x04,
+  UARTM_9D = 0x04,
   UARTM_8D_W = 0x05,
   UARTM_8D_P = 0x07
 } UARTMode_TypeDef;
 
-
 /* UART flags definition */
-#define UART_TxFull          0x0200
-#define UART_RxHalfFull      0x0100
-#define UART_TimeOutIdle     0x0080
+#define UART_TxFull 0x0200
+#define UART_RxHalfFull 0x0100
+#define UART_TimeOutIdle 0x0080
 #define UART_TimeOutNotEmpty 0x0040
-#define UART_OverrunError    0x0020
-#define UART_FrameError      0x0010
-#define UART_ParityError     0x0008
-#define UART_TxHalfEmpty     0x0004
-#define UART_TxEmpty         0x0002
-#define UART_RxBufFull       0x0001
-
+#define UART_OverrunError 0x0020
+#define UART_FrameError 0x0010
+#define UART_ParityError 0x0008
+#define UART_TxHalfEmpty 0x0004
+#define UART_TxEmpty 0x0002
+#define UART_RxBufFull 0x0001
 
 /*******************************************************************************
 * Function Name  : UART_Init
-* Description    : This function initializes the selected UART registers to 
+* Description    : This function initializes the selected UART registers to
 *                  their reset values
 * Input 1        : UARTx (x can be 0,1, 2 or 3) the selected UART
 * Output         : None
@@ -88,13 +86,13 @@ void UART_Init(UART_TypeDef *UARTx);
 *                  UARTM_7D_P 	for 7-bit data + parity format
 *                  UART_9D 	for 9-bit data format
 *                  UART_8D_W	for 8-bit data + wake-up bit format
-*                  UART_8D_P	for 8-bit data + parity bit format 
+*                  UART_8D_P	for 8-bit data + parity bit format
 * Output         : None
 * Return         : None
 *******************************************************************************/
 inline void UART_ModeConfig(UART_TypeDef *UARTx, UARTMode_TypeDef UART_Mode)
 {
-  UARTx->CR = (UARTx->CR&0xFFF8)|(u16)UART_Mode;
+  UARTx->CR = (UARTx->CR & 0xFFF8) | (u16)UART_Mode;
 }
 
 /*******************************************************************************
@@ -118,7 +116,7 @@ void UART_BaudRateConfig(UART_TypeDef *UARTx, u32 BaudRate);
 *******************************************************************************/
 inline void UART_ParityConfig(UART_TypeDef *UARTx, UARTParity_TypeDef Parity)
 {
-  UARTx->CR = (UARTx->CR&0xFFDF)|(u16)Parity;
+  UARTx->CR = (UARTx->CR & 0xFFDF) | (u16)Parity;
 }
 
 /*******************************************************************************
@@ -128,7 +126,7 @@ inline void UART_ParityConfig(UART_TypeDef *UARTx, UARTParity_TypeDef Parity)
 * Input 1        : UARTx (x can be 0,1, 2 or 3) the selected UART
 * Input 2        : The number of stop bits, it can be
 *                  UART_0_5_StopBits	for 0.5 stop bit
-*                  UART_1_StopBits	for 1 stop bit, 
+*                  UART_1_StopBits	for 1 stop bit,
 *                  UART_1_5_StopBits 	for 1.5 stop bits
 *	           UART_2_StopBits	for 2 stop bits
 * Output         : None
@@ -136,7 +134,7 @@ inline void UART_ParityConfig(UART_TypeDef *UARTx, UARTParity_TypeDef Parity)
 *******************************************************************************/
 inline void UART_StopBitsConfig(UART_TypeDef *UARTx, UARTStopBits_TypeDef StopBits)
 {
-  UARTx->CR = (UARTx->CR&0xFFE7)|(u16)StopBits;
+  UARTx->CR = (UARTx->CR & 0xFFE7) | (u16)StopBits;
 }
 
 /*******************************************************************************
@@ -147,14 +145,14 @@ inline void UART_StopBitsConfig(UART_TypeDef *UARTx, UARTStopBits_TypeDef StopBi
 * Input 2        : u32 The baudrate value
 * Input 3        : The parity type, it can be UART_EVEN_PARITY, UART_ODD_PARITY
 *		   or UART_NO_PARITY
-* Input 4        : The number of stop bits UART_0_5_StopBits, UART_1_StopBits, 
+* Input 4        : The number of stop bits UART_0_5_StopBits, UART_1_StopBits,
 *                  UART_1_5_StopBits or UART_2_StopBits
 * Input 5        : The UART mode, it can be
 *                  UARTM_8D 	for 8-bit data format
 *                  UARTM_7D_P 	for 7-bit data + parity format
 *                  UART_9D 	for 9-bit data format
 *                  UART_8D_W	for 8-bit data + wake-up bit format
-*                  UART_8D_P	for 8-bit data + parity bit format   
+*                  UART_8D_P	for 8-bit data + parity bit format
 * Output         : None
 * Return         : None
 *******************************************************************************/
@@ -166,7 +164,7 @@ void UART_Config(UART_TypeDef *UARTx, u32 BaudRate, UARTParity_TypeDef Parity,
 * Description    : This function enables or disables one or several interrupt
 *                  sources of the selected UART.
 * Input 1        : UARTx (x can be 0,1, 2 or 3) the selected UART
-* Input 2        : The new interrupt flag or flags  
+* Input 2        : The new interrupt flag or flags
 * Input 3        : ENABLE or DISABLE
 * Output         : None
 * Return         : None
@@ -381,7 +379,7 @@ inline u16 UART_FlagStatus(UART_TypeDef *UARTx)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void sendchar( char *ch );
+void sendchar(char *ch);
 #endif /* USE_SERIAL_PORT */
 
 #endif /* _UART_H */

@@ -29,57 +29,57 @@
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void GPIO_Config (GPIO_TypeDef *GPIOx, u16 Port_Pins, GpioPinMode_TypeDef GPIO_Mode)
+void GPIO_Config(GPIO_TypeDef *GPIOx, u16 Port_Pins, GpioPinMode_TypeDef GPIO_Mode)
 {
   switch (GPIO_Mode)
   {
-    case GPIO_HI_AIN_TRI:
-      GPIOx->PC0&=~Port_Pins;
-      GPIOx->PC1&=~Port_Pins;
-      GPIOx->PC2&=~Port_Pins;
-      break;
+  case GPIO_HI_AIN_TRI:
+    GPIOx->PC0 &= ~Port_Pins;
+    GPIOx->PC1 &= ~Port_Pins;
+    GPIOx->PC2 &= ~Port_Pins;
+    break;
 
-    case GPIO_IN_TRI_TTL:
-      GPIOx->PC0|=Port_Pins;
-      GPIOx->PC1&=~Port_Pins;
-      GPIOx->PC2&=~Port_Pins;
-      break;
+  case GPIO_IN_TRI_TTL:
+    GPIOx->PC0 |= Port_Pins;
+    GPIOx->PC1 &= ~Port_Pins;
+    GPIOx->PC2 &= ~Port_Pins;
+    break;
 
-    case GPIO_IN_TRI_CMOS:
-      GPIOx->PC0&=~Port_Pins;
-      GPIOx->PC1|=Port_Pins;
-      GPIOx->PC2&=~Port_Pins;
-      break;
+  case GPIO_IN_TRI_CMOS:
+    GPIOx->PC0 &= ~Port_Pins;
+    GPIOx->PC1 |= Port_Pins;
+    GPIOx->PC2 &= ~Port_Pins;
+    break;
 
-    case GPIO_IPUPD_WP:
-      GPIOx->PC0|=Port_Pins;
-      GPIOx->PC1|=Port_Pins;
-      GPIOx->PC2&=~Port_Pins;
-      break;
+  case GPIO_IPUPD_WP:
+    GPIOx->PC0 |= Port_Pins;
+    GPIOx->PC1 |= Port_Pins;
+    GPIOx->PC2 &= ~Port_Pins;
+    break;
 
-    case GPIO_OUT_OD:
-      GPIOx->PC0&=~Port_Pins;
-      GPIOx->PC1&=~Port_Pins;
-      GPIOx->PC2|=Port_Pins;
-      break;
+  case GPIO_OUT_OD:
+    GPIOx->PC0 &= ~Port_Pins;
+    GPIOx->PC1 &= ~Port_Pins;
+    GPIOx->PC2 |= Port_Pins;
+    break;
 
-    case GPIO_OUT_PP:
-      GPIOx->PC0|=Port_Pins;
-      GPIOx->PC1&=~Port_Pins;
-      GPIOx->PC2|=Port_Pins;
-      break;
+  case GPIO_OUT_PP:
+    GPIOx->PC0 |= Port_Pins;
+    GPIOx->PC1 &= ~Port_Pins;
+    GPIOx->PC2 |= Port_Pins;
+    break;
 
-    case GPIO_AF_OD:
-      GPIOx->PC0&=~Port_Pins;
-      GPIOx->PC1|=Port_Pins;
-      GPIOx->PC2|=Port_Pins;
-      break;
+  case GPIO_AF_OD:
+    GPIOx->PC0 &= ~Port_Pins;
+    GPIOx->PC1 |= Port_Pins;
+    GPIOx->PC2 |= Port_Pins;
+    break;
 
-    case GPIO_AF_PP:
-      GPIOx->PC0|=Port_Pins;
-      GPIOx->PC1|=Port_Pins;
-      GPIOx->PC2|=Port_Pins;
-      break;
+  case GPIO_AF_PP:
+    GPIOx->PC0 |= Port_Pins;
+    GPIOx->PC1 |= Port_Pins;
+    GPIOx->PC2 |= Port_Pins;
+    break;
   }
 }
 
@@ -94,7 +94,10 @@ void GPIO_Config (GPIO_TypeDef *GPIOx, u16 Port_Pins, GpioPinMode_TypeDef GPIO_M
 *******************************************************************************/
 void GPIO_BitWrite(GPIO_TypeDef *GPIOx, u8 Port_Pin, u8 Port_Val)
 {
-  if (Port_Val&0x01) GPIOx->PD |= 1<<Port_Pin; else GPIOx->PD &= ~(1<<Port_Pin);
+  if (Port_Val & 0x01)
+    GPIOx->PD |= 1 << Port_Pin;
+  else
+    GPIOx->PD &= ~(1 << Port_Pin);
 }
 
 /*******************************************************************************
@@ -108,8 +111,8 @@ void GPIO_BitWrite(GPIO_TypeDef *GPIOx, u8 Port_Pin, u8 Port_Val)
 *******************************************************************************/
 void GPIO_ByteWrite(GPIO_TypeDef *GPIOx, u8 Port_Byte, u8 Port_Val)
 {
-  GPIOx->PD = Port_Byte ? (GPIOx->PD&0x00FF) | ((u16)Port_Val<<8)
-                        : (GPIOx->PD&0xFF00) | Port_Val;
+  GPIOx->PD = Port_Byte ? (GPIOx->PD & 0x00FF) | ((u16)Port_Val << 8)
+                        : (GPIOx->PD & 0xFF00) | Port_Val;
 }
 
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

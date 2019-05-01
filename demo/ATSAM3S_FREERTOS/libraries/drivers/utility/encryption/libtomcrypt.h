@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -31,11 +31,11 @@
 /// \unit
 ///
 /// !Purpose
-/// 
+///
 /// Firmware encryption using libTomCrypt
-/// 
+///
 /// !Usage
-/// 
+///
 /// -# ltc_init: Initialize LibTomCrypt
 /// -# ltc_init_AES_CBC
 /// -# ltc_init_AES_CTR
@@ -72,32 +72,32 @@
 #if !defined(ENCRYPTION_CTR) && \
     !defined(ENCRYPTION_CBC) && \
     !defined(ENCRYPTION_ECB)
-  #error No other mode than ECB, CBC & CTR are supported.
+#error No other mode than ECB, CBC & CTR are supported.
 #endif
 
 // Supported key length
 #if defined(ENCRYPTION_AES_LTC)
-  #if (ENCRYPTION_KEY_LENGTH != 16) && \
-      (ENCRYPTION_KEY_LENGTH != 24) && \
-      (ENCRYPTION_KEY_LENGTH != 32) 
-    #error Only a key length of 128, 192 or 256 bits are supported with AES.
-  #endif
+#if (ENCRYPTION_KEY_LENGTH != 16) && \
+    (ENCRYPTION_KEY_LENGTH != 24) && \
+    (ENCRYPTION_KEY_LENGTH != 32)
+#error Only a key length of 128, 192 or 256 bits are supported with AES.
+#endif
 #elif defined(ENCRYPTION_3DES_LTC)
-  #if (ENCRYPTION_KEY_LENGTH != 16) && \
-      (ENCRYPTION_KEY_LENGTH != 24)
-    #error Only a key length of 128 or 192 bits are supported with Triple-DES.
-  #endif
+#if (ENCRYPTION_KEY_LENGTH != 16) && \
+    (ENCRYPTION_KEY_LENGTH != 24)
+#error Only a key length of 128 or 192 bits are supported with Triple-DES.
+#endif
 #endif
 
 // Supported block length
 #if defined(ENCRYPTION_AES_LTC)
-  #if (ENCRYPTION_BLOCK_LENGTH != 16)
-    #error Only a block length of 128 bits is supported with AES.
-  #endif
+#if (ENCRYPTION_BLOCK_LENGTH != 16)
+#error Only a block length of 128 bits is supported with AES.
+#endif
 #elif defined(ENCRYPTION_3DES_LTC)
-  #if (ENCRYPTION_BLOCK_LENGTH != 8)
-    #error Only a block length of 64 bits is supported with Triple-DES.
-  #endif
+#if (ENCRYPTION_BLOCK_LENGTH != 8)
+#error Only a block length of 64 bits is supported with Triple-DES.
+#endif
 #endif
 
 //------------------------------------------------------------------------------
@@ -106,16 +106,16 @@
 
 // Functions
 #ifdef ONLY_ONE_ENCRYPTION
-#define ENCRYPTION_INIT     ltc_init
-#define ENCRYPTION_CLEANUP  ltc_cleanup
-#define ENCRYPTION_DECRYPT  ltc_decrypt
+#define ENCRYPTION_INIT ltc_init
+#define ENCRYPTION_CLEANUP ltc_cleanup
+#define ENCRYPTION_DECRYPT ltc_decrypt
 
 #if defined(ENCRYPTION_AES_LTC)
-  #define CIPHER_NAME       "rijndael"
-  #define CIPHER_DESC       rijndael_desc
+#define CIPHER_NAME "rijndael"
+#define CIPHER_DESC rijndael_desc
 #elif defined(ENCRYPTION_3DES_LTC)
-  #define CIPHER_NAME       "3des"
-  #define CIPHER_DESC       des3_desc
+#define CIPHER_NAME "3des"
+#define CIPHER_DESC des3_desc
 #endif
 #endif
 
@@ -138,12 +138,10 @@ extern void ltc_cleanup_CBC(void);
 extern void ltc_cleanup_CTR(void);
 extern void ltc_cleanup_ECB(void);
 
-extern int ltc_decrypt(const unsigned char * cipherText, unsigned char * plainText, unsigned int length);
-extern int ltc_decrypt_CBC(const unsigned char * cipherText, unsigned char * plainText, unsigned int length);
-extern int ltc_decrypt_CTR(const unsigned char * cipherText, unsigned char * plainText, unsigned int length);
-extern int ltc_decrypt_ECB(const unsigned char * cipherText, unsigned char * plainText, unsigned int length);
+extern int ltc_decrypt(const unsigned char *cipherText, unsigned char *plainText, unsigned int length);
+extern int ltc_decrypt_CBC(const unsigned char *cipherText, unsigned char *plainText, unsigned int length);
+extern int ltc_decrypt_CTR(const unsigned char *cipherText, unsigned char *plainText, unsigned int length);
+extern int ltc_decrypt_ECB(const unsigned char *cipherText, unsigned char *plainText, unsigned int length);
 
 #endif // defined(USE_ENCRYPTION) && (defined(ENCRYPTION_AES_LTC) || defined(ENCRYPTION_3DES_LTC))
 #endif // BOOTLOADER_AES_LIBTOMCRYPT_H
-
-

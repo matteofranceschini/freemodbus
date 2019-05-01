@@ -70,14 +70,14 @@
 /* PWM sub-bit field definition. begin */
 /* TODO: remove them when AT91SAM3S4.h have the definitions. */
 // PWM_CMRx
-#define 	PWM_CMR0_CPRE_MCKA                 (0xB) // (PWMC_CH)
-#define 	PWM_CMR0_CPRE_MCKB                 (0xC) // (PWMC_CH)
-#define 	PWM_CMR1_CPRE_MCKA                 (0xB) // (PWMC_CH)
-#define 	PWM_CMR2_CPRE_MCKA                 (0xB) // (PWMC_CH)
+#define PWM_CMR0_CPRE_MCKA (0xB) // (PWMC_CH)
+#define PWM_CMR0_CPRE_MCKB (0xC) // (PWMC_CH)
+#define PWM_CMR1_CPRE_MCKA (0xB) // (PWMC_CH)
+#define PWM_CMR2_CPRE_MCKA (0xB) // (PWMC_CH)
 // PWM_SCM
-#define 	PWM_SCM_UPDM_MODE0                (0x0 << 16) // (PWMC) Manual write of data and manual trigger of the update
-#define 	PWM_SCM_UPDM_MODE1                (0x1 << 16) // (PWMC) Manual write of data and automatic trigger of the update
-#define 	PWM_SCM_UPDM_MODE2                (0x2 << 16) // (PWMC) Automatic write of data and automatic trigger of the update
+#define PWM_SCM_UPDM_MODE0 (0x0 << 16) // (PWMC) Manual write of data and manual trigger of the update
+#define PWM_SCM_UPDM_MODE1 (0x1 << 16) // (PWMC) Manual write of data and automatic trigger of the update
+#define PWM_SCM_UPDM_MODE2 (0x2 << 16) // (PWMC) Automatic write of data and automatic trigger of the update
 /* end */
 
 /*----------------------------------------------------------------------------
@@ -100,10 +100,9 @@ extern void PWMC_ConfigureChannelExt(
     uint32_t DTHInverte,
     uint32_t DTLInverte);
 
-extern void PWMC_ConfigureClocks
-    (uint32_t clka,
-     uint32_t clkb,
-     uint32_t mck);
+extern void PWMC_ConfigureClocks(uint32_t clka,
+                                 uint32_t clkb,
+                                 uint32_t mck);
 
 extern void PWMC_SetPeriod(uint8_t channel, uint16_t period);
 
@@ -134,8 +133,8 @@ extern void PWMC_EnableIt(uint32_t sources1, uint32_t sources2);
 extern void PWMC_DisableIt(uint32_t sources1, uint32_t sources2);
 
 extern uint8_t PWMC_WriteBuffer(Pwm *pwmc,
-    void *buffer,
-    uint32_t length);
+                                void *buffer,
+                                uint32_t length);
 
 extern void PWMC_SetOverrideValue(uint32_t value);
 
@@ -156,4 +155,3 @@ extern void PWMC_ConfigureComparisonUnit(uint32_t x, uint32_t value, uint32_t mo
 extern void PWMC_ConfigureEventLineMode(uint32_t x, uint32_t mode);
 
 #endif /* #ifndef PWMC_H */
-

@@ -44,14 +44,16 @@
 //------------------------------------------------------------------------------
 static void PrintChar(unsigned char c)
 {
-    if( (/*c >= 0x00 &&*/ c <= 0x1F) ||
-        (c >= 0xB0 && c <= 0xDF) ) {
+    if ((/*c >= 0x00 &&*/ c <= 0x1F) ||
+        (c >= 0xB0 && c <= 0xDF))
+    {
 
-       printf(".");
+        printf(".");
     }
-    else {
+    else
+    {
 
-       printf("%c", c);
+        printf("%c", c);
     }
 }
 
@@ -68,7 +70,8 @@ void UTIL_DbguDumpFrame(unsigned char *pFrame, unsigned int size)
 {
     unsigned int i;
 
-    for (i=0; i < size; i++) {
+    for (i = 0; i < size; i++)
+    {
         printf("%02X ", pFrame[i]);
     }
 
@@ -84,56 +87,64 @@ void UTIL_DbguDumpFrame(unsigned char *pFrame, unsigned int size)
 void UTIL_DbguDumpMemory(
     unsigned char *pBuffer,
     unsigned int size,
-    unsigned int address
-    )
+    unsigned int address)
 {
     unsigned int i, j;
     unsigned int lastLineStart;
-    unsigned char* pTmp;
+    unsigned char *pTmp;
 
-    for (i=0; i < (size / 16); i++) {
+    for (i = 0; i < (size / 16); i++)
+    {
 
-        printf("0x%08X: ", address + (i*16));
-        pTmp = (unsigned char*)&pBuffer[i*16];
-        for (j=0; j < 4; j++) {
-            printf("%02X%02X%02X%02X ", pTmp[0],pTmp[1],pTmp[2],pTmp[3]);
+        printf("0x%08X: ", address + (i * 16));
+        pTmp = (unsigned char *)&pBuffer[i * 16];
+        for (j = 0; j < 4; j++)
+        {
+            printf("%02X%02X%02X%02X ", pTmp[0], pTmp[1], pTmp[2], pTmp[3]);
             pTmp += 4;
         }
 
-        pTmp = (unsigned char*)&pBuffer[i*16];
-        for (j=0; j < 16; j++) {
+        pTmp = (unsigned char *)&pBuffer[i * 16];
+        for (j = 0; j < 16; j++)
+        {
             PrintChar(*pTmp++);
         }
 
         printf("\n\r");
     }
 
-    if( (size%16) != 0) {
-        lastLineStart = size - (size%16);
+    if ((size % 16) != 0)
+    {
+        lastLineStart = size - (size % 16);
         printf("0x%08X: ", address + lastLineStart);
 
-        for (j= lastLineStart; j < lastLineStart+16; j++) {
+        for (j = lastLineStart; j < lastLineStart + 16; j++)
+        {
 
-            if( (j!=lastLineStart) && (j%4 == 0) ) {
+            if ((j != lastLineStart) && (j % 4 == 0))
+            {
                 printf(" ");
             }
-            if(j<size) {
+            if (j < size)
+            {
                 printf("%02X", pBuffer[j]);
             }
-            else {
+            else
+            {
                 printf("  ");
             }
         }
 
         printf(" ");
-        for (j= lastLineStart; j <size; j++) {
+        for (j = lastLineStart; j < size; j++)
+        {
             PrintChar(pBuffer[j]);
         }
 
         printf("\n\r");
     }
 }
-    
+
 //------------------------------------------------------------------------------
 /// Reads an integer
 //------------------------------------------------------------------------------
@@ -142,25 +153,33 @@ unsigned char UTIL_DbguGetInteger(unsigned int *pValue)
     unsigned char key;
     unsigned char nbNb = 0;
     unsigned int value = 0;
-    while(1) {
+    while (1)
+    {
         key = DBGU_GetChar();
         DBGU_PutChar(key);
-        if(key >= '0' &&  key <= '9' ) {
+        if (key >= '0' && key <= '9')
+        {
             value = (value * 10) + (key - '0');
             nbNb++;
         }
-        else if(key == 0x0D || key == ' ') {
-            if(nbNb == 0) {
-                printf("\n\rWrite a number and press ENTER or SPACE!\n\r");       
-                return 0; 
-            } else {
-                printf("\n\r"); 
+        else if (key == 0x0D || key == ' ')
+        {
+            if (nbNb == 0)
+            {
+                printf("\n\rWrite a number and press ENTER or SPACE!\n\r");
+                return 0;
+            }
+            else
+            {
+                printf("\n\r");
                 *pValue = value;
                 return 1;
             }
-        } else {
+        }
+        else
+        {
             printf("\n\r'%c' not a number!\n\r", key);
-            return 0;  
+            return 0;
         }
     }
 }
@@ -169,23 +188,24 @@ unsigned char UTIL_DbguGetInteger(unsigned int *pValue)
 /// Reads an integer and check the value
 //------------------------------------------------------------------------------
 unsigned char UTIL_DbguGetIntegerMinMax(
-    unsigned int *pValue, 
-    unsigned int min, 
-    unsigned int max
-    )
+    unsigned int *pValue,
+    unsigned int min,
+    unsigned int max)
 {
     unsigned int value = 0;
 
-    if( UTIL_DbguGetInteger(&value) == 0) {
+    if (UTIL_DbguGetInteger(&value) == 0)
+    {
         return 0;
     }
-    
-    if(value < min || value > max) {
+
+    if (value < min || value > max)
+    {
         printf("\n\rThe number have to be between %d and %d\n\r", min, max);
-        return 0; 
+        return 0;
     }
 
-    printf("\n\r"); 
+    printf("\n\r");
     *pValue = value;
     return 1;
 }
@@ -198,26 +218,30 @@ unsigned char UTIL_DbguGetHexa32(unsigned int *pValue)
     unsigned char key;
     unsigned int i = 0;
     unsigned int value = 0;
-    for(i = 0; i < 8; i++) {
+    for (i = 0; i < 8; i++)
+    {
         key = DBGU_GetChar();
         DBGU_PutChar(key);
-        if(key >= '0' &&  key <= '9' ) {
+        if (key >= '0' && key <= '9')
+        {
             value = (value * 16) + (key - '0');
         }
-        else if(key >= 'A' &&  key <= 'F' ) {
-            value = (value * 16) + (key - 'A' + 10) ;
+        else if (key >= 'A' && key <= 'F')
+        {
+            value = (value * 16) + (key - 'A' + 10);
         }
-        else if(key >= 'a' &&  key <= 'f' ) {
-            value = (value * 16) + (key - 'a' + 10) ;
-        }        
-        else {
-            printf("\n\rIt is not a hexa character!\n\r");       
-            return 0; 
+        else if (key >= 'a' && key <= 'f')
+        {
+            value = (value * 16) + (key - 'a' + 10);
+        }
+        else
+        {
+            printf("\n\rIt is not a hexa character!\n\r");
+            return 0;
         }
     }
 
-    printf("\n\r");    
-    *pValue = value;     
+    printf("\n\r");
+    *pValue = value;
     return 1;
 }
-

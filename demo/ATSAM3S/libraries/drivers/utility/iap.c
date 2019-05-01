@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -58,8 +58,6 @@
 //         Internal variables
 //------------------------------------------------------------------------------
 
-
-
 //------------------------------------------------------------------------------
 //         Exported functions
 //------------------------------------------------------------------------------
@@ -72,21 +70,23 @@
        -1 if the IAP feature is not implemented in the ROM code.
 */
 unsigned long IAP_PerformCmd(unsigned long FlashCmd)
-{   
+{
     // Pointer on IAP function in ROM
     static void (*IAP_Function)(unsigned int) = 0;
 
-    if (IAP_Function == 0) {
+    if (IAP_Function == 0)
+    {
 
-        IAP_Function = (void (*)(unsigned int)) (*((unsigned int *) IAP_FUNC_ADDR));
-        TRACE_DEBUG("IAP_PerformCmd : IAP function address in ROM : 0x%08X\n\r", (unsigned int) IAP_Function);
+        IAP_Function = (void (*)(unsigned int))(*((unsigned int *)IAP_FUNC_ADDR));
+        TRACE_DEBUG("IAP_PerformCmd : IAP function address in ROM : 0x%08X\n\r", (unsigned int)IAP_Function);
 
         /* Check if IAP function is implemented (opcode in SWI != 'b' or 'ldr') */
         if ((((((unsigned long)IAP_Function >> 24) & 0xFF) == 0xEA) ||
-            (((unsigned long)IAP_Function >> 24) & 0xFF) == 0xE5)) {
-             TRACE_ERROR("IAP_PerformCmd : no IAP function address found in ROM\n\r");
-             IAP_Function = 0;
-             return -1;
+             (((unsigned long)IAP_Function >> 24) & 0xFF) == 0xE5))
+        {
+            TRACE_ERROR("IAP_PerformCmd : no IAP function address found in ROM\n\r");
+            IAP_Function = 0;
+            return -1;
         }
     }
 
@@ -95,4 +95,3 @@ unsigned long IAP_PerformCmd(unsigned long FlashCmd)
 
     return 0;
 }
-

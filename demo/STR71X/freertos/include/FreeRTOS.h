@@ -19,13 +19,13 @@
 
 	A special exception to the GPL can be applied should you wish to distribute
 	a combined work that includes FreeRTOS, without being obliged to provide
-	the source code for any proprietary components.  See the licensing section 
+	the source code for any proprietary components.  See the licensing section
 	of http://www.FreeRTOS.org for full details of how and when the exception
 	can be applied.
 
 	***************************************************************************
-	See http://www.FreeRTOS.org for documentation, latest information, license 
-	and contact details.  Please ensure to read the configuration and relevant 
+	See http://www.FreeRTOS.org for documentation, latest information, license
+	and contact details.  Please ensure to read the configuration and relevant
 	port sections of the online documentation.
 	***************************************************************************
 */
@@ -33,9 +33,8 @@
 #ifndef INC_FREERTOS_H
 #define INC_FREERTOS_H
 
-
-/* 
- * Include the generic headers required for the FreeRTOS port being used. 
+/*
+ * Include the generic headers required for the FreeRTOS port being used.
  */
 #include <stddef.h>
 
@@ -48,58 +47,50 @@
 /* Definitions specific to the port being used. */
 #include "portable.h"
 
-
-
-
-
-
-
 /*
- * Check all the required application specific macros have been defined. 
+ * Check all the required application specific macros have been defined.
  * These macros are application specific and (as downloaded) are defined
  * within FreeRTOSConfig.h.
  */
 
 #ifndef configUSE_PREEMPTION
-	#error Missing definition:  configUSE_PREEMPTION should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#error Missing definition:  configUSE_PREEMPTION should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
 #ifndef configUSE_IDLE_HOOK
-	#error Missing definition:  configUSE_IDLE_HOOK should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#error Missing definition:  configUSE_IDLE_HOOK should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
 #ifndef INCLUDE_vTaskPrioritySet
-	#error Missing definition:  INCLUDE_vTaskPrioritySet should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#error Missing definition:  INCLUDE_vTaskPrioritySet should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
 #ifndef INCLUDE_uxTaskPriorityGet
-	#error Missing definition:  INCLUDE_uxTaskPriorityGet should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#error Missing definition:  INCLUDE_uxTaskPriorityGet should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
-#ifndef INCLUDE_vTaskDelete		
-	#error Missing definition:  INCLUDE_vTaskDelete		 should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#ifndef INCLUDE_vTaskDelete
+#error Missing definition:  INCLUDE_vTaskDelete		 should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
 #ifndef INCLUDE_vTaskCleanUpResources
-	#error Missing definition:  INCLUDE_vTaskCleanUpResources should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#error Missing definition:  INCLUDE_vTaskCleanUpResources should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
-#ifndef INCLUDE_vTaskSuspend	
-	#error Missing definition:  INCLUDE_vTaskSuspend	 should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#ifndef INCLUDE_vTaskSuspend
+#error Missing definition:  INCLUDE_vTaskSuspend	 should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
 #ifndef INCLUDE_vTaskDelayUntil
-	#error Missing definition:  INCLUDE_vTaskDelayUntil should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#error Missing definition:  INCLUDE_vTaskDelayUntil should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
 #ifndef INCLUDE_vTaskDelay
-	#error Missing definition:  INCLUDE_vTaskDelay should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#error Missing definition:  INCLUDE_vTaskDelay should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
 #ifndef configUSE_16_BIT_TICKS
-	#error Missing definition:  configUSE_16_BIT_TICKS should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
+#error Missing definition:  configUSE_16_BIT_TICKS should be defined as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
-
-
 
 #endif

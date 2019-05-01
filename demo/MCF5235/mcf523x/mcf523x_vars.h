@@ -9,12 +9,12 @@
  **************************************************************************/
 
 /* eTPU characteristics definition */
-struct eTPU_struct *eTPU = ( struct eTPU_struct * )0x401D0000;
+struct eTPU_struct *eTPU = (struct eTPU_struct *)0x401D0000;
 
-uint32_t        fs_etpu_code_start = 0x401E0000;
-uint32_t        fs_etpu_data_ram_start = 0x401D8000;
-uint32_t        fs_etpu_data_ram_end = 0x401D85FC;
-uint32_t        fs_etpu_data_ram_ext = 0x401DC000;
+uint32_t fs_etpu_code_start = 0x401E0000;
+uint32_t fs_etpu_data_ram_start = 0x401D8000;
+uint32_t fs_etpu_data_ram_end = 0x401D85FC;
+uint32_t fs_etpu_data_ram_ext = 0x401DC000;
 
 /*********************************************************************
  *

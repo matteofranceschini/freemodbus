@@ -54,45 +54,45 @@
 
 /* ------------------------ Defines --------------------------------------- */
 /* This is the number of threads that can be started with sys_thead_new() */
-#define SYS_MBOX_SIZE               ( 16 )
-#define MS_TO_TICKS( ms )           \
-    ( portTickType )( ( portTickType ) ( ms ) / portTICK_RATE_MS )
-#define TICKS_TO_MS( ticks )        \
-    ( unsigned portLONG )( ( portTickType ) ( ticks ) * portTICK_RATE_MS )
-#define THREAD_STACK_SIZE           ( 1024 )
-#define THREAD_NAME                 "lwIP"
+#define SYS_MBOX_SIZE (16)
+#define MS_TO_TICKS(ms) \
+    (portTickType)((portTickType)(ms) / portTICK_RATE_MS)
+#define TICKS_TO_MS(ticks) \
+    (unsigned portLONG)((portTickType)(ticks)*portTICK_RATE_MS)
+#define THREAD_STACK_SIZE (1024)
+#define THREAD_NAME "lwIP"
 
 /* Must hold the string THREAD_NAME + task number + terminating '\0'. */
-#define THREAD_NAME_LEN_MAX         6
+#define THREAD_NAME_LEN_MAX 6
 
-#define THREAD_INIT( tcb ) \
-    do { \
-        tcb->next = NULL; \
-        tcb->pid = ( xTaskHandle )0; \
-        tcb->timeouts.next = NULL; \
-        memset( tcb->name, 0, THREAD_NAME_LEN_MAX ); \
-    } while( 0 )
+#define THREAD_INIT(tcb)                           \
+    do                                             \
+    {                                              \
+        tcb->next = NULL;                          \
+        tcb->pid = (xTaskHandle)0;                 \
+        tcb->timeouts.next = NULL;                 \
+        memset(tcb->name, 0, THREAD_NAME_LEN_MAX); \
+    } while (0)
 
 /* ------------------------ Type definitions ------------------------------ */
 typedef struct sys_tcb
 {
     struct sys_tcb *next;
     struct sys_timeouts timeouts;
-    xTaskHandle     pid;
-    char            name[THREAD_NAME_LEN_MAX];
+    xTaskHandle pid;
+    char name[THREAD_NAME_LEN_MAX];
 } sys_tcb_t;
 
 /* ------------------------ Static functions ------------------------------ */
-sys_tcb_t      *sys_thread_current( void );
+sys_tcb_t *sys_thread_current(void);
 
 /* ------------------------ Static variables ------------------------------ */
 static sys_tcb_t *tasks = NULL;
 
 /* ------------------------ Start implementation -------------------------- */
-void
-sys_init( void )
+void sys_init(void)
 {
-    LWIP_ASSERT( "sys_init: not called first\r\n", tasks == NULL );
+    LWIP_ASSERT("sys_init: not called first\r\n", tasks == NULL);
     tasks = NULL;
 }
 
@@ -110,9 +110,9 @@ sys_init( void )
  * system.
  */
 sys_prot_t
-sys_arch_protect( void )
+sys_arch_protect(void)
 {
-    vPortEnterCritical(  );
+    vPortEnterCritical();
     return 1;
 }
 
@@ -122,43 +122,40 @@ sys_arch_protect( void )
  * more information. This function is only required if your port is supporting
  * an operating system.
  */
-void
-sys_arch_unprotect( sys_prot_t pval )
+void sys_arch_unprotect(sys_prot_t pval)
 {
-    ( void )pval;
-    vPortExitCritical(  );
+    (void)pval;
+    vPortExitCritical();
 }
 
 /*
  * Prints an assertion messages and aborts execution.
  */
-void
-sys_assert( const char *msg )
+void sys_assert(const char *msg)
 {
-    ( void )fputs( msg, stderr );
-    ( void )fputs( "\n\r", stderr );
-    exit( EXIT_FAILURE );
+    (void)fputs(msg, stderr);
+    (void)fputs("\n\r", stderr);
+    exit(EXIT_FAILURE);
 }
 
-void
-sys_debug( const char *const fmt, ... )
+void sys_debug(const char *const fmt, ...)
 {
-    va_list         ap;
+    va_list ap;
 
-    va_start( ap, fmt );
-    ( void )vprintf( fmt, ap );
-    ( void )putc( '\r', stdout );
-    fflush( stdout );
+    va_start(ap, fmt);
+    (void)vprintf(fmt, ap);
+    (void)putc('\r', stdout);
+    fflush(stdout);
 
-    va_end( ap );
+    va_end(ap);
 }
 
 /* ------------------------ Start implementation ( Threads ) -------------- */
 
 sys_thread_t
-sys_thread_new( void ( *thread ) ( void *arg ), void *arg, int prio )
+sys_thread_new(void (*thread)(void *arg), void *arg, int prio)
 {
-    return sys_arch_thread_new( thread, arg, prio, THREAD_STACK_SIZE );
+    return sys_arch_thread_new(thread, arg, prio, THREAD_STACK_SIZE);
 }
 
 /*
@@ -169,26 +166,26 @@ sys_thread_new( void ( *thread ) ( void *arg ), void *arg, int prio )
   * priority are system dependent.
  */
 sys_thread_t
-sys_arch_thread_new( void ( *thread ) ( void *arg ), void *arg, int prio, size_t ssize )
+sys_arch_thread_new(void (*thread)(void *arg), void *arg, int prio, size_t ssize)
 {
-    sys_thread_t    thread_hdl = SYS_THREAD_NULL;
-    int             i;
-    sys_tcb_t      *p;
+    sys_thread_t thread_hdl = SYS_THREAD_NULL;
+    int i;
+    sys_tcb_t *p;
 
     /* We disable the FreeRTOS scheduler because it might be the case that the new
      * tasks gets scheduled inside the xTaskCreate function. To prevent this we
      * disable the scheduling. Note that this can happen although we have interrupts
      * disabled because xTaskCreate contains a call to taskYIELD( ).
      */
-    vPortEnterCritical(  );
+    vPortEnterCritical();
 
     p = tasks;
     i = 0;
     /* We are called the first time. Initialize it. */
-    if( p == NULL )
+    if (p == NULL)
     {
-        p = pvPortMalloc( sizeof( sys_tcb_t ) );
-        if( p != NULL )
+        p = pvPortMalloc(sizeof(sys_tcb_t));
+        if (p != NULL)
         {
             tasks = p;
         }
@@ -198,61 +195,60 @@ sys_arch_thread_new( void ( *thread ) ( void *arg ), void *arg, int prio, size_t
         /* First task already counter. */
         i++;
         /* Cycle to the end of the list. */
-        while( p->next != NULL )
+        while (p->next != NULL)
         {
             i++;
             p = p->next;
         }
-        p->next = pvPortMalloc( sizeof( sys_tcb_t ) );
+        p->next = pvPortMalloc(sizeof(sys_tcb_t));
         p = p->next;
     }
 
-    if( p != NULL )
+    if (p != NULL)
     {
         /* Memory allocated. Initialize the data structure. */
-        THREAD_INIT( p );
-        ( void )snprintf( p->name, THREAD_NAME_LEN_MAX, "lwIP%d", i );
+        THREAD_INIT(p);
+        (void)snprintf(p->name, THREAD_NAME_LEN_MAX, "lwIP%d", i);
 
         /* Now q points to a free element in the list. */
-        if( xTaskCreate( thread, p->name, ssize, arg, prio, &p->pid ) == pdPASS )
+        if (xTaskCreate(thread, p->name, ssize, arg, prio, &p->pid) == pdPASS)
         {
             thread_hdl = p;
         }
         else
         {
-            vPortFree( p );
+            vPortFree(p);
         }
     }
 
-    vPortExitCritical(  );
+    vPortExitCritical();
     return thread_hdl;
 }
 
-void
-sys_arch_thread_remove( sys_thread_t hdl )
+void sys_arch_thread_remove(sys_thread_t hdl)
 {
-    sys_tcb_t      *current = tasks, *prev;
-    sys_tcb_t      *toremove = hdl;
-    xTaskHandle     pid = ( xTaskHandle ) 0;
+    sys_tcb_t *current = tasks, *prev;
+    sys_tcb_t *toremove = hdl;
+    xTaskHandle pid = (xTaskHandle)0;
 
-    LWIP_ASSERT( "sys_arch_thread_remove: assertion hdl != NULL failed!", hdl != NULL );
+    LWIP_ASSERT("sys_arch_thread_remove: assertion hdl != NULL failed!", hdl != NULL);
 
     /* If we have to remove the first task we must update the global "tasks"
      * variable. */
-    vPortEnterCritical(  );
-    if( hdl != NULL )
+    vPortEnterCritical();
+    if (hdl != NULL)
     {
         prev = NULL;
-        while( ( current != NULL ) && ( current != toremove ) )
+        while ((current != NULL) && (current != toremove))
         {
             prev = current;
             current = current->next;
         }
         /* Found it. */
-        if( current == toremove )
+        if (current == toremove)
         {
             /* Not the first entry in the list. */
-            if( prev != NULL )
+            if (prev != NULL)
             {
                 prev->next = toremove->next;
             }
@@ -260,20 +256,20 @@ sys_arch_thread_remove( sys_thread_t hdl )
             {
                 tasks = toremove->next;
             }
-            LWIP_ASSERT( "sys_arch_thread_remove: can't remove thread with timeouts!",
-                         toremove->timeouts.next == NULL );
+            LWIP_ASSERT("sys_arch_thread_remove: can't remove thread with timeouts!",
+                        toremove->timeouts.next == NULL);
             pid = toremove->pid;
-            THREAD_INIT( toremove );
-            vPortFree( toremove );
+            THREAD_INIT(toremove);
+            vPortFree(toremove);
         }
     }
-    /* We are done with accessing the shared datastructure. Release the 
+    /* We are done with accessing the shared datastructure. Release the
      * resources.
      */
-    vPortExitCritical(  );
-    if( pid != ( xTaskHandle ) 0 )
+    vPortExitCritical();
+    if (pid != (xTaskHandle)0)
     {
-        vTaskDelete( pid );
+        vTaskDelete(pid);
         /* not reached. */
     }
 }
@@ -283,17 +279,17 @@ sys_arch_thread_remove( sys_thread_t hdl )
  * of an error the functions returns NULL.
  */
 sys_thread_t
-sys_arch_thread_current( void )
+sys_arch_thread_current(void)
 {
-    sys_tcb_t      *p = tasks;
-    xTaskHandle     pid = xTaskGetCurrentTaskHandle(  );
+    sys_tcb_t *p = tasks;
+    xTaskHandle pid = xTaskGetCurrentTaskHandle();
 
-    vPortEnterCritical(  );
-    while( ( p != NULL ) && ( p->pid != pid ) )
+    vPortEnterCritical();
+    while ((p != NULL) && (p->pid != pid))
     {
         p = p->next;
     }
-    vPortExitCritical(  );
+    vPortExitCritical();
     return p;
 }
 
@@ -309,13 +305,13 @@ sys_arch_thread_current( void )
  * the sys_arch module.
  */
 struct sys_timeouts *
-sys_arch_timeouts( void )
+sys_arch_timeouts(void)
 {
-    sys_tcb_t      *ptask;
+    sys_tcb_t *ptask;
 
-    ptask = sys_arch_thread_current(  );
-    LWIP_ASSERT( "sys_arch_timeouts: ptask != NULL", ptask != NULL );
-    return ptask != NULL ? &( ptask->timeouts ) : NULL;
+    ptask = sys_arch_thread_current();
+    LWIP_ASSERT("sys_arch_timeouts: ptask != NULL", ptask != NULL);
+    return ptask != NULL ? &(ptask->timeouts) : NULL;
 }
 
 /* ------------------------ Start implementation ( Semaphores ) ----------- */
@@ -324,57 +320,55 @@ sys_arch_timeouts( void )
  * the initial state of the semaphore.
  */
 sys_sem_t
-sys_sem_new( u8_t count )
+sys_sem_new(u8_t count)
 {
     xSemaphoreHandle xSemaphore;
 
-    vSemaphoreCreateBinary( xSemaphore );
-    if( xSemaphore != SYS_SEM_NULL )
+    vSemaphoreCreateBinary(xSemaphore);
+    if (xSemaphore != SYS_SEM_NULL)
     {
-        if( count == 0 )
+        if (count == 0)
         {
-            xSemaphoreTake( xSemaphore, 1 );
+            xSemaphoreTake(xSemaphore, 1);
         }
 #ifdef SYS_STATS
-        vPortEnterCritical(  );
+        vPortEnterCritical();
         lwip_stats.sys.sem.used++;
-        if( lwip_stats.sys.sem.used > lwip_stats.sys.sem.max )
+        if (lwip_stats.sys.sem.used > lwip_stats.sys.sem.max)
         {
             lwip_stats.sys.sem.max = lwip_stats.sys.sem.used;
         }
-        vPortExitCritical(  );
+        vPortExitCritical();
 #endif
     }
     else
     {
-        LWIP_ASSERT( "sys_sem_new: xSemaphore == SYS_SEM_NULL\n", xSemaphore != SYS_SEM_NULL );
+        LWIP_ASSERT("sys_sem_new: xSemaphore == SYS_SEM_NULL\n", xSemaphore != SYS_SEM_NULL);
     }
 
     return xSemaphore;
 }
 
 /* Deallocates a semaphore */
-void
-sys_sem_free( sys_sem_t sem )
+void sys_sem_free(sys_sem_t sem)
 {
-    LWIP_ASSERT( "sys_sem_free: sem != SYS_SEM_NULL\n", sem != SYS_SEM_NULL );
-    if( sem != SYS_SEM_NULL )
+    LWIP_ASSERT("sys_sem_free: sem != SYS_SEM_NULL\n", sem != SYS_SEM_NULL);
+    if (sem != SYS_SEM_NULL)
     {
 #ifdef SYS_STATS
-        vPortEnterCritical(  );
+        vPortEnterCritical();
         lwip_stats.sys.sem.used--;
-        vPortExitCritical(  );
+        vPortExitCritical();
 #endif
-        vQueueDelete( sem );
+        vQueueDelete(sem);
     }
 }
 
 /* Signals a semaphore */
-void
-sys_sem_signal( sys_sem_t sem )
+void sys_sem_signal(sys_sem_t sem)
 {
-    LWIP_ASSERT( "sys_sem_signal: sem != SYS_SEM_NULL\n", sem != SYS_SEM_NULL );
-    xSemaphoreGive( sem );
+    LWIP_ASSERT("sys_sem_signal: sem != SYS_SEM_NULL\n", sem != SYS_SEM_NULL);
+    xSemaphoreGive(sem);
 }
 
 /*
@@ -392,34 +386,32 @@ sys_sem_signal( sys_sem_t sem )
  * Notice that lwIP implements a function with a similar name,
  * sys_sem_wait(), that uses the sys_arch_sem_wait() function.
  */
-u32_t
-sys_arch_sem_wait( sys_sem_t sem, u32_t timeout )
+u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout)
 {
-    portBASE_TYPE   xStatus;
-    portTickType    xTicksStart, xTicksEnd, xTicksElapsed;
-    u32_t           timespent;
+    portBASE_TYPE xStatus;
+    portTickType xTicksStart, xTicksEnd, xTicksElapsed;
+    u32_t timespent;
 
-    LWIP_ASSERT( "sys_arch_sem_wait: sem != SYS_SEM_NULL", sem != SYS_SEM_NULL );
-    xTicksStart = xTaskGetTickCount(  );
-    if( timeout == 0 )
+    LWIP_ASSERT("sys_arch_sem_wait: sem != SYS_SEM_NULL", sem != SYS_SEM_NULL);
+    xTicksStart = xTaskGetTickCount();
+    if (timeout == 0)
     {
         do
         {
-            xStatus = xSemaphoreTake( sem, MS_TO_TICKS( 100 ) );
-        }
-        while( xStatus != pdTRUE );
+            xStatus = xSemaphoreTake(sem, MS_TO_TICKS(100));
+        } while (xStatus != pdTRUE);
     }
     else
     {
-        xStatus = xSemaphoreTake( sem, MS_TO_TICKS( timeout ) );
+        xStatus = xSemaphoreTake(sem, MS_TO_TICKS(timeout));
     }
 
     /* Semaphore was signaled. */
-    if( xStatus == pdTRUE )
+    if (xStatus == pdTRUE)
     {
-        xTicksEnd = xTaskGetTickCount(  );
+        xTicksEnd = xTaskGetTickCount();
         xTicksElapsed = xTicksEnd - xTicksStart;
-        timespent = TICKS_TO_MS( xTicksElapsed );
+        timespent = TICKS_TO_MS(xTicksElapsed);
     }
     else
     {
@@ -428,26 +420,25 @@ sys_arch_sem_wait( sys_sem_t sem, u32_t timeout )
     return timespent;
 }
 
-
 /* ------------------------ Start implementation ( Mailboxes ) ------------ */
 
 /* Creates an empty mailbox. */
 sys_mbox_t
-sys_mbox_new( void )
+sys_mbox_new(void)
 {
-    xQueueHandle    mbox;
+    xQueueHandle mbox;
 
-    mbox = xQueueCreate( SYS_MBOX_SIZE, sizeof( void * ) );
-    if( mbox != SYS_MBOX_NULL )
+    mbox = xQueueCreate(SYS_MBOX_SIZE, sizeof(void *));
+    if (mbox != SYS_MBOX_NULL)
     {
 #ifdef SYS_STATS
-        vPortEnterCritical(  );
+        vPortEnterCritical();
         lwip_stats.sys.mbox.used++;
-        if( lwip_stats.sys.mbox.used > lwip_stats.sys.mbox.max )
+        if (lwip_stats.sys.mbox.used > lwip_stats.sys.mbox.max)
         {
             lwip_stats.sys.mbox.max = lwip_stats.sys.mbox.used;
         }
-        vPortExitCritical(  );
+        vPortExitCritical();
 #endif
     }
     return mbox;
@@ -458,26 +449,25 @@ sys_mbox_new( void )
   mailbox when the mailbox is deallocated, it is an indication of a
   programming error in lwIP and the developer should be notified.
 */
-void
-sys_mbox_free( sys_mbox_t mbox )
+void sys_mbox_free(sys_mbox_t mbox)
 {
-    void           *msg;
+    void *msg;
 
-    LWIP_ASSERT( "sys_mbox_free: mbox != SYS_MBOX_NULL", mbox != SYS_MBOX_NULL );
-    if( mbox != SYS_MBOX_NULL )
+    LWIP_ASSERT("sys_mbox_free: mbox != SYS_MBOX_NULL", mbox != SYS_MBOX_NULL);
+    if (mbox != SYS_MBOX_NULL)
     {
-        while( uxQueueMessagesWaiting( mbox ) != 0 )
+        while (uxQueueMessagesWaiting(mbox) != 0)
         {
-            if( sys_arch_mbox_fetch( mbox, &msg, 1 ) != SYS_ARCH_TIMEOUT )
+            if (sys_arch_mbox_fetch(mbox, &msg, 1) != SYS_ARCH_TIMEOUT)
             {
-                LWIP_ASSERT( "sys_mbox_free: memory leak (msg != NULL)", msg == NULL );
+                LWIP_ASSERT("sys_mbox_free: memory leak (msg != NULL)", msg == NULL);
             }
         }
-        vQueueDelete( mbox );
+        vQueueDelete(mbox);
 #ifdef SYS_STATS
-        vPortEnterCritical(  );
+        vPortEnterCritical();
         lwip_stats.sys.mbox.used--;
-        vPortExitCritical(  );
+        vPortExitCritical();
 #endif
     }
 }
@@ -488,14 +478,13 @@ sys_mbox_free( sys_mbox_t mbox )
  * the mailbox queue will not fail. The caller does this by limiting the number
  * of msg structures which exist for a given mailbox.
  */
-void
-sys_mbox_post( sys_mbox_t mbox, void *data )
+void sys_mbox_post(sys_mbox_t mbox, void *data)
 {
-    portBASE_TYPE   xQueueSent;
+    portBASE_TYPE xQueueSent;
 
     /* Queue must not be full - Otherwise it is an error. */
-    xQueueSent = xQueueSend( mbox, &data, 0 );
-    LWIP_ASSERT( "sys_mbox_post: xQueueSent == pdPASS", xQueueSent == pdPASS );
+    xQueueSent = xQueueSend(mbox, &data, 0);
+    LWIP_ASSERT("sys_mbox_post: xQueueSent == pdPASS", xQueueSent == pdPASS);
 }
 
 /*
@@ -509,42 +498,40 @@ sys_mbox_post( sys_mbox_t mbox, void *data )
  * Note that a function with a similar name, sys_mbox_fetch(), is
  * implemented by lwIP.
  */
-u32_t
-sys_arch_mbox_fetch( sys_mbox_t mbox, void **msg, u32_t timeout )
+u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout)
 {
-    void           *ret_msg;
-    portBASE_TYPE   xStatus;
-    portTickType    xTicksStart, xTicksEnd, xTicksElapsed;
-    u32_t           timespent;
+    void *ret_msg;
+    portBASE_TYPE xStatus;
+    portTickType xTicksStart, xTicksEnd, xTicksElapsed;
+    u32_t timespent;
 
-    LWIP_ASSERT( "sys_arch_mbox_fetch: mbox != SYS_MBOX_NULL", mbox != SYS_MBOX_NULL );
-    xTicksStart = xTaskGetTickCount(  );
-    if( timeout == 0 )
+    LWIP_ASSERT("sys_arch_mbox_fetch: mbox != SYS_MBOX_NULL", mbox != SYS_MBOX_NULL);
+    xTicksStart = xTaskGetTickCount();
+    if (timeout == 0)
     {
         do
         {
-            xStatus = xQueueReceive( mbox, &ret_msg, MS_TO_TICKS( 100 ) );
-        }
-        while( xStatus != pdTRUE );
+            xStatus = xQueueReceive(mbox, &ret_msg, MS_TO_TICKS(100));
+        } while (xStatus != pdTRUE);
     }
     else
     {
-        xStatus = xQueueReceive( mbox, &ret_msg, MS_TO_TICKS( timeout ) );
+        xStatus = xQueueReceive(mbox, &ret_msg, MS_TO_TICKS(timeout));
     }
 
-    if( xStatus == pdTRUE )
+    if (xStatus == pdTRUE)
     {
-        if( msg )
+        if (msg)
         {
             *msg = ret_msg;
         }
-        xTicksEnd = xTaskGetTickCount(  );
+        xTicksEnd = xTaskGetTickCount();
         xTicksElapsed = xTicksEnd - xTicksStart;
-        timespent = TICKS_TO_MS( xTicksElapsed );
+        timespent = TICKS_TO_MS(xTicksElapsed);
     }
     else
     {
-        if( msg )
+        if (msg)
         {
             *msg = NULL;
         }
@@ -554,9 +541,9 @@ sys_arch_mbox_fetch( sys_mbox_t mbox, void **msg, u32_t timeout )
 }
 
 unsigned long
-sys_jiffies( void )
+sys_jiffies(void)
 {
-    portTickType    xTicks = xTaskGetTickCount(  );
+    portTickType xTicks = xTaskGetTickCount();
 
-    return ( unsigned long )TICKS_TO_MS( xTicks );
+    return (unsigned long)TICKS_TO_MS(xTicks);
 }

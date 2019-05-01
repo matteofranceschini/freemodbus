@@ -34,125 +34,125 @@ extern u32 T0TIMI_Addr;
 *******************************************************************************/
 void libdebug(void)
 {
-  #ifdef _ADC12
+#ifdef _ADC12
   ADC12 = (ADC12_TypeDef *)ADC12_BASE;
-  #endif
+#endif
 
-  #ifdef _APB
-  #ifdef _APB1
-  APB1 = (APB_TypeDef *)(APB1_BASE+0x10);
-  #endif
-  #ifdef _APB2
-  APB2 = (APB_TypeDef *)(APB2_BASE+0x10);
-  #endif
-  #endif
+#ifdef _APB
+#ifdef _APB1
+  APB1 = (APB_TypeDef *)(APB1_BASE + 0x10);
+#endif
+#ifdef _APB2
+  APB2 = (APB_TypeDef *)(APB2_BASE + 0x10);
+#endif
+#endif
 
-  #ifdef _BSPI
-  #ifdef _BSPI0
+#ifdef _BSPI
+#ifdef _BSPI0
   BSPI0 = (BSPI_TypeDef *)BSPI0_BASE;
-  #endif
-  #ifdef _BSPI1
+#endif
+#ifdef _BSPI1
   BSPI1 = (BSPI_TypeDef *)BSPI1_BASE;
-  #endif
-  #endif
+#endif
+#endif
 
-  #ifdef _CAN
+#ifdef _CAN
   CAN = (CAN_TypeDef *)CAN_BASE;
-  #endif
+#endif
 
-  #ifdef _EIC
+#ifdef _EIC
   EIC = (EIC_TypeDef *)EIC_BASE;
-  #endif
+#endif
 
-  #ifdef _EMI
+#ifdef _EMI
   EMI = (EMI_TypeDef *)EMI_BASE;
-  #endif
+#endif
 
-  #ifdef _FLASH
+#ifdef _FLASH
   FLASHR = (FLASHR_TypeDef *)FLASHR_BASE;
   FLASHPR = (FLASHPR_TypeDef *)FLASHPR_BASE;
-  #endif
+#endif
 
-  #ifdef _GPIO
-  #ifdef _GPIO0
+#ifdef _GPIO
+#ifdef _GPIO0
   GPIO0 = (GPIO_TypeDef *)GPIO0_BASE;
-  #endif
-  #ifdef _GPIO1
+#endif
+#ifdef _GPIO1
   GPIO1 = (GPIO_TypeDef *)GPIO1_BASE;
-  #endif
-  #ifdef _GPIO2
+#endif
+#ifdef _GPIO2
   GPIO2 = (GPIO_TypeDef *)GPIO2_BASE;
-  #endif
-  #endif
+#endif
+#endif
 
-  #ifdef _I2C
-  #ifdef _I2C0
+#ifdef _I2C
+#ifdef _I2C0
   I2C0 = (I2C_TypeDef *)I2C0_BASE;
-  #endif
-  #ifdef _I2C1
+#endif
+#ifdef _I2C1
   I2C1 = (I2C_TypeDef *)I2C1_BASE;
-  #endif
-  #endif
+#endif
+#endif
 
-  #ifdef _PCU
+#ifdef _PCU
   PCU = (PCU_TypeDef *)PCU_BASE;
-  #endif
+#endif
 
-  #ifdef _RCCU
+#ifdef _RCCU
   RCCU = (RCCU_TypeDef *)RCCU_BASE;
-  #endif
+#endif
 
-  #ifdef _RTC
+#ifdef _RTC
   RTC = (RTC_TypeDef *)RTC_BASE;
-  #endif
+#endif
 
-  #ifdef _TIM
-  #ifdef _TIM0
+#ifdef _TIM
+#ifdef _TIM0
   TIM0 = (TIM_TypeDef *)TIM0_BASE;
-  #endif
-  #ifdef _TIM1
+#endif
+#ifdef _TIM1
   TIM1 = (TIM_TypeDef *)TIM1_BASE;
-  #endif
-  #ifdef _TIM2
+#endif
+#ifdef _TIM2
   TIM2 = (TIM_TypeDef *)TIM2_BASE;
-  #endif
-  #ifdef _TIM3
+#endif
+#ifdef _TIM3
   TIM3 = (TIM_TypeDef *)TIM3_BASE;
-  #endif
-  #endif
+#endif
+#endif
 
-  #ifdef _UART
-  #ifdef _UART0
+#ifdef _UART
+#ifdef _UART0
   UART0 = (UART_TypeDef *)UART0_BASE;
-  #endif
-  #ifdef _UART1
+#endif
+#ifdef _UART1
   UART1 = (UART_TypeDef *)UART1_BASE;
-  #endif
-  #ifdef _UART2
+#endif
+#ifdef _UART2
   UART2 = (UART_TypeDef *)UART2_BASE;
-  #endif
-  #ifdef _UART3
+#endif
+#ifdef _UART3
   UART3 = (UART_TypeDef *)UART3_BASE;
-  #endif
-  #endif
+#endif
+#endif
 
-  #ifdef _USB
+#ifdef _USB
   USB = (USB_TypeDef *)USB_BASE;
-  #endif
+#endif
 
-  #ifdef _WDG
+#ifdef _WDG
   WDG = (WDG_TypeDef *)WDG_BASE;
-  #endif
+#endif
 
-  #ifdef _XTI
+#ifdef _XTI
   XTI = (XTI_TypeDef *)XTI_BASE;
-  #endif
+#endif
 
-  #ifdef _IRQVectors
+#ifdef _IRQVectors
   IRQVectors = (IRQVectors_TypeDef *)&T0TIMI_Addr;
-  #endif
+#endif
 }
 
-#endif  /* LIBDEBUG */
+#endif /* LIBDEBUG */
 
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

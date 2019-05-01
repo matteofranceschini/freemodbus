@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2009, Atmel Corporation
  *
@@ -29,20 +29,20 @@
 
 /**
  *  \unit
- * 
+ *
  *  !Purpose
- * 
+ *
  *  Interface for configuration the Analog-to-Digital Converter (ACC) peripheral.
- * 
+ *
  *  !Usage
- * 
+ *
  *  -# Configurate the pins for ACC
  *  -# Initialize the ACC with ACC_Initialize().
  *  -# Select the active channel using ACC_EnableChannel()
  *  -# Start the conversion with ACC_StartConversion()
  *  -# Wait the end of the conversion by polling status with ACC_GetStatus()
  *  -# Finally, get the converted data using ACC_GetConvertedData()
- * 
+ *
 */
 #ifndef ACC_H
 #define ACC_H
@@ -65,80 +65,87 @@
 #define ACC_SELPLUS_AD12B7 7
 #define ACC_SELMINUS_TS 0
 #define ACC_SELMINUS_ADVREF 1
-#define ACC_SELMINUS_DAC0   2
-#define ACC_SELMINUS_DAC1   3
+#define ACC_SELMINUS_DAC0 2
+#define ACC_SELMINUS_DAC1 3
 #define ACC_SELMINUS_AD12B0 4
 #define ACC_SELMINUS_AD12B1 5
 #define ACC_SELMINUS_AD12B2 6
 #define ACC_SELMINUS_AD12B3 7
 
-
 /*------------------------------------------------------------------------------
  *         Macros function of register access
  *------------------------------------------------------------------------------*/
-#define ACC_CfgModeReg(pAcc, mode)  { \
-            (pAcc)->ACC_MR = (mode);\
-        }
+#define ACC_CfgModeReg(pAcc, mode) \
+    {                              \
+        (pAcc)->ACC_MR = (mode);   \
+    }
 
-#define ACC_GetModeReg(pAcc)                ((pAcc)->ACC_MR)
+#define ACC_GetModeReg(pAcc) ((pAcc)->ACC_MR)
 
-#define ACC_StartConversion(pAcc)           ((pAcc)->ACC_CR = ACC_CR_START)
+#define ACC_StartConversion(pAcc) ((pAcc)->ACC_CR = ACC_CR_START)
 
-#define ACC_SoftReset(pAcc)                 ((pAcc)->ACC_CR = ACC_CR_SWRST)
+#define ACC_SoftReset(pAcc) ((pAcc)->ACC_CR = ACC_CR_SWRST)
 
-#define ACC_EnableChannel(pAcc, channel)    {\
-            ASSERT(channel < 16, "ACC Channel not exist");\
-            (pAcc)->ACC_CHER = (1 << (channel));\
-        }
+#define ACC_EnableChannel(pAcc, channel)               \
+    {                                                  \
+        ASSERT(channel < 16, "ACC Channel not exist"); \
+        (pAcc)->ACC_CHER = (1 << (channel));           \
+    }
 
-#define ACC_DisableChannel (pAcc, channel)  {\
-            ASSERT((channel) < 16, "ACC Channel not exist");\
-            (pAcc)->ACC_CHDR = (1 << (channel));\
-        }
+#define ACC_DisableChannel                               \
+    (pAcc, channel)                                      \
+    {                                                    \
+        ASSERT((channel) < 16, "ACC Channel not exist"); \
+        (pAcc)->ACC_CHDR = (1 << (channel));             \
+    }
 
-#define ACC_EnableIt(pAcc, mode)            {\
-            ASSERT(((mode)&0xFFF00000)== 0, "ACC bad interrupt IER");\
-            (pAcc)->ACC_IER = (mode);\
-        }
+#define ACC_EnableIt(pAcc, mode)                                   \
+    {                                                              \
+        ASSERT(((mode)&0xFFF00000) == 0, "ACC bad interrupt IER"); \
+        (pAcc)->ACC_IER = (mode);                                  \
+    }
 
-#define ACC_DisableIt(pAcc, mode)           {\
-            ASSERT(((mode)&0xFFF00000)== 0, "ACC bad interrupt IDR");\
-            (pAcc)->ACC_IDR = (mode);\
-        }
+#define ACC_DisableIt(pAcc, mode)                                  \
+    {                                                              \
+        ASSERT(((mode)&0xFFF00000) == 0, "ACC bad interrupt IDR"); \
+        (pAcc)->ACC_IDR = (mode);                                  \
+    }
 
-#define ACC_EnableDataReadyIt(pAcc)         ((pAcc)->ACC_IER = AT91C_ACC_DRDY)
+#define ACC_EnableDataReadyIt(pAcc) ((pAcc)->ACC_IER = AT91C_ACC_DRDY)
 
-#define ACC_GetStatus(pAcc)                 ((pAcc)->ACC_ISR)
+#define ACC_GetStatus(pAcc) ((pAcc)->ACC_ISR)
 
-#define ACC_GetChannelStatus(pAcc)          ((pAcc)->ACC_CHSR)
+#define ACC_GetChannelStatus(pAcc) ((pAcc)->ACC_CHSR)
 
-#define ACC_GetInterruptMaskStatus(pAcc)    ((pAcc)->ACC_IMR)
+#define ACC_GetInterruptMaskStatus(pAcc) ((pAcc)->ACC_IMR)
 
-#define ACC_GetLastConvertedData(pAcc)      ((pAcc)->ACC_LCDR)
+#define ACC_GetLastConvertedData(pAcc) ((pAcc)->ACC_LCDR)
 
-#define ACC_CfgAnalogCtrlReg(pAcc,mode)     {\
-            ASSERT(((mode) & 0xFFFCFF3C)==0, "ACC bad analog control config");\
-            (pAcc)->ACC_ACR = (mode);\
-        }
+#define ACC_CfgAnalogCtrlReg(pAcc, mode)                                   \
+    {                                                                      \
+        ASSERT(((mode)&0xFFFCFF3C) == 0, "ACC bad analog control config"); \
+        (pAcc)->ACC_ACR = (mode);                                          \
+    }
 
-#define ACC_CfgExtModeReg(pAcc, extmode)    {\
-            ASSERT(((extmode) & 0xFF00FFFE)==0, "ACC bad extended mode config");\
-            (pAcc)->ACC_EMR = (extmode);\
-        }
+#define ACC_CfgExtModeReg(pAcc, extmode)                                     \
+    {                                                                        \
+        ASSERT(((extmode)&0xFF00FFFE) == 0, "ACC bad extended mode config"); \
+        (pAcc)->ACC_EMR = (extmode);                                         \
+    }
 
-#define ACC_GetAnalogCtrlReg(pAcc)          ((pAcc)->ACC_ACR)
+#define ACC_GetAnalogCtrlReg(pAcc) ((pAcc)->ACC_ACR)
 
 /*------------------------------------------------------------------------------
  *         Exported functions
  *------------------------------------------------------------------------------*/
 void ACC_Configure(Acc *pAcc,
-                     uint8_t idAcc,
-                     uint8_t selplus,
-                     uint8_t selminus,
-                     uint16_t ac_en,
-                     uint16_t edge,        
-                     uint16_t invert);
+                   uint8_t idAcc,
+                   uint8_t selplus,
+                   uint8_t selminus,
+                   uint16_t ac_en,
+                   uint16_t edge,
+                   uint16_t invert);
 
-extern uint8_t ACC_GetComparisionResult(Acc *pAcc,uint32_t status);
+extern uint8_t ACC_GetComparisionResult(Acc *pAcc, uint32_t status);
 
 #endif //#ifndef ACC_H

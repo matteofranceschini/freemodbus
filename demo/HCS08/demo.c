@@ -29,21 +29,21 @@
 #define REG_INPUT_NREGS 4
 
 /* ----------------------- Static variables ---------------------------------*/
-static USHORT   usRegInputStart = REG_INPUT_START;
-static USHORT   usRegInputBuf[REG_INPUT_NREGS];
+static USHORT usRegInputStart = REG_INPUT_START;
+static USHORT usRegInputBuf[REG_INPUT_NREGS];
 
-UCHAR           CCR_reg;        // SaveStatusReg stores the Condition Code Register here
+UCHAR CCR_reg; // SaveStatusReg stores the Condition Code Register here
 
 /* ----------------------- Start implementation -----------------------------*/
 
-void
-main( void )
+void main(void)
 {
-    eMBErrorCode    eStatus;
+    eMBErrorCode eStatus;
 
     /* Use external 32.768 Hz crystal to generate 4.194.304 Hz bus clock */
-    ICGC1 = 0x38;               // ??=0,RANGE=0,REFS=1,CLKS=1:1,OSCSTEN=0,??=0:0
-    while( ICGS2_DCOS == 0 );
+    ICGC1 = 0x38; // ??=0,RANGE=0,REFS=1,CLKS=1:1,OSCSTEN=0,??=0:0
+    while (ICGS2_DCOS == 0)
+        ;
 
 #if 0
     /* Test code for porting
@@ -113,52 +113,51 @@ main( void )
      */
 
     /* Initialization */
-    eStatus = eMBInit( MB_RTU, 0x0A, 0, 38400, MB_PAR_EVEN );
-//      eStatus = eMBInit( MB_ASCII, 0x0A, 0, 38400, MB_PAR_EVEN );
+    eStatus = eMBInit(MB_RTU, 0x0A, 0, 38400, MB_PAR_EVEN);
+    //      eStatus = eMBInit( MB_ASCII, 0x0A, 0, 38400, MB_PAR_EVEN );
 
     /* Enable the Modbus Protocol Stack. */
-    eStatus = eMBEnable(  );
+    eStatus = eMBEnable();
 
     /* Start polling */
     EnableInterrupts;
-    for( ;; )
+    for (;;)
     {
         /* Poll for Modbus events */
-        ( void )eMBPoll(  );
+        (void)eMBPoll();
 
         /* Count the number of polls */
         usRegInputBuf[0]++;
 
         /* Count the number of timer overflows */
-        if( TPM1SC_TOF )
+        if (TPM1SC_TOF)
         {
             TPM1SC_TOF = 0;
-            ENTER_CRITICAL_SECTION(  );
-            if( ++usRegInputBuf[1] == 0 )       // Happens every 2 seconds
-                usRegInputBuf[2]++;     // Happens every 36.4 hours
-            EXIT_CRITICAL_SECTION(  );
+            ENTER_CRITICAL_SECTION();
+            if (++usRegInputBuf[1] == 0) // Happens every 2 seconds
+                usRegInputBuf[2]++;      // Happens every 36.4 hours
+            EXIT_CRITICAL_SECTION();
         }
 
         /* Keep the COP watchdog happy */
-        __RESET_WATCHDOG(  );
+        __RESET_WATCHDOG();
     }
 #endif // Test code when porting
 }
 
 eMBErrorCode
-eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
+eMBRegInputCB(UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs)
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    eMBErrorCode eStatus = MB_ENOERR;
+    int iRegIndex;
 
-    if( ( usAddress >= REG_INPUT_START )
-        && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
+    if ((usAddress >= REG_INPUT_START) && (usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS))
     {
-        iRegIndex = ( int )( usAddress - usRegInputStart );
-        while( usNRegs > 0 )
+        iRegIndex = (int)(usAddress - usRegInputStart);
+        while (usNRegs > 0)
         {
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] >> 8 );
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] & 0xFF );
+            *pucRegBuffer++ = (unsigned char)(usRegInputBuf[iRegIndex] >> 8);
+            *pucRegBuffer++ = (unsigned char)(usRegInputBuf[iRegIndex] & 0xFF);
             iRegIndex++;
             usNRegs--;
         }
@@ -172,20 +171,19 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 }
 
 eMBErrorCode
-eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
-{
-    return MB_ENOREG;
-}
-
-
-eMBErrorCode
-eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
+eMBRegHoldingCB(UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode)
 {
     return MB_ENOREG;
 }
 
 eMBErrorCode
-eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
+eMBRegCoilsCB(UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode)
+{
+    return MB_ENOREG;
+}
+
+eMBErrorCode
+eMBRegDiscreteCB(UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete)
 {
     return MB_ENOREG;
 }

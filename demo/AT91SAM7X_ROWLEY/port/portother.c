@@ -37,86 +37,81 @@
 /* ----------------------- Type definitions ---------------------------------*/
 
 /* ----------------------- Function prototypes ------------------------------*/
-void            vMBPortSerialClose( void );
-void            vMBPortEventClose( void );
-void            vMBPortTimerClose( void );
+void vMBPortSerialClose(void);
+void vMBPortEventClose(void);
+void vMBPortTimerClose(void);
 
 /* ----------------------- Static variables ---------------------------------*/
 
 /* ----------------------- Static functions ---------------------------------*/
-STATIC void     vDefaultHandler( void ) __attribute__ ( ( interrupt( "IRQ" ) ) );
-STATIC void     vDefaultSpuriousHandler( void ) __attribute__ ( ( interrupt( "IRQ" ) ) );
+STATIC void vDefaultHandler(void) __attribute__((interrupt("IRQ")));
+STATIC void vDefaultSpuriousHandler(void) __attribute__((interrupt("IRQ")));
 
 /* ----------------------- Start implementation -----------------------------*/
 
-void
-vMBPInit( void )
+void vMBPInit(void)
 {
-    AT91F_AIC_Open( AT91C_BASE_AIC, AT91C_AIC_BRANCH_OPCODE, AT91C_AIC_BRANCH_OPCODE,
-                    vDefaultHandler, vDefaultSpuriousHandler, AT91C_AIC_DCR_PROT );
+    AT91F_AIC_Open(AT91C_BASE_AIC, AT91C_AIC_BRANCH_OPCODE, AT91C_AIC_BRANCH_OPCODE,
+                   vDefaultHandler, vDefaultSpuriousHandler, AT91C_AIC_DCR_PROT);
 }
 
-void
-__assert( const char *pcFile, const char *pcAssertion, int iLine )
+void __assert(const char *pcFile, const char *pcAssertion, int iLine)
 {
-    volatile BOOL   bBreakOut = FALSE;
+    volatile BOOL bBreakOut = FALSE;
 
-    ( void )pcFile;
-    ( void )pcAssertion;
-    ( void )iLine;
-    ENTER_CRITICAL_SECTION(  );
-    while( !bBreakOut );
+    (void)pcFile;
+    (void)pcAssertion;
+    (void)iLine;
+    ENTER_CRITICAL_SECTION();
+    while (!bBreakOut)
+        ;
 }
 
-BOOL
-bMBPIsWithinException( void )
+BOOL bMBPIsWithinException(void)
 {
-    BOOL            bMBPIsWithinException = TRUE;
-    unsigned int    uiCPSR;
-    asm volatile    ( "MRS  %0, CPSR":"=r" ( uiCPSR ): );
+    BOOL bMBPIsWithinException = TRUE;
+    unsigned int uiCPSR;
+    asm volatile("MRS  %0, CPSR"
+                 : "=r"(uiCPSR)
+                 :);
 
-    switch ( uiCPSR & 0x000000001F )
+    switch (uiCPSR & 0x000000001F)
     {
-    case 0x00000010U:          /* User Mode */
-    case 0x0000001FU:          /* System Mode */
+    case 0x00000010U: /* User Mode */
+    case 0x0000001FU: /* System Mode */
         bMBPIsWithinException = FALSE;
         break;
     }
     return bMBPIsWithinException;
 }
 
-void
-vMBPPortEnterCritical( void )
+void vMBPPortEnterCritical(void)
 {
-    if( !bMBPIsWithinException(  ) )
+    if (!bMBPIsWithinException())
     {
-        portENTER_CRITICAL(  );
+        portENTER_CRITICAL();
     }
 }
 
-void
-vMBPPortExitCritical( void )
+void vMBPPortExitCritical(void)
 {
-    if( !bMBPIsWithinException(  ) )
+    if (!bMBPIsWithinException())
     {
-        portEXIT_CRITICAL(  );
+        portEXIT_CRITICAL();
     }
 }
 
-void
-vMBPortClose( void )
+void vMBPortClose(void)
 {
-    vMBPortSerialClose(  );
-    vMBPortEventClose(  );
-    vMBPortTimerClose(  );
+    vMBPortSerialClose();
+    vMBPortEventClose();
+    vMBPortTimerClose();
 }
 
-void
-vDefaultSpuriousHandler( void )
+void vDefaultSpuriousHandler(void)
 {
 }
 
-void
-vDefaultHandler( void )
+void vDefaultHandler(void)
 {
 }

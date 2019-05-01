@@ -69,12 +69,12 @@ Changes from V3.0.0
  * PUBLIC LIST API documented in list.h
  *----------------------------------------------------------*/
 
-void vListInitialise( xList *pxList )
+void vListInitialise(xList *pxList)
 {
 	/* The list structure contains a list item which is used to mark the
 	end of the list.  To initialise the list the list end is inserted
 	as the only list entry. */
-	pxList->pxHead = &( pxList->xListEnd );
+	pxList->pxHead = &(pxList->xListEnd);
 	pxList->pxIndex = pxList->pxHead;
 
 	/* The list end value is the highest possible value in the list to
@@ -83,29 +83,29 @@ void vListInitialise( xList *pxList )
 
 	/* The list end next and previous pointers point to itself so we know
 	when the list is empty. */
-	pxList->xListEnd.pxNext = &( pxList->xListEnd );
-	pxList->xListEnd.pxPrevious = &( pxList->xListEnd );
+	pxList->xListEnd.pxNext = &(pxList->xListEnd);
+	pxList->xListEnd.pxPrevious = &(pxList->xListEnd);
 
 	/* The list head will never get used and has no owner. */
 	pxList->xListEnd.pvOwner = NULL;
 
 	/* Make sure the marker items are not mistaken for being on a list. */
-	vListInitialiseItem( ( xListItem * ) &( pxList->xListEnd ) );
+	vListInitialiseItem((xListItem *)&(pxList->xListEnd));
 
 	pxList->uxNumberOfItems = 0;
 }
 /*-----------------------------------------------------------*/
 
-void vListInitialiseItem( xListItem *pxItem )
+void vListInitialiseItem(xListItem *pxItem)
 {
 	/* Make sure the list item is not recorded as being on a list. */
 	pxItem->pvContainer = NULL;
 }
 /*-----------------------------------------------------------*/
 
-void vListInsertEnd( xList *pxList, xListItem *pxNewListItem )
+void vListInsertEnd(xList *pxList, xListItem *pxNewListItem)
 {
-volatile xListItem * pxIndex;
+	volatile xListItem *pxIndex;
 
 	/* Insert a new list item into pxList, but rather than sort the list,
 	makes the new list item the last item to be removed by a call to
@@ -115,21 +115,21 @@ volatile xListItem * pxIndex;
 
 	pxNewListItem->pxNext = pxIndex->pxNext;
 	pxNewListItem->pxPrevious = pxList->pxIndex;
-	pxIndex->pxNext->pxPrevious = ( volatile xListItem * ) pxNewListItem;
-	pxIndex->pxNext = ( volatile xListItem * ) pxNewListItem;
-	pxList->pxIndex = ( volatile xListItem * ) pxNewListItem;
+	pxIndex->pxNext->pxPrevious = (volatile xListItem *)pxNewListItem;
+	pxIndex->pxNext = (volatile xListItem *)pxNewListItem;
+	pxList->pxIndex = (volatile xListItem *)pxNewListItem;
 
 	/* Remember which list the item is in. */
-	pxNewListItem->pvContainer = ( void * ) pxList;
+	pxNewListItem->pvContainer = (void *)pxList;
 
-	( pxList->uxNumberOfItems )++;
+	(pxList->uxNumberOfItems)++;
 }
 /*-----------------------------------------------------------*/
 
-void vListInsert( xList *pxList, xListItem *pxNewListItem )
+void vListInsert(xList *pxList, xListItem *pxNewListItem)
 {
-volatile xListItem *pxIterator;
-register portTickType xValueOfInsertion;
+	volatile xListItem *pxIterator;
+	register portTickType xValueOfInsertion;
 
 	/* Insert the new list item into the list, sorted in ulListItem order. */
 	xValueOfInsertion = pxNewListItem->xItemValue;
@@ -141,9 +141,9 @@ register portTickType xValueOfInsertion;
 	the back marker the iteration loop below will not end.  This means we need
 	to guard against this by checking the value first and modifying the
 	algorithm slightly if necessary. */
-	if( xValueOfInsertion == portMAX_DELAY )
+	if (xValueOfInsertion == portMAX_DELAY)
 	{
-		for( pxIterator = pxList->pxHead; pxIterator->pxNext->xItemValue < xValueOfInsertion; pxIterator = pxIterator->pxNext )
+		for (pxIterator = pxList->pxHead; pxIterator->pxNext->xItemValue < xValueOfInsertion; pxIterator = pxIterator->pxNext)
 		{
 			/* There is nothing to do here, we are just iterating to the
 			wanted insertion position. */
@@ -151,7 +151,7 @@ register portTickType xValueOfInsertion;
 	}
 	else
 	{
-		for( pxIterator = pxList->pxHead; pxIterator->pxNext->xItemValue <= xValueOfInsertion; pxIterator = pxIterator->pxNext )
+		for (pxIterator = pxList->pxHead; pxIterator->pxNext->xItemValue <= xValueOfInsertion; pxIterator = pxIterator->pxNext)
 		{
 			/* There is nothing to do here, we are just iterating to the
 			wanted insertion position. */
@@ -159,37 +159,36 @@ register portTickType xValueOfInsertion;
 	}
 
 	pxNewListItem->pxNext = pxIterator->pxNext;
-	pxNewListItem->pxNext->pxPrevious = ( volatile xListItem * ) pxNewListItem;
+	pxNewListItem->pxNext->pxPrevious = (volatile xListItem *)pxNewListItem;
 	pxNewListItem->pxPrevious = pxIterator;
-	pxIterator->pxNext = ( volatile xListItem * ) pxNewListItem;
+	pxIterator->pxNext = (volatile xListItem *)pxNewListItem;
 
 	/* Remember which list the item is in.  This allows fast removal of the
 	item later. */
-	pxNewListItem->pvContainer = ( void * ) pxList;
+	pxNewListItem->pvContainer = (void *)pxList;
 
-	( pxList->uxNumberOfItems )++;
+	(pxList->uxNumberOfItems)++;
 }
 /*-----------------------------------------------------------*/
 
-void vListRemove( xListItem *pxItemToRemove )
+void vListRemove(xListItem *pxItemToRemove)
 {
-xList * pxList;
+	xList *pxList;
 
 	pxItemToRemove->pxNext->pxPrevious = pxItemToRemove->pxPrevious;
 	pxItemToRemove->pxPrevious->pxNext = pxItemToRemove->pxNext;
-	
+
 	/* The list item knows which list it is in.  Obtain the list from the list
 	item. */
-	pxList = ( xList * ) pxItemToRemove->pvContainer;
+	pxList = (xList *)pxItemToRemove->pvContainer;
 
 	/* Make sure the index is left pointing to a valid item. */
-	if( pxList->pxIndex == pxItemToRemove )
+	if (pxList->pxIndex == pxItemToRemove)
 	{
 		pxList->pxIndex = pxItemToRemove->pxPrevious;
 	}
 
 	pxItemToRemove->pvContainer = NULL;
-	( pxList->uxNumberOfItems )--;
+	(pxList->uxNumberOfItems)--;
 }
 /*-----------------------------------------------------------*/
-

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2009, Atmel Corporation
  *
@@ -82,37 +82,33 @@
   * \param trackingt Tracking Time (in ADCClock cycle)
 */
 void ADC_Initialize(Adc *pAdc, uint8_t idAdc, uint8_t trgEn, uint8_t trgSel,
-        uint8_t sleepMode, uint8_t resolution, uint32_t mckClock,
-        uint32_t adcClock, uint32_t startup, uint32_t tracking) {
+                    uint8_t sleepMode, uint8_t resolution, uint32_t mckClock,
+                    uint32_t adcClock, uint32_t startup, uint32_t tracking)
+{
     uint32_t prescal;
-    prescal = (mckClock / (2*adcClock)) - 1;
-    
-    ASSERT( (prescal<0x3F), "ADC Bad PRESCAL\n\r");
+    prescal = (mckClock / (2 * adcClock)) - 1;
 
-    TRACE_DEBUG("adcClock:%lu MasterClock:%lu\n\r", (mckClock/((prescal+1)*2)),
-            mckClock);
-    
-    if( adcClock != (mckClock/((prescal+1)*2)) ) {
+    ASSERT((prescal < 0x3F), "ADC Bad PRESCAL\n\r");
+
+    TRACE_DEBUG("adcClock:%lu MasterClock:%lu\n\r", (mckClock / ((prescal + 1) * 2)),
+                mckClock);
+
+    if (adcClock != (mckClock / ((prescal + 1) * 2)))
+    {
         TRACE_WARNING("User and calculated adcClocks are different : "
-                "user=%lu calc=%lu\n\r",
-            adcClock, (mckClock/((prescal+1)*2)));
+                      "user=%lu calc=%lu\n\r",
+                      adcClock, (mckClock / ((prescal + 1) * 2)));
     }
 
-    /* Enable peripheral clock*/    
-    PMC->PMC_PCER0 = 1 << idAdc;    
-    
+    /* Enable peripheral clock*/
+    PMC->PMC_PCER0 = 1 << idAdc;
+
     /*  Reset the controller */
     ADC_SoftReset(pAdc);
 
     /*  Write to the MR register */
-    ADC_CfgModeReg( pAdc,
-          ( trgEn & ADC_MR_TRGEN)
-        | ( trgSel & ADC_MR_TRGSEL)
-        | ( resolution & ADC_MR_LOWRES)			
-        | ( sleepMode & ADC_MR_SLEEP)
-        | ( (prescal<<8) & ADC_MR_PRESCAL)
-        | ( (startup<<16) & ADC_MR_STARTUP) 
-        | ( (tracking<<24) & ADC_MR_TRACKTIM) );
+    ADC_CfgModeReg(pAdc,
+                   (trgEn & ADC_MR_TRGEN) | (trgSel & ADC_MR_TRGSEL) | (resolution & ADC_MR_LOWRES) | (sleepMode & ADC_MR_SLEEP) | ((prescal << 8) & ADC_MR_PRESCAL) | ((startup << 16) & ADC_MR_STARTUP) | ((tracking << 24) & ADC_MR_TRACKTIM));
 }
 
 /**
@@ -120,26 +116,32 @@ void ADC_Initialize(Adc *pAdc, uint8_t idAdc, uint8_t trgEn, uint8_t trgSel,
  * \param pAdc Pointer to an Adc instance.
  * \param channel channel to get converted value
  */
-uint32_t ADC_GetConvertedData(Adc *pAdc, uint32_t channel) {
-    uint32_t data=0;
-    
-    if (15 >= channel) {
-      data =  *((RoReg *)((uint32_t)&(pAdc->ADC_CDR0)+ channel*4));
+uint32_t ADC_GetConvertedData(Adc *pAdc, uint32_t channel)
+{
+    uint32_t data = 0;
+
+    if (15 >= channel)
+    {
+        data = *((RoReg *)((uint32_t) & (pAdc->ADC_CDR0) + channel * 4));
     }
-    return data;    
+    return data;
 }
 /**
  * Set compare channel
  * \param pAdc Pointer to an Adc instance.
  * \param channel channel number to be set,16 for all channels
  */
-void ADC_SetCompareChannel(Adc *pAdc, uint8_t channel) {
-    ASSERT(channel<=16, "Invalid channel number");
-    if (channel < 16) {
+void ADC_SetCompareChannel(Adc *pAdc, uint8_t channel)
+{
+    ASSERT(channel <= 16, "Invalid channel number");
+    if (channel < 16)
+    {
         pAdc->ADC_EMR &= ~(ADC_EMR_CMPALL);
         pAdc->ADC_EMR &= ~(ADC_EMR_CMPSEL);
         pAdc->ADC_EMR |= (channel << 4);
-    } else {
+    }
+    else
+    {
         pAdc->ADC_EMR |= ADC_EMR_CMPALL;
     }
 }
@@ -148,7 +150,8 @@ void ADC_SetCompareChannel(Adc *pAdc, uint8_t channel) {
  * \param pAdc Pointer to an Adc instance.
  * \param mode compare mode
  */
-void ADC_SetCompareMode(Adc *pAdc, uint8_t mode) {
+void ADC_SetCompareMode(Adc *pAdc, uint8_t mode)
+{
     pAdc->ADC_EMR &= ~(ADC_EMR_CMPMODE);
     pAdc->ADC_EMR |= mode;
 }
@@ -157,17 +160,19 @@ void ADC_SetCompareMode(Adc *pAdc, uint8_t mode) {
  * \param pAdc Pointer to an Adc instance.
  * \param hi_lo Comparison Window
  */
-void ADC_SetComparisonWindow(Adc *pAdc, uint32_t hi_lo) {
-  pAdc->ADC_CWR = hi_lo;
+void ADC_SetComparisonWindow(Adc *pAdc, uint32_t hi_lo)
+{
+    pAdc->ADC_CWR = hi_lo;
 }
 
 /**----------------------------------------------------------------------------
-* Test if ADC Interrupt is Masked 
+* Test if ADC Interrupt is Masked
 * \param pAdc Pointer to an Adc instance.
 * \param flag flag to be tested
 * \return 1 if interrupt is masked, otherwise 0
 */
-uint32_t ADC_IsInterruptMasked(Adc *pAdc, uint32_t flag) {
+uint32_t ADC_IsInterruptMasked(Adc *pAdc, uint32_t flag)
+{
     return (ADC_GetInterruptMaskStatus(pAdc) & flag);
 }
 
@@ -177,7 +182,8 @@ uint32_t ADC_IsInterruptMasked(Adc *pAdc, uint32_t flag) {
 * \param flag flag to be tested
 * \return 1 if the staus is set; 0 otherwise
 */
-uint32_t ADC_IsStatusSet(Adc *pAdc, uint32_t flag) {
+uint32_t ADC_IsStatusSet(Adc *pAdc, uint32_t flag)
+{
     return (ADC_GetStatus(pAdc) & flag);
 }
 
@@ -187,12 +193,16 @@ uint32_t ADC_IsStatusSet(Adc *pAdc, uint32_t flag) {
 * \param channel Channel to be tested
 * \return 1 if interrupt status is set, otherwise 0
 */
-uint8_t ADC_IsChannelInterruptStatusSet(uint32_t adc_sr, uint32_t channel) {
+uint8_t ADC_IsChannelInterruptStatusSet(uint32_t adc_sr, uint32_t channel)
+{
     uint8_t status;
-    
-    if((adc_sr & (1<<channel)) == (1<<channel)) {
+
+    if ((adc_sr & (1 << channel)) == (1 << channel))
+    {
         status = 1;
-    } else {
+    }
+    else
+    {
         status = 0;
     }
     return status;
@@ -204,28 +214,31 @@ uint8_t ADC_IsChannelInterruptStatusSet(uint32_t adc_sr, uint32_t channel) {
   * \param pBuffer the destination buffer
   * \param size the size of the buffer
 */
-int8_t ADC_ReadBuffer(Adc *pADC, int16_t *pBuffer, int32_t size) {
-  
-    /* Check if the first PDC bank is free*/
-    if ((pADC->ADC_RCR == 0) && (pADC->ADC_RNCR == 0)) {
+int8_t ADC_ReadBuffer(Adc *pADC, int16_t *pBuffer, int32_t size)
+{
 
-        pADC->ADC_RPR = (uint32_t) pBuffer;
+    /* Check if the first PDC bank is free*/
+    if ((pADC->ADC_RCR == 0) && (pADC->ADC_RNCR == 0))
+    {
+
+        pADC->ADC_RPR = (uint32_t)pBuffer;
         pADC->ADC_RCR = size;
         pADC->ADC_PTCR = ADC_PTCR_RXTEN;
 
         return 1;
     }
     /* Check if the second PDC bank is free*/
-    else if (pADC->ADC_RNCR == 0) {
+    else if (pADC->ADC_RNCR == 0)
+    {
 
-        pADC->ADC_RNPR = (uint32_t) pBuffer;
+        pADC->ADC_RNPR = (uint32_t)pBuffer;
         pADC->ADC_RNCR = size;
 
         return 1;
-    } else {
+    }
+    else
+    {
 
         return 0;
     }
-  
 }
-

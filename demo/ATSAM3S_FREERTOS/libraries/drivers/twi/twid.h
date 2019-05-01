@@ -42,14 +42,15 @@
  *----------------------------------------------------------------------------*/
 
 /** TWI driver is currently busy. */
-#define TWID_ERROR_BUSY              1
+#define TWID_ERROR_BUSY 1
 
 /*----------------------------------------------------------------------------
  *        Types
  *----------------------------------------------------------------------------*/
 
 /** TWI driver structure. Holds the internal state of the driver.*/
-typedef struct _Twid {
+typedef struct _Twid
+{
     /** Pointer to the underlying TWI peripheral.*/
     Twi *pTwi;
     /** Current asynchronous transfer being processed.*/
@@ -83,4 +84,3 @@ extern uint8_t TWID_Write(
     Async *pAsync);
 
 #endif //#ifndef TWID_H
-

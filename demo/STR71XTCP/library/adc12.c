@@ -28,7 +28,7 @@
 void ADC12_Init(void)
 {
   //Initiate ADC12 registers to their reset values
-  ADC12->CSR  = 0x00;
+  ADC12->CSR = 0x00;
   ADC12->CPR = 0x01;
 }
 
@@ -41,7 +41,7 @@ void ADC12_Init(void)
 void ADC12_PrescalerConfig(u32 Adc12_clk)
 {
   //Update the Prescaler Register
-  ADC12->CPR = (vu16) (RCCU_FrequencyValue(RCCU_PCLK)/(Adc12_clk*512*8));
+  ADC12->CPR = (vu16)(RCCU_FrequencyValue(RCCU_PCLK) / (Adc12_clk * 512 * 8));
 }
 
 /*******************************************************************************
@@ -61,10 +61,18 @@ void ADC12_ITConfig(FunctionalState NewState)
       // Set interrupt bit equivalent to the channel selected
       switch (ADC12->CSR & 0x30)
       {
-        case 0x00 : ADC12->CSR |= ADC12_IT0_Mask;  break;
-        case 0x10 : ADC12->CSR |= ADC12_IT1_Mask;  break;
-        case 0x20 : ADC12->CSR |= ADC12_IT2_Mask;  break;
-        case 0x30 : ADC12->CSR |= ADC12_IT3_Mask;  break;
+      case 0x00:
+        ADC12->CSR |= ADC12_IT0_Mask;
+        break;
+      case 0x10:
+        ADC12->CSR |= ADC12_IT1_Mask;
+        break;
+      case 0x20:
+        ADC12->CSR |= ADC12_IT2_Mask;
+        break;
+      case 0x30:
+        ADC12->CSR |= ADC12_IT3_Mask;
+        break;
       }
     }
     else
@@ -76,4 +84,3 @@ void ADC12_ITConfig(FunctionalState NewState)
     ADC12->CSR &= ~ADC12_IT_Mask;
 }
 /*********************(c) 2003  STMicroelectronics********************* END OF FILE **/
-

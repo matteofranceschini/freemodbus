@@ -19,13 +19,13 @@
 
 	A special exception to the GPL can be applied should you wish to distribute
 	a combined work that includes FreeRTOS, without being obliged to provide
-	the source code for any proprietary components.  See the licensing section 
+	the source code for any proprietary components.  See the licensing section
 	of http://www.FreeRTOS.org for full details of how and when the exception
 	can be applied.
 
 	***************************************************************************
-	See http://www.FreeRTOS.org for documentation, latest information, license 
-	and contact details.  Please ensure to read the configuration and relevant 
+	See http://www.FreeRTOS.org for documentation, latest information, license
+	and contact details.  Please ensure to read the configuration and relevant
 	port sections of the online documentation.
 	***************************************************************************
 */
@@ -40,34 +40,32 @@
  * application requirements.
  *
  * THESE PARAMETERS ARE DESCRIBED WITHIN THE 'CONFIGURATION' SECTION OF THE
- * FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE. 
+ * FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE.
  *----------------------------------------------------------*/
 
-#define configUSE_PREEMPTION            1
-#define configUSE_IDLE_HOOK             0
+#define configUSE_PREEMPTION 1
+#define configUSE_IDLE_HOOK 0
 
 /* 160000000Mhz is frequency of PCLK2 not CPU frequency because this
  * value is used for calculating the timer reload value */
-#define configCPU_CLOCK_HZ              ( ( unsigned portLONG ) 16000000 )
-#define configTICK_RATE_HZ              ( ( portTickType ) 1000 )
-#define configMAX_PRIORITIES            ( ( unsigned portBASE_TYPE ) 5 )
-#define configMINIMAL_STACK_SIZE        ( ( unsigned portSHORT ) 128 )
-#define configMAX_TASK_NAME_LEN         ( 16 )
-#define configUSE_TRACE_FACILITY        1
-#define configUSE_16_BIT_TICKS          0
-#define configIDLE_SHOULD_YIELD         1
-
+#define configCPU_CLOCK_HZ ((unsigned portLONG)16000000)
+#define configTICK_RATE_HZ ((portTickType)1000)
+#define configMAX_PRIORITIES ((unsigned portBASE_TYPE)5)
+#define configMINIMAL_STACK_SIZE ((unsigned portSHORT)128)
+#define configMAX_TASK_NAME_LEN (16)
+#define configUSE_TRACE_FACILITY 1
+#define configUSE_16_BIT_TICKS 0
+#define configIDLE_SHOULD_YIELD 1
 
 /* Set the following definitions to 1 to include the API function, or zero
  * to exclude the API function. */
 
-#define INCLUDE_vTaskPrioritySet		1
-#define INCLUDE_uxTaskPriorityGet		1
-#define INCLUDE_vTaskDelete				1
-#define INCLUDE_vTaskCleanUpResources	0
-#define INCLUDE_vTaskSuspend			1
-#define INCLUDE_vTaskDelayUntil			1
-#define INCLUDE_vTaskDelay				1
-
+#define INCLUDE_vTaskPrioritySet 1
+#define INCLUDE_uxTaskPriorityGet 1
+#define INCLUDE_vTaskDelete 1
+#define INCLUDE_vTaskCleanUpResources 0
+#define INCLUDE_vTaskSuspend 1
+#define INCLUDE_vTaskDelayUntil 1
+#define INCLUDE_vTaskDelay 1
 
 #endif /* FREERTOS_CONFIG_H */

@@ -74,22 +74,26 @@ void LCDD_DrawChar(
 
     SANITY_CHECK((c >= 0x20) && (c <= 0x7F));
 
-    for (col = 0; col < 10; col++) {
+    for (col = 0; col < 10; col++)
+    {
 
-        for (row = 0; row < 8; row++) {
+        for (row = 0; row < 8; row++)
+        {
 
-            if ((pCharset10x14[((c - 0x20) * 20) + col * 2] >> (7 - row)) & 0x1) {
+            if ((pCharset10x14[((c - 0x20) * 20) + col * 2] >> (7 - row)) & 0x1)
+            {
 
-                LCDD_DrawPixel(x+col, y+row, color);
+                LCDD_DrawPixel(x + col, y + row, color);
             }
         }
-        for (row = 0; row < 6; row++) {
+        for (row = 0; row < 6; row++)
+        {
 
-            if ((pCharset10x14[((c - 0x20) * 20) + col * 2 + 1] >> (7 - row)) & 0x1) {
+            if ((pCharset10x14[((c - 0x20) * 20) + col * 2 + 1] >> (7 - row)) & 0x1)
+            {
 
-                LCDD_DrawPixel(x+col, y+row+8, color);
+                LCDD_DrawPixel(x + col, y + row + 8, color);
             }
         }
     }
 }
-

@@ -48,9 +48,8 @@
  * \ref at45d.c\n
  * \ref at45d.h.\n
  */
- /*@{*/
- /*@}*/
-
+/*@{*/
+/*@}*/
 
 /**
   * \file
@@ -58,7 +57,7 @@
   * Implementation of At45 driver.
   *
   */
-  
+
 /*----------------------------------------------------------------------------
  *        Headers
  *----------------------------------------------------------------------------*/
@@ -83,7 +82,8 @@ static void AT45D_Wait(At45 *pAt45)
     SANITY_CHECK(pAt45);
 
     /* Wait for transfer to finish*/
-    while (AT45_IsBusy(pAt45)) {
+    while (AT45_IsBusy(pAt45))
+    {
 
         SPID_Handler(pAt45->pSpid);
     }
@@ -104,7 +104,8 @@ void AT45D_WaitReady(At45 *pAt45)
 
     SANITY_CHECK(pAt45);
     /* Poll device until it is ready.*/
-    while (!ready) {
+    while (!ready)
+    {
         ready = AT45_STATUS_READY(AT45D_GetStatus(pAt45));
     }
 }
@@ -126,7 +127,8 @@ uint8_t AT45D_GetStatus(At45 *pAt45)
     ASSERT(!error, "-F- AT45_GetStatus: Failed to issue command.\n\r");
 
     /* Wait for command to terminate*/
-    while (AT45_IsBusy(pAt45)) {
+    while (AT45_IsBusy(pAt45))
+    {
         AT45D_Wait(pAt45);
     }
     return status;
@@ -157,7 +159,8 @@ void AT45D_Read(
     ASSERT(!error, "-F- AT45_Read: Failed to issue command\n\r");
 
     /* Wait for the read command to execute.*/
-    while (AT45_IsBusy(pAt45)) {
+    while (AT45_IsBusy(pAt45))
+    {
 
         AT45D_Wait(pAt45);
     }
@@ -190,7 +193,8 @@ void AT45D_Write(
     ASSERT(!error, "-F- AT45_Write: Could not issue command.\n\r");
 
     /* Wait until the command is sent. */
-    while (AT45_IsBusy(pAt45)) {
+    while (AT45_IsBusy(pAt45))
+    {
 
         AT45D_Wait(pAt45);
     }
@@ -216,7 +220,8 @@ void AT45D_Erase(At45 *pAt45, uint32_t address)
     ASSERT(!error, "-F- AT45_Erase: Could not issue command.\n\r");
 
     /* Wait for end of transfer. */
-    while (AT45_IsBusy(pAt45)) {
+    while (AT45_IsBusy(pAt45))
+    {
 
         AT45D_Wait(pAt45);
     }
@@ -233,7 +238,7 @@ void AT45D_Erase(At45 *pAt45, uint32_t address)
 void AT45D_BinaryPage(At45 *pAt45)
 {
     uint8_t error;
-    uint8_t opcode[3]= {AT45_BINARY_PAGE};
+    uint8_t opcode[3] = {AT45_BINARY_PAGE};
     SANITY_CHECK(pAt45);
 
     /* Issue a binary page command. */
@@ -243,7 +248,8 @@ void AT45D_BinaryPage(At45 *pAt45)
     ASSERT(!error, "-F- AT45_Erase: Could not issue command.\n\r");
 
     /* Wait for end of transfer.*/
-    while (AT45_IsBusy(pAt45)) {
+    while (AT45_IsBusy(pAt45))
+    {
 
         AT45D_Wait(pAt45);
     }

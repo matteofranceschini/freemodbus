@@ -40,34 +40,33 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_UART_DEV             ( UART0 )
-#define MB_UART_RX_PORT         ( GPIO0 )
-#define MB_UART_RX_PIN          ( 8 )
-#define MB_UART_TX_PORT         ( GPIO0 )
-#define MB_UART_TX_PIN          ( 9 )
-#define MB_UART_IRQ_CH          ( UART0_IRQChannel )
-#define MB_UART_TX_QUEUE_LEN    ( 8 )
-#define MB_IRQ_PRIORITY         ( 1 )
+#define MB_UART_DEV (UART0)
+#define MB_UART_RX_PORT (GPIO0)
+#define MB_UART_RX_PIN (8)
+#define MB_UART_TX_PORT (GPIO0)
+#define MB_UART_TX_PIN (9)
+#define MB_UART_IRQ_CH (UART0_IRQChannel)
+#define MB_UART_TX_QUEUE_LEN (8)
+#define MB_IRQ_PRIORITY (1)
 
 /* ----------------------- Static functions ---------------------------------*/
-void            prvvMBSerialIRQHandler( void ) __attribute__ ( ( naked ) );
+void prvvMBSerialIRQHandler(void) __attribute__((naked));
 
-static BOOL     prvMBPortTXIsEnabled(  );
+static BOOL prvMBPortTXIsEnabled();
 
-static BOOL     prvMBPortRXIsEnabled(  );
+static BOOL prvMBPortRXIsEnabled();
 
 /* ----------------------- Start implementation -----------------------------*/
 
-BOOL
-xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
+BOOL xMBPortSerialInit(UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity)
 {
-    BOOL            xResult = TRUE;
+    BOOL xResult = TRUE;
     UARTParity_TypeDef eUARTParity;
     UARTMode_TypeDef eUARTMode;
 
-    ( void )ucPort;
+    (void)ucPort;
 
-    switch ( eParity )
+    switch (eParity)
     {
     case MB_PAR_EVEN:
         eUARTParity = UART_EVEN_PARITY;
@@ -80,10 +79,10 @@ xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         break;
     }
 
-    switch ( ucDataBits )
+    switch (ucDataBits)
     {
     case 7:
-        if( eParity == MB_PAR_NONE )
+        if (eParity == MB_PAR_NONE)
         {
             /* not supported by our hardware. */
             xResult = FALSE;
@@ -94,7 +93,7 @@ xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         }
         break;
     case 8:
-        if( eParity == MB_PAR_NONE )
+        if (eParity == MB_PAR_NONE)
         {
             eUARTMode = UARTM_8D;
         }
@@ -107,98 +106,91 @@ xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         xResult = FALSE;
     }
 
-    if( xResult != FALSE )
+    if (xResult != FALSE)
     {
-        u32             test = RCCU_FrequencyValue( RCCU_CLK2 );
+        u32 test = RCCU_FrequencyValue(RCCU_CLK2);
 
-        test = RCCU_FrequencyValue( RCCU_RCLK );
-        test = RCCU_FrequencyValue( RCCU_PCLK );
-        test = RCCU_FrequencyValue( RCCU_FCLK );
+        test = RCCU_FrequencyValue(RCCU_RCLK);
+        test = RCCU_FrequencyValue(RCCU_PCLK);
+        test = RCCU_FrequencyValue(RCCU_FCLK);
 
         /* Setup the UART port pins. */
-        GPIO_Config( MB_UART_TX_PORT, 1 << MB_UART_TX_PIN, GPIO_AF_PP );
-        GPIO_Config( MB_UART_RX_PORT, 1 << MB_UART_RX_PIN, GPIO_IN_TRI_CMOS );
+        GPIO_Config(MB_UART_TX_PORT, 1 << MB_UART_TX_PIN, GPIO_AF_PP);
+        GPIO_Config(MB_UART_RX_PORT, 1 << MB_UART_RX_PIN, GPIO_IN_TRI_CMOS);
 
         /* Configure the UART. */
-        UART_OnOffConfig( MB_UART_DEV, ENABLE );
-        UART_FifoConfig( MB_UART_DEV, DISABLE );
-        UART_FifoReset( MB_UART_DEV, UART_RxFIFO );
-        UART_FifoReset( MB_UART_DEV, UART_TxFIFO );
-        UART_LoopBackConfig( MB_UART_DEV, DISABLE );
-        UART_Config( MB_UART_DEV, ulBaudRate, eUARTParity, UART_1_StopBits, eUARTMode );
-        UART_RxConfig( UART0, ENABLE );
-        vMBPortSerialEnable( FALSE, FALSE );
+        UART_OnOffConfig(MB_UART_DEV, ENABLE);
+        UART_FifoConfig(MB_UART_DEV, DISABLE);
+        UART_FifoReset(MB_UART_DEV, UART_RxFIFO);
+        UART_FifoReset(MB_UART_DEV, UART_TxFIFO);
+        UART_LoopBackConfig(MB_UART_DEV, DISABLE);
+        UART_Config(MB_UART_DEV, ulBaudRate, eUARTParity, UART_1_StopBits, eUARTMode);
+        UART_RxConfig(UART0, ENABLE);
+        vMBPortSerialEnable(FALSE, FALSE);
 
         /* Configure the IEC for the UART interrupts. */
-        EIC_IRQChannelPriorityConfig( MB_UART_IRQ_CH, MB_IRQ_PRIORITY );
-        EIC_IRQChannelConfig( MB_UART_IRQ_CH, ENABLE );
+        EIC_IRQChannelPriorityConfig(MB_UART_IRQ_CH, MB_IRQ_PRIORITY);
+        EIC_IRQChannelConfig(MB_UART_IRQ_CH, ENABLE);
     }
     return xResult;
 }
 
-void
-vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
+void vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
 {
-    if( xRxEnable )
-        UART_ItConfig( MB_UART_DEV, UART_RxBufFull, ENABLE );
+    if (xRxEnable)
+        UART_ItConfig(MB_UART_DEV, UART_RxBufFull, ENABLE);
     else
-        UART_ItConfig( MB_UART_DEV, UART_RxBufFull, DISABLE );
+        UART_ItConfig(MB_UART_DEV, UART_RxBufFull, DISABLE);
 
-    if( xTxEnable )
-        UART_ItConfig( MB_UART_DEV, UART_TxHalfEmpty, ENABLE );
+    if (xTxEnable)
+        UART_ItConfig(MB_UART_DEV, UART_TxHalfEmpty, ENABLE);
     else
-        UART_ItConfig( MB_UART_DEV, UART_TxHalfEmpty, DISABLE );
+        UART_ItConfig(MB_UART_DEV, UART_TxHalfEmpty, DISABLE);
 }
 
-BOOL
-xMBPortSerialPutByte( CHAR ucByte )
+BOOL xMBPortSerialPutByte(CHAR ucByte)
 {
     MB_UART_DEV->TxBUFR = ucByte;
     return TRUE;
 }
 
-BOOL
-xMBPortSerialGetByte( CHAR * pucByte )
+BOOL xMBPortSerialGetByte(CHAR *pucByte)
 {
     *pucByte = MB_UART_DEV->RxBUFR;
     return TRUE;
 }
 
-BOOL
-prvMBPortTXIsEnabled(  )
+BOOL prvMBPortTXIsEnabled()
 {
-    return ( MB_UART_DEV->IER & UART_TxHalfEmpty ) == UART_TxHalfEmpty;
+    return (MB_UART_DEV->IER & UART_TxHalfEmpty) == UART_TxHalfEmpty;
 }
 
-BOOL
-prvMBPortRXIsEnabled(  )
+BOOL prvMBPortRXIsEnabled()
 {
-    return ( MB_UART_DEV->IER & UART_RxBufFull ) == UART_RxBufFull;
+    return (MB_UART_DEV->IER & UART_RxBufFull) == UART_RxBufFull;
 }
 
-
-void
-prvvMBSerialIRQHandler( void )
+void prvvMBSerialIRQHandler(void)
 {
-    portENTER_SWITCHING_ISR(  );
+    portENTER_SWITCHING_ISR();
 
-    static BOOL     xTaskWokenReceive = FALSE;
-    static BOOL     xTaskWokenTransmit = FALSE;
-    static USHORT   usStatus;
+    static BOOL xTaskWokenReceive = FALSE;
+    static BOOL xTaskWokenTransmit = FALSE;
+    static USHORT usStatus;
 
-    usStatus = UART_FlagStatus( MB_UART_DEV );
+    usStatus = UART_FlagStatus(MB_UART_DEV);
 
-    if( prvMBPortTXIsEnabled(  ) && ( usStatus & UART_TxHalfEmpty ) )
+    if (prvMBPortTXIsEnabled() && (usStatus & UART_TxHalfEmpty))
     {
-        xTaskWokenReceive = pxMBFrameCBTransmitterEmpty(  );
+        xTaskWokenReceive = pxMBFrameCBTransmitterEmpty();
     }
-    if( prvMBPortRXIsEnabled(  ) && ( usStatus & UART_RxBufFull ) )
+    if (prvMBPortRXIsEnabled() && (usStatus & UART_RxBufFull))
     {
-        xTaskWokenReceive = pxMBFrameCBByteReceived(  );
+        xTaskWokenReceive = pxMBFrameCBByteReceived();
     }
 
     /* End the interrupt in the EIC. */
-    EIC->IPR |= 1 << EIC_CurrentIRQChannelValue(  );
+    EIC->IPR |= 1 << EIC_CurrentIRQChannelValue();
 
-    portEXIT_SWITCHING_ISR( ( xTaskWokenReceive || xTaskWokenTransmit ) ? pdTRUE : pdFALSE );
+    portEXIT_SWITCHING_ISR((xTaskWokenReceive || xTaskWokenTransmit) ? pdTRUE : pdFALSE);
 }

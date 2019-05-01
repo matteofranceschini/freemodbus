@@ -35,63 +35,62 @@ enum
 };
 
 /* Control register */
-#define CAN_CR_TEST		0x0080
-#define CAN_CR_CCE		0x0040
-#define CAN_CR_DAR		0x0020
-#define CAN_CR_EIE		0x0008
-#define CAN_CR_SIE		0x0004
-#define CAN_CR_IE		0x0002
-#define CAN_CR_INIT		0x0001
+#define CAN_CR_TEST 0x0080
+#define CAN_CR_CCE 0x0040
+#define CAN_CR_DAR 0x0020
+#define CAN_CR_EIE 0x0008
+#define CAN_CR_SIE 0x0004
+#define CAN_CR_IE 0x0002
+#define CAN_CR_INIT 0x0001
 
 /* Status register */
-#define CAN_SR_LEC		0x0007
-#define CAN_SR_TXOK		0x0008
-#define CAN_SR_RXOK		0x0010
-#define CAN_SR_EPASS		0x0020
-#define CAN_SR_EWARN		0x0040
-#define CAN_SR_BOFF		0x0080
+#define CAN_SR_LEC 0x0007
+#define CAN_SR_TXOK 0x0008
+#define CAN_SR_RXOK 0x0010
+#define CAN_SR_EPASS 0x0020
+#define CAN_SR_EWARN 0x0040
+#define CAN_SR_BOFF 0x0080
 
 /* Test register */
-#define CAN_TESTR_RX		0x0080
-#define CAN_TESTR_TX1		0x0040
-#define CAN_TESTR_TX0		0x0020
-#define CAN_TESTR_LBACK		0x0010
-#define CAN_TESTR_SILENT	0x0008
-#define CAN_TESTR_BASIC		0x0004
+#define CAN_TESTR_RX 0x0080
+#define CAN_TESTR_TX1 0x0040
+#define CAN_TESTR_TX0 0x0020
+#define CAN_TESTR_LBACK 0x0010
+#define CAN_TESTR_SILENT 0x0008
+#define CAN_TESTR_BASIC 0x0004
 
 /* IFn / Command Request register */
-#define CAN_CRR_BUSY		0x8000
+#define CAN_CRR_BUSY 0x8000
 
 /* IFn / Command Mask register */
-#define CAN_CMR_WRRD		0x0080
-#define CAN_CMR_MASK		0x0040
-#define CAN_CMR_ARB		0x0020
-#define CAN_CMR_CONTROL		0x0010
-#define CAN_CMR_CLRINTPND	0x0008
-#define CAN_CMR_TXRQST		0x0004
-#define CAN_CMR_DATAA		0x0002
-#define CAN_CMR_DATAB		0x0001
+#define CAN_CMR_WRRD 0x0080
+#define CAN_CMR_MASK 0x0040
+#define CAN_CMR_ARB 0x0020
+#define CAN_CMR_CONTROL 0x0010
+#define CAN_CMR_CLRINTPND 0x0008
+#define CAN_CMR_TXRQST 0x0004
+#define CAN_CMR_DATAA 0x0002
+#define CAN_CMR_DATAB 0x0001
 
 /* IFn / Mask 2 register */
-#define CAN_M2R_MXTD		0x8000
-#define CAN_M2R_MDIR		0x4000
+#define CAN_M2R_MXTD 0x8000
+#define CAN_M2R_MDIR 0x4000
 
 /* IFn / Arbitration 2 register */
-#define CAN_A2R_MSGVAL		0x8000
-#define CAN_A2R_XTD		0x4000
-#define CAN_A2R_DIR		0x2000
+#define CAN_A2R_MSGVAL 0x8000
+#define CAN_A2R_XTD 0x4000
+#define CAN_A2R_DIR 0x2000
 
 /* IFn / Message Control register */
-#define CAN_MCR_NEWDAT		0x8000
-#define CAN_MCR_MSGLST		0x4000
-#define CAN_MCR_INTPND		0x2000
-#define CAN_MCR_UMASK		0x1000
-#define CAN_MCR_TXIE		0x0800
-#define CAN_MCR_RXIE		0x0400
-#define CAN_MCR_RMTEN		0x0200
-#define CAN_MCR_TXRQST		0x0100
-#define CAN_MCR_EOB		0x0080
-
+#define CAN_MCR_NEWDAT 0x8000
+#define CAN_MCR_MSGLST 0x4000
+#define CAN_MCR_INTPND 0x2000
+#define CAN_MCR_UMASK 0x1000
+#define CAN_MCR_TXIE 0x0800
+#define CAN_MCR_RXIE 0x0400
+#define CAN_MCR_RMTEN 0x0200
+#define CAN_MCR_TXRQST 0x0100
+#define CAN_MCR_EOB 0x0080
 
 /* Wake-up modes */
 enum
@@ -99,7 +98,6 @@ enum
   CAN_WAKEUP_ON_EXT,
   CAN_WAKEUP_ON_CAN
 };
-
 
 /* CAN message structure */
 typedef struct
@@ -118,8 +116,8 @@ enum
 };
 
 /* message ID limits */
-#define CAN_LAST_STD_ID	((1<<11) - 1)
-#define CAN_LAST_EXT_ID	((1L<<29) - 1)
+#define CAN_LAST_STD_ID ((1 << 11) - 1)
+#define CAN_LAST_EXT_ID ((1L << 29) - 1)
 
 /*******************************************************************************
 * Function Name  : CAN_EnterInitMode
@@ -131,10 +129,10 @@ enum
 *******************************************************************************/
 inline void CAN_EnterInitMode(u8 mask)
 {
-	CAN->CR = mask | CAN_CR_INIT;
+  CAN->CR = mask | CAN_CR_INIT;
 
-    /* reset the status */
-	CAN->SR = 0;					
+  /* reset the status */
+  CAN->SR = 0;
 }
 
 /*******************************************************************************
@@ -146,7 +144,7 @@ inline void CAN_EnterInitMode(u8 mask)
 *******************************************************************************/
 inline void CAN_LeaveInitMode(void)
 {
-	CAN->CR &= ~(CAN_CR_INIT | CAN_CR_CCE);
+  CAN->CR &= ~(CAN_CR_INIT | CAN_CR_CCE);
 }
 
 /*******************************************************************************
@@ -159,8 +157,8 @@ inline void CAN_LeaveInitMode(void)
 *******************************************************************************/
 inline void CAN_EnterTestMode(u8 mask)
 {
-	CAN->CR |= CAN_CR_TEST;
-	CAN->TESTR |= mask;
+  CAN->CR |= CAN_CR_TEST;
+  CAN->TESTR |= mask;
 }
 
 /*******************************************************************************
@@ -172,9 +170,9 @@ inline void CAN_EnterTestMode(u8 mask)
 *******************************************************************************/
 inline void CAN_LeaveTestMode(void)
 {
-	CAN->CR |= CAN_CR_TEST;
-	CAN->TESTR &= ~(CAN_TESTR_LBACK | CAN_TESTR_SILENT | CAN_TESTR_BASIC);
-	CAN->CR &= ~CAN_CR_TEST;
+  CAN->CR |= CAN_CR_TEST;
+  CAN->TESTR &= ~(CAN_TESTR_LBACK | CAN_TESTR_SILENT | CAN_TESTR_BASIC);
+  CAN->CR &= ~CAN_CR_TEST;
 }
 
 /*******************************************************************************
@@ -281,8 +279,8 @@ void CAN_ReleaseMessage(u32 msgobj);
 *******************************************************************************/
 inline void CAN_ReleaseTxMessage(u32 msgobj)
 {
-	CAN->sMsgObj[0].CMR = CAN_CMR_CLRINTPND | CAN_CMR_TXRQST;
-	CAN->sMsgObj[0].CRR = 1 + msgobj;
+  CAN->sMsgObj[0].CMR = CAN_CMR_CLRINTPND | CAN_CMR_TXRQST;
+  CAN->sMsgObj[0].CRR = 1 + msgobj;
 }
 
 /*******************************************************************************
@@ -295,8 +293,8 @@ inline void CAN_ReleaseTxMessage(u32 msgobj)
 *******************************************************************************/
 inline void CAN_ReleaseRxMessage(u32 msgobj)
 {
-	CAN->sMsgObj[1].CMR = CAN_CMR_CLRINTPND | CAN_CMR_TXRQST;
-	CAN->sMsgObj[1].CRR = 1 + msgobj;
+  CAN->sMsgObj[1].CMR = CAN_CMR_CLRINTPND | CAN_CMR_TXRQST;
+  CAN->sMsgObj[1].CRR = 1 + msgobj;
 }
 
 /*******************************************************************************
@@ -307,7 +305,7 @@ inline void CAN_ReleaseRxMessage(u32 msgobj)
 * Output         : None
 * Return         : 1 if transmission was OK, else 0
 *******************************************************************************/
-u32  CAN_SendMessage(u32 msgobj, canmsg* pCanMsg);
+u32 CAN_SendMessage(u32 msgobj, canmsg *pCanMsg);
 
 /*******************************************************************************
 * Function Name  : CAN_ReceiveMessage
@@ -319,7 +317,7 @@ u32  CAN_SendMessage(u32 msgobj, canmsg* pCanMsg);
 * Output         : None
 * Return         : 1 if reception was OK, else 0 (no message pending)
 *******************************************************************************/
-u32  CAN_ReceiveMessage(u32 msgobj, bool release, canmsg* pCanMsg);
+u32 CAN_ReceiveMessage(u32 msgobj, bool release, canmsg *pCanMsg);
 
 /*******************************************************************************
 * Function Name  : CAN_WaitEndOfTx
@@ -338,7 +336,7 @@ void CAN_WaitEndOfTx(void);
 * Return         : 1 if transmission was OK, else 0
 * Note           : CAN must be in BASIC mode
 *******************************************************************************/
-u32 CAN_BasicSendMessage(canmsg* pCanMsg);
+u32 CAN_BasicSendMessage(canmsg *pCanMsg);
 
 /*******************************************************************************
 * Function Name  : CAN_BasicReceiveMessage
@@ -348,7 +346,7 @@ u32 CAN_BasicSendMessage(canmsg* pCanMsg);
 * Return         : 1 if reception was OK, else 0 (no message pending)
 * Note           : CAN must be in BASIC mode
 *******************************************************************************/
-u32 CAN_BasicReceiveMessage(canmsg* pCanMsg);
+u32 CAN_BasicReceiveMessage(canmsg *pCanMsg);
 
 /*******************************************************************************
 * Function Name  : CAN_IsMessageWaiting
@@ -360,7 +358,7 @@ u32 CAN_BasicReceiveMessage(canmsg* pCanMsg);
 *******************************************************************************/
 inline u32 CAN_IsMessageWaiting(u32 msgobj)
 {
-  return (msgobj < 16 ? CAN->ND1R & (1 << msgobj) : CAN->ND2R & (1 << (msgobj-16)));
+  return (msgobj < 16 ? CAN->ND1R & (1 << msgobj) : CAN->ND2R & (1 << (msgobj - 16)));
 }
 
 /*******************************************************************************
@@ -373,7 +371,7 @@ inline u32 CAN_IsMessageWaiting(u32 msgobj)
 *******************************************************************************/
 inline u32 CAN_IsTransmitRequested(u32 msgobj)
 {
-  return (msgobj < 16 ? CAN->TR1R & (1 << msgobj) : CAN->TR2R & (1 << (msgobj-16)));
+  return (msgobj < 16 ? CAN->TR1R & (1 << msgobj) : CAN->TR2R & (1 << (msgobj - 16)));
 }
 
 /*******************************************************************************
@@ -386,7 +384,7 @@ inline u32 CAN_IsTransmitRequested(u32 msgobj)
 *******************************************************************************/
 inline u32 CAN_IsInterruptPending(u32 msgobj)
 {
-  return (msgobj < 16 ? CAN->IP1R & (1 << msgobj) : CAN->IP2R & (1 << (msgobj-16)));
+  return (msgobj < 16 ? CAN->IP1R & (1 << msgobj) : CAN->IP2R & (1 << (msgobj - 16)));
 }
 
 /*******************************************************************************
@@ -399,7 +397,7 @@ inline u32 CAN_IsInterruptPending(u32 msgobj)
 *******************************************************************************/
 inline u32 CAN_IsObjectValid(u32 msgobj)
 {
-  return (msgobj < 16 ? CAN->MV1R & (1 << msgobj) : CAN->MV2R & (1 << (msgobj-16)));
+  return (msgobj < 16 ? CAN->MV1R & (1 << msgobj) : CAN->MV2R & (1 << (msgobj - 16)));
 }
 
 #endif /* __CAN_H */

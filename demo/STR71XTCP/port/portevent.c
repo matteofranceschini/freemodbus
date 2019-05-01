@@ -27,48 +27,44 @@
 #include "mb.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_POLL_CYCLETIME       100     /* Poll cycle time is 100ms */
+#define MB_POLL_CYCLETIME 100 /* Poll cycle time is 100ms */
 /* ----------------------- Static variables ---------------------------------*/
 static sys_mbox_t xMailBox = SYS_MBOX_NULL;
 static eMBEventType eMailBoxEvent;
 
 /* ----------------------- Start implementation -----------------------------*/
-BOOL
-xMBPortEventInit( void )
+BOOL xMBPortEventInit(void)
 {
     eMailBoxEvent = EV_READY;
-    xMailBox = sys_mbox_new(  );
+    xMailBox = sys_mbox_new();
     return xMailBox != SYS_MBOX_NULL ? TRUE : FALSE;
 }
 
-void
-vMBPortEventClose( void )
+void vMBPortEventClose(void)
 {
-    if( xMailBox != SYS_MBOX_NULL )
+    if (xMailBox != SYS_MBOX_NULL)
     {
-        sys_mbox_free( xMailBox );
+        sys_mbox_free(xMailBox);
     }
 }
 
-BOOL
-xMBPortEventPost( eMBEventType eEvent )
+BOOL xMBPortEventPost(eMBEventType eEvent)
 {
     eMailBoxEvent = eEvent;
-    sys_mbox_post( xMailBox, &eMailBoxEvent );
+    sys_mbox_post(xMailBox, &eMailBoxEvent);
     return TRUE;
 }
 
-BOOL
-xMBPortEventGet( eMBEventType * eEvent )
+BOOL xMBPortEventGet(eMBEventType *eEvent)
 {
-    void           *peMailBoxEvent;
-    BOOL            xEventHappend = FALSE;
-    u32_t           uiTimeSpent;
+    void *peMailBoxEvent;
+    BOOL xEventHappend = FALSE;
+    u32_t uiTimeSpent;
 
-    uiTimeSpent = sys_arch_mbox_fetch( xMailBox, &peMailBoxEvent, MB_POLL_CYCLETIME );
-    if( uiTimeSpent != SYS_ARCH_TIMEOUT )
+    uiTimeSpent = sys_arch_mbox_fetch(xMailBox, &peMailBoxEvent, MB_POLL_CYCLETIME);
+    if (uiTimeSpent != SYS_ARCH_TIMEOUT)
     {
-        *eEvent = *( eMBEventType * ) peMailBoxEvent;
+        *eEvent = *(eMBEventType *)peMailBoxEvent;
         eMailBoxEvent = EV_READY;
         xEventHappend = TRUE;
     }

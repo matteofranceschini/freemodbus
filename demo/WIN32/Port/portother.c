@@ -30,59 +30,57 @@
 #include "mbconfig.h"
 
 LPTSTR
-Error2String( DWORD dwError )
+Error2String(DWORD dwError)
 {
-    static TCHAR    szUserBuf[512];
-    static LPTSTR   szErrorMsg = _T( "internal error" );
-    LPTSTR          lpMsgBuf = NULL;
-    DWORD           dwLength;
+    static TCHAR szUserBuf[512];
+    static LPTSTR szErrorMsg = _T( "internal error" );
+    LPTSTR lpMsgBuf = NULL;
+    DWORD dwLength;
 
-    dwLength = FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                              FORMAT_MESSAGE_FROM_SYSTEM,
-                              NULL,
-                              dwError,
-                              MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
-                              ( LPTSTR ) & lpMsgBuf, 0, NULL );
-    if( dwLength == 0 )
+    dwLength = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                                 FORMAT_MESSAGE_FROM_SYSTEM,
+                             NULL,
+                             dwError,
+                             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                             (LPTSTR)&lpMsgBuf, 0, NULL);
+    if (dwLength == 0)
     {
         lpMsgBuf = _T( "internal error" );
     }
 
-    _tcsnccpy_s( szUserBuf, _countof( szUserBuf ), lpMsgBuf, _tcslen( lpMsgBuf ) );
-    LocalFree( lpMsgBuf );
+    _tcsnccpy_s(szUserBuf, _countof(szUserBuf), lpMsgBuf, _tcslen(lpMsgBuf));
+    LocalFree(lpMsgBuf);
 
     return szUserBuf;
 }
 
-void
-vMBPortLog( eMBPortLogLevel eLevel, const TCHAR * szModule, const TCHAR * szFmt, ... )
+void vMBPortLog(eMBPortLogLevel eLevel, const TCHAR *szModule, const TCHAR *szFmt, ...)
 {
-    TCHAR    szBuf[512];
-    int      i;
-    va_list         args;
+    TCHAR szBuf[512];
+    int i;
+    va_list args;
     static const LPTSTR arszLevel2Str[] =
-        { _T( "DEBUG" ), _T( "INFO" ), _T( "WARN" ), _T( "ERROR" ) };
+        {_T( "DEBUG" ), _T( "INFO" ), _T( "WARN" ), _T( "ERROR" )};
 
-    i = _sntprintf_s( szBuf, _countof(szBuf) , _TRUNCATE, _T( "%s: %s: " ), 
-                     arszLevel2Str[eLevel], szModule );
+    i = _sntprintf_s(szBuf, _countof(szBuf), _TRUNCATE, _T( "%s: %s: " ),
+                     arszLevel2Str[eLevel], szModule);
 
-    if( i != 0 )
+    if (i != 0)
     {
-        va_start( args, szFmt );
-        i += _vsntprintf_s( &szBuf[i], _countof(szBuf) - i, _TRUNCATE, szFmt, args );
-        va_end( args );
+        va_start(args, szFmt);
+        i += _vsntprintf_s(&szBuf[i], _countof(szBuf) - i, _TRUNCATE, szFmt, args);
+        va_end(args);
     }
 
-    if( i != 0 )
+    if (i != 0)
     {
-        if( eLevel == MB_LOG_DEBUG )
+        if (eLevel == MB_LOG_DEBUG)
         {
-            OutputDebugString( szBuf );
+            OutputDebugString(szBuf);
         }
         else
         {
-            _fputts( szBuf, stderr );
+            _fputts(szBuf, stderr);
         }
     }
-    
 }

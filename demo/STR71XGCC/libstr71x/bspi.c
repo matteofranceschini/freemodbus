@@ -32,7 +32,7 @@ void BSPI_Init(BSPI_TypeDef *BSPIx)
 {
   BSPIx->CSR2 = 0x41;
   BSPIx->CSR1 = 0x00;
-  BSPIx->CLK  = 0x06;
+  BSPIx->CLK = 0x06;
 }
 
 /*******************************************************************************
@@ -49,20 +49,20 @@ void BSPI_TrItSrc(BSPI_TypeDef *BSPIx, BSPI_TR_IT_SRCS TrItSrc)
 {
   switch (TrItSrc)
   {
-    case BSPI_TR_DIS:
-      BSPIx->CSR2 &= ~0xC000;
-      break;
-	case BSPI_TR_FE:
-	  BSPIx->CSR2 &= ~0x8000;
-	  BSPIx->CSR2 |= 0x4000;
-      break;
-	case BSPI_TR_UFL:
-	  BSPIx->CSR2 &= ~0x4000;
-	  BSPIx->CSR2 |= 0x8000;
-	  break;
-	case BSPI_TR_FF:
-	  BSPIx->CSR2 |= 0xC000;
-	  break;
+  case BSPI_TR_DIS:
+    BSPIx->CSR2 &= ~0xC000;
+    break;
+  case BSPI_TR_FE:
+    BSPIx->CSR2 &= ~0x8000;
+    BSPIx->CSR2 |= 0x4000;
+    break;
+  case BSPI_TR_UFL:
+    BSPIx->CSR2 &= ~0x4000;
+    BSPIx->CSR2 |= 0x8000;
+    break;
+  case BSPI_TR_FF:
+    BSPIx->CSR2 |= 0xC000;
+    break;
   }
 }
 
@@ -80,16 +80,16 @@ void BSPI_RcItSrc(BSPI_TypeDef *BSPIx, BSPI_RC_IR_SRCS RcItSrc)
 {
   switch (RcItSrc)
   {
-    case BSPI_RC_DIS:
-      BSPIx->CSR1 &= ~0x000C;
-      break;
-	case BSPI_RC_FNE:
-	  BSPIx->CSR1 &= ~0x0008;
-	  BSPIx->CSR1 |= 0x0004;
-      break;
-	case BSPI_RC_FF:
-	  BSPIx->CSR1 |= 0x000C;
-      break;
+  case BSPI_RC_DIS:
+    BSPIx->CSR1 &= ~0x000C;
+    break;
+  case BSPI_RC_FNE:
+    BSPIx->CSR1 &= ~0x0008;
+    BSPIx->CSR1 |= 0x0004;
+    break;
+  case BSPI_RC_FF:
+    BSPIx->CSR1 |= 0x000C;
+    break;
   }
 }
 
@@ -106,10 +106,11 @@ void BSPI_TrFifoDepth(BSPI_TypeDef *BSPIx, u8 TDepth)
   if (TDepth > 0 && TDepth < 11)
   {
     TDepth--;
-    BSPIx->CSR2 &= (TDepth*0x400) | ~0x3C00;
-    BSPIx->CSR2 |= TDepth*0x400;
+    BSPIx->CSR2 &= (TDepth * 0x400) | ~0x3C00;
+    BSPIx->CSR2 |= TDepth * 0x400;
   }
-  else BSPIx->CSR2 &= ~0x3C00;
+  else
+    BSPIx->CSR2 &= ~0x3C00;
 }
 
 /*******************************************************************************
@@ -125,10 +126,11 @@ void BSPI_RcFifoDepth(BSPI_TypeDef *BSPIx, u8 RDepth)
   if (RDepth > 0 && RDepth < 11)
   {
     RDepth--;
-    BSPIx->CSR1 &= (RDepth*0x1000) | ~0xF000;
-    BSPIx->CSR1 |= RDepth*0x1000;
+    BSPIx->CSR1 &= (RDepth * 0x1000) | ~0xF000;
+    BSPIx->CSR1 |= RDepth * 0x1000;
   }
-  else BSPIx->CSR1 &= ~0xF000;
+  else
+    BSPIx->CSR1 &= ~0xF000;
 }
 
 /*******************************************************************************
@@ -140,12 +142,12 @@ void BSPI_RcFifoDepth(BSPI_TypeDef *BSPIx, u8 RDepth)
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void  BSPI_BufferSend(BSPI_TypeDef *BSPIx, u8 *PtrToBuffer, u8 NbOfWords)
+void BSPI_BufferSend(BSPI_TypeDef *BSPIx, u8 *PtrToBuffer, u8 NbOfWords)
 {
   vu8 SendWord = 0;
   while (SendWord < NbOfWords)
   {
-    BSPI_WordSend(BSPIx, *(PtrToBuffer+SendWord));
+    BSPI_WordSend(BSPIx, *(PtrToBuffer + SendWord));
     SendWord++;
   }
 }
@@ -164,7 +166,7 @@ void BSPI_BufferReceive(BSPI_TypeDef *BSPIx, u8 *PtrToBuffer, u8 NbOfWords)
   vu16 ReceiveWord = 0;
   while (ReceiveWord < NbOfWords)
   {
-    *(PtrToBuffer+ReceiveWord) = BSPI_WordReceive(BSPIx);
+    *(PtrToBuffer + ReceiveWord) = BSPI_WordReceive(BSPIx);
     ReceiveWord++;
   }
 }

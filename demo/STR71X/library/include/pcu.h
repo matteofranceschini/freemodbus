@@ -54,46 +54,44 @@ typedef enum
   PCU_STANDBY
 } LPM_MODES;
 
-
 // VR_OK  : Voltage Regulator OK
-#define PCU_VROK_Mask       0x1000
+#define PCU_VROK_Mask 0x1000
 
 // Main Voltage Regulator
-#define PCU_MVR_Mask        0x0008
+#define PCU_MVR_Mask 0x0008
 
 // Low Power Voltage Regulator
-#define PCU_LPR_Mask        0x0020
+#define PCU_LPR_Mask 0x0020
 
 // PCU register Write Enable Bit
-#define PCU_WREN_Mask       0x8000
+#define PCU_WREN_Mask 0x8000
 
 // Low Voltage Detector
-#define PCU_LVD_Mask        0x0100
+#define PCU_LVD_Mask 0x0100
 
 // Power Down Flag
-#define PCU_PWRDWN_Mask     0x0040
+#define PCU_PWRDWN_Mask 0x0040
 
 // WFI Mode Clock Selection Bit
-#define PCU_WFI_CKSEL_Mask  0x00000002
+#define PCU_WFI_CKSEL_Mask 0x00000002
 
 // Halt Mode Enable Bit
-#define PCU_EN_HALT_Mask    0x00000800
+#define PCU_EN_HALT_Mask 0x00000800
 
 // Halt Mode Flag
-#define PCU_HALT_Mask       0x0002
+#define PCU_HALT_Mask 0x0002
 
 // Stop Mode Enable Bit
-#define PCU_STOP_EN_Mask    0x00000400
+#define PCU_STOP_EN_Mask 0x00000400
 
 // Low Power Regulator in Wait For interrupt Mode
-#define PCU_LPRWFI_Mask     0x0020
+#define PCU_LPRWFI_Mask 0x0020
 
 // Low Power Mode in Wait For interrupt Mode
-#define PCU_LPOWFI_Mask     0x00000001
+#define PCU_LPOWFI_Mask 0x00000001
 
 // Software Reset Enable
-#define PCU_SRESEN_Mask     0x00000001
-
+#define PCU_SRESEN_Mask 0x00000001
 
 /*******************************************************************************
 * Function Name  : PCU_MVRStatus
@@ -102,9 +100,9 @@ typedef enum
 * Input          : None
 * Return         : STABLE, UNSTABLE
 *******************************************************************************/
-INLINE PCU_VR_Status PCU_MVRStatus ( void )
+INLINE PCU_VR_Status PCU_MVRStatus(void)
 {
-	return (PCU->PWRCR & PCU_VROK_Mask) == 0x00 ? PCU_UNSTABLE : PCU_STABLE;
+  return (PCU->PWRCR & PCU_VROK_Mask) == 0x00 ? PCU_UNSTABLE : PCU_STABLE;
 }
 
 /*******************************************************************************
@@ -113,9 +111,9 @@ INLINE PCU_VR_Status PCU_MVRStatus ( void )
 * Input 1        : The flag to get
 * Return         : RESET, SET
 *******************************************************************************/
-INLINE FlagStatus PCU_FlagStatus ( PCU_Flags Xflag )
+INLINE FlagStatus PCU_FlagStatus(PCU_Flags Xflag)
 {
-	return ( PCU->PWRCR & Xflag ) == 0x00 ? RESET : SET;
+  return (PCU->PWRCR & Xflag) == 0x00 ? RESET : SET;
 }
 
 /*******************************************************************************
@@ -127,7 +125,7 @@ INLINE FlagStatus PCU_FlagStatus ( PCU_Flags Xflag )
                    DISABLE: Disable ( ByPass ) the VR
 * Return         : None
 *******************************************************************************/
-void PCU_VRConfig ( PCU_VR xVR, FunctionalState NewState );
+void PCU_VRConfig(PCU_VR xVR, FunctionalState NewState);
 
 /*******************************************************************************
 * Function Name  : PCU_VRStatus
@@ -137,9 +135,9 @@ void PCU_VRConfig ( PCU_VR xVR, FunctionalState NewState );
 * Return         : ENABLE : Enable the Voltage Regulator
                    DISABLE: Disable ( ByPass ) the VR
 *******************************************************************************/
-INLINE FunctionalState PCU_VRStatus ( PCU_VR xVR )
+INLINE FunctionalState PCU_VRStatus(PCU_VR xVR)
 {
-	return ( PCU->PWRCR & xVR ) == 0  ? ENABLE : DISABLE;
+  return (PCU->PWRCR & xVR) == 0 ? ENABLE : DISABLE;
 }
 
 /*******************************************************************************
@@ -148,10 +146,10 @@ INLINE FunctionalState PCU_VRStatus ( PCU_VR xVR )
 * Input          : None
 * Return         : None
 *******************************************************************************/
-INLINE void PCU_LVDDisable ( void )
+INLINE void PCU_LVDDisable(void)
 {
-	PCU->PWRCR |= PCU_WREN_Mask;	// Unlock Power Control Register
-	PCU->PWRCR |= PCU_LVD_Mask;	// Set the LVD DIS Flag
+  PCU->PWRCR |= PCU_WREN_Mask; // Unlock Power Control Register
+  PCU->PWRCR |= PCU_LVD_Mask;  // Set the LVD DIS Flag
 }
 
 /*******************************************************************************
@@ -160,9 +158,9 @@ INLINE void PCU_LVDDisable ( void )
 * Input          : None
 * Return         : ENABLE, DISABLE
 *******************************************************************************/
-INLINE FunctionalState PCU_LVDStatus ( void )
+INLINE FunctionalState PCU_LVDStatus(void)
 {
-	return ( PCU->PWRCR & PCU_LVD_Mask ) == 0 ? ENABLE : DISABLE;
+  return (PCU->PWRCR & PCU_LVD_Mask) == 0 ? ENABLE : DISABLE;
 }
 
 /*******************************************************************************
@@ -176,7 +174,7 @@ INLINE FunctionalState PCU_LVDStatus ( void )
 *                  DISABLE: Disable Low Power Mode during Wait For Interrupt Mode
 * Return         : None
 *******************************************************************************/
-void PCU_WFIEnter ( WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlpm );
+void PCU_WFIEnter(WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlpm);
 
 /*******************************************************************************
 * Function Name  : PCU_LPMEnter
@@ -187,8 +185,8 @@ void PCU_WFIEnter ( WFI_CLOCKS Xclock, FunctionalState Xlpr, FunctionalState Xlp
                    HALT : Halt Mode
 * Return         : None
 *******************************************************************************/
-void PCU_LPMEnter ( LPM_MODES Xmode);
+void PCU_LPMEnter(LPM_MODES Xmode);
 
-#endif	// __PCU_H
+#endif // __PCU_H
 
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

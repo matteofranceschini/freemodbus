@@ -40,7 +40,7 @@
  *        Local definitions
  *----------------------------------------------------------------------------*/
 /** Define clock timeout */
-#define CLOCK_TIMEOUT         5000
+#define CLOCK_TIMEOUT 5000
 
 /*----------------------------------------------------------------------------
  *        Local functions
@@ -48,28 +48,26 @@
 static void BOARD_ConfigurePmc(void)
 {
 
-#define AT91C_CKGR_MUL_SHIFT         16
-#define AT91C_CKGR_PLLCOUNT_SHIFT     8
-#define AT91C_CKGR_DIV_SHIFT          0
+#define AT91C_CKGR_MUL_SHIFT 16
+#define AT91C_CKGR_PLLCOUNT_SHIFT 8
+#define AT91C_CKGR_DIV_SHIFT 0
 
-// Settings at 64 MHz for MCK
+    // Settings at 64 MHz for MCK
 
-#define BOARD_OSCOUNT         (CKGR_MOR_MOSCXTST & (0x8 << 8))
+#define BOARD_OSCOUNT (CKGR_MOR_MOSCXTST & (0x8 << 8))
 
 // PLLA Settings 64 MHz : 12 / 3 * 32
-#define BOARD_PLLAR ((1 << 29) | (0x1F << AT91C_CKGR_MUL_SHIFT) \
-        | (0x1 << AT91C_CKGR_PLLCOUNT_SHIFT) | (0x3 << AT91C_CKGR_DIV_SHIFT))
+#define BOARD_PLLAR ((1 << 29) | (0x1F << AT91C_CKGR_MUL_SHIFT) | (0x1 << AT91C_CKGR_PLLCOUNT_SHIFT) | (0x3 << AT91C_CKGR_DIV_SHIFT))
 
 // PLLB Settings 96 MHz
-#define BOARD_PLLBR ((1 << 29) | (0x7 << AT91C_CKGR_MUL_SHIFT) \
-        | (0x1 << AT91C_CKGR_PLLCOUNT_SHIFT) | (0x1 << AT91C_CKGR_DIV_SHIFT))
+#define BOARD_PLLBR ((1 << 29) | (0x7 << AT91C_CKGR_MUL_SHIFT) | (0x1 << AT91C_CKGR_PLLCOUNT_SHIFT) | (0x1 << AT91C_CKGR_DIV_SHIFT))
 
 // USB on PLLB, MCK/PCK on PLLA
-#define BOARD_MCKR ( PMC_MCKR_PRES_CLK_2 | PMC_MCKR_CSS_PLLA_CLK)
+#define BOARD_MCKR (PMC_MCKR_PRES_CLK_2 | PMC_MCKR_CSS_PLLA_CLK)
 
 // Define clock timeout
 #undef CLOCK_TIMEOUT
-#define CLOCK_TIMEOUT           0xFFFFFFFF
+#define CLOCK_TIMEOUT 0xFFFFFFFF
 
     uint32_t timeout = 0;
 
@@ -79,22 +77,24 @@ static void BOARD_ConfigurePmc(void)
 
     /* Initialize main oscillator
      ****************************/
-    if(!(PMC->CKGR_MOR & CKGR_MOR_MOSCSEL))
+    if (!(PMC->CKGR_MOR & CKGR_MOR_MOSCSEL))
     {
 
         PMC->CKGR_MOR = (0x37 << 16) | BOARD_OSCOUNT | CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN;
         timeout = 0;
-        while (!(PMC->PMC_SR & PMC_SR_MOSCXTS) && (timeout++ < CLOCK_TIMEOUT));
-
+        while (!(PMC->PMC_SR & PMC_SR_MOSCXTS) && (timeout++ < CLOCK_TIMEOUT))
+            ;
     }
 
     /* Switch to 3-20MHz Xtal oscillator */
     PMC->CKGR_MOR = (0x37 << 16) | BOARD_OSCOUNT | CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN | CKGR_MOR_MOSCSEL;
     timeout = 0;
-    while (!(PMC->PMC_SR & PMC_SR_MOSCSELS) && (timeout++ < CLOCK_TIMEOUT));
+    while (!(PMC->PMC_SR & PMC_SR_MOSCSELS) && (timeout++ < CLOCK_TIMEOUT))
+        ;
     PMC->PMC_MCKR = (PMC->PMC_MCKR & ~(uint32_t)PMC_MCKR_CSS) | PMC_MCKR_CSS_MAIN_CLK;
     timeout = 0;
-    while (!(PMC->PMC_SR & PMC_SR_MCKRDY) && (timeout++ < CLOCK_TIMEOUT));
+    while (!(PMC->PMC_SR & PMC_SR_MCKRDY) && (timeout++ < CLOCK_TIMEOUT))
+        ;
 
     /** Set 3 WS for Embedded Flash Access */
     EFC->EEFC_FMR = (3 << 8);
@@ -102,12 +102,14 @@ static void BOARD_ConfigurePmc(void)
     /* Initialize PLLA */
     PMC->CKGR_PLLAR = BOARD_PLLAR;
     timeout = 0;
-    while (!(PMC->PMC_SR & PMC_SR_LOCKA) && (timeout++ < CLOCK_TIMEOUT));
+    while (!(PMC->PMC_SR & PMC_SR_LOCKA) && (timeout++ < CLOCK_TIMEOUT))
+        ;
 
     /* Initialize PLLB */
     PMC->CKGR_PLLBR = BOARD_PLLBR;
     timeout = 0;
-    while (!(PMC->PMC_SR & PMC_SR_LOCKB) && (timeout++ < CLOCK_TIMEOUT));
+    while (!(PMC->PMC_SR & PMC_SR_LOCKB) && (timeout++ < CLOCK_TIMEOUT))
+        ;
 
     // Set USB clock on PLLB
     REG_PMC_USB = PMC_USB_USBS | (PMC_USB_USBDIV & (1 << 8));
@@ -116,12 +118,13 @@ static void BOARD_ConfigurePmc(void)
      **********************/
     PMC->PMC_MCKR = (BOARD_MCKR & ~PMC_MCKR_CSS) | PMC_MCKR_CSS_MAIN_CLK;
     timeout = 0;
-    while (!(PMC->PMC_SR & PMC_SR_MCKRDY) && (timeout++ < CLOCK_TIMEOUT));
+    while (!(PMC->PMC_SR & PMC_SR_MCKRDY) && (timeout++ < CLOCK_TIMEOUT))
+        ;
 
     PMC->PMC_MCKR = BOARD_MCKR;
     timeout = 0;
-    while (!(PMC->PMC_SR & PMC_SR_MCKRDY) && (timeout++ < CLOCK_TIMEOUT));
-
+    while (!(PMC->PMC_SR & PMC_SR_MCKRDY) && (timeout++ < CLOCK_TIMEOUT))
+        ;
 }
 
 /*----------------------------------------------------------------------------
@@ -134,7 +137,7 @@ static void BOARD_ConfigurePmc(void)
  * master clock and watchdog configuration.
  */
 /*----------------------------------------------------------------------------*/
-void LowLevelInit (void)
+void LowLevelInit(void)
 {
     /** Configure PMC */
     BOARD_ConfigurePmc();

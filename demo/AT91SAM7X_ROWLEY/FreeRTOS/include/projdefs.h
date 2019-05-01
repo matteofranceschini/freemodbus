@@ -19,13 +19,13 @@
 
 	A special exception to the GPL can be applied should you wish to distribute
 	a combined work that includes FreeRTOS.org, without being obliged to provide
-	the source code for any proprietary components.  See the licensing section 
+	the source code for any proprietary components.  See the licensing section
 	of http://www.FreeRTOS.org for full details of how and when the exception
 	can be applied.
 
 	***************************************************************************
-	See http://www.FreeRTOS.org for documentation, latest information, license 
-	and contact details.  Please ensure to read the configuration and relevant 
+	See http://www.FreeRTOS.org for documentation, latest information, license
+	and contact details.  Please ensure to read the configuration and relevant
 	port sections of the online documentation.
 
 	Also see http://www.SafeRTOS.com for an IEC 61508 compliant version along
@@ -37,23 +37,20 @@
 #define PROJDEFS_H
 
 /* Defines to prototype to which task functions must conform. */
-typedef void (*pdTASK_CODE)( void * );
+typedef void (*pdTASK_CODE)(void *);
 
-#define pdTRUE		( 1 )
-#define pdFALSE		( 0 )
+#define pdTRUE (1)
+#define pdFALSE (0)
 
-#define pdPASS									( 1 )
-#define pdFAIL									( 0 )
-#define errQUEUE_EMPTY							( 0 )
-#define errQUEUE_FULL							( 0 )
+#define pdPASS (1)
+#define pdFAIL (0)
+#define errQUEUE_EMPTY (0)
+#define errQUEUE_FULL (0)
 
 /* Error definitions. */
-#define errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY	( -1 )
-#define errNO_TASK_TO_RUN						( -2 )
-#define errQUEUE_BLOCKED						( -4 )
-#define errQUEUE_YIELD							( -5 )
+#define errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY (-1)
+#define errNO_TASK_TO_RUN (-2)
+#define errQUEUE_BLOCKED (-4)
+#define errQUEUE_YIELD (-5)
 
 #endif /* PROJDEFS_H */
-
-
-

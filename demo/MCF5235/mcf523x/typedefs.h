@@ -31,10 +31,10 @@
 #ifndef _TYPEDEFS_H_
 #define _TYPEDEFS_H_
 
-#ifdef __MWERKS__               //Metrowerk CodeWarrior
+#ifdef __MWERKS__ //Metrowerk CodeWarrior
 #include <stdint.h>
 
-    // Standard typedefs used by header files, based on ISO C standard
+// Standard typedefs used by header files, based on ISO C standard
 typedef volatile int8_t vint8_t;
 typedef volatile uint8_t vuint8_t;
 
@@ -45,10 +45,10 @@ typedef volatile int32_t vint32_t;
 typedef volatile uint32_t vuint32_t;
 
 #else
-#ifdef __GHS__                  //GreenHills
+#ifdef __GHS__ //GreenHills
 #include <stdint.h>
 
-    // Standard typedefs used by header files, based on ISO C standard
+// Standard typedefs used by header files, based on ISO C standard
 typedef volatile int8_t vint8_t;
 typedef volatile uint8_t vuint8_t;
 
@@ -60,7 +60,7 @@ typedef volatile uint32_t vuint32_t;
 
 #else
 
-    // This is needed for compilers that don't have a stdint.h file
+// This is needed for compilers that don't have a stdint.h file
 
 typedef signed char int8_t;
 typedef unsigned char uint8_t;

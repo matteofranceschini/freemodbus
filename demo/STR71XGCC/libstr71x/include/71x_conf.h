@@ -69,5 +69,4 @@
 
 #endif /* __71x_CONF_H */
 
-
 /******************* (C) COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

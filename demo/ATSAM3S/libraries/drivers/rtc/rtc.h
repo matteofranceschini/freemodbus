@@ -41,14 +41,14 @@
  *        Definitions
  *----------------------------------------------------------------------------*/
 
-#define RTC_HOUR_BIT_LEN_MASK   0x3F
-#define RTC_MIN_BIT_LEN_MASK    0x7F
-#define RTC_SEC_BIT_LEN_MASK    0x7F
-#define RTC_CENT_BIT_LEN_MASK   0x7F
-#define RTC_YEAR_BIT_LEN_MASK   0xFF
-#define RTC_MONTH_BIT_LEN_MASK  0x1F
-#define RTC_DATE_BIT_LEN_MASK   0x3F
-#define RTC_WEEK_BIT_LEN_MASK   0x07
+#define RTC_HOUR_BIT_LEN_MASK 0x3F
+#define RTC_MIN_BIT_LEN_MASK 0x7F
+#define RTC_SEC_BIT_LEN_MASK 0x7F
+#define RTC_CENT_BIT_LEN_MASK 0x7F
+#define RTC_YEAR_BIT_LEN_MASK 0xFF
+#define RTC_MONTH_BIT_LEN_MASK 0x1F
+#define RTC_DATE_BIT_LEN_MASK 0x3F
+#define RTC_WEEK_BIT_LEN_MASK 0x07
 
 /*----------------------------------------------------------------------------
  *        Exported functions
@@ -56,7 +56,7 @@
 
 extern void RTC_SetHourMode(uint32_t mode);
 
-extern uint32_t RTC_GetHourMode( void ) ;
+extern uint32_t RTC_GetHourMode(void);
 
 extern void RTC_EnableIt(uint32_t sources);
 
@@ -96,4 +96,3 @@ extern void RTC_ClearSCCR(uint32_t mask);
 extern uint32_t RTC_GetSR(uint32_t mask);
 
 #endif /* #ifndef RTC_H */
-

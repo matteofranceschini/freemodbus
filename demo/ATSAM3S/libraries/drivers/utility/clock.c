@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -44,7 +44,8 @@ int currentConfig = 0; // 0 have to be the default configuration
 /// Describes a possible clock configuration (processor clock & master clock),
 /// including the necessary register values.
 //------------------------------------------------------------------------------
-struct ClockConfiguration {
+struct ClockConfiguration
+{
 
     /// Processor clock frequency (in MHz).
     unsigned short pck;
@@ -63,8 +64,8 @@ struct ClockConfiguration {
 // Clock configurations for the AT91SAM9263-EK
 #if defined(at91sam9263)
 
-#define AT91C_CKGR_PLLR     AT91C_CKGR_PLLAR
-#define AT91C_PMC_LOCK      AT91C_PMC_LOCKA
+#define AT91C_CKGR_PLLR AT91C_CKGR_PLLAR
+#define AT91C_PMC_LOCK AT91C_PMC_LOCKA
 
 static const struct ClockConfiguration clockConfigurations[] = {
     // PCK = 200 MHz, MCK = 100 MHz
@@ -76,14 +77,13 @@ static const struct ClockConfiguration clockConfigurations[] = {
     // PCK = 96 MHz, MCK = 48 MHz
     {96, 48, 0x2057400F, 0x00000102},
     // PCK = 48 MHz, MCK = 48 MHz
-    {48, 48, 0x2057400F, 0x00000006}
-};
+    {48, 48, 0x2057400F, 0x00000006}};
 
 // Clock configurations for the AT91SAM9G20-EK
 #elif defined(at91sam9g20)
 
-#define AT91C_CKGR_PLLR     AT91C_CKGR_PLLAR
-#define AT91C_PMC_LOCK      AT91C_PMC_LOCKA
+#define AT91C_CKGR_PLLR AT91C_CKGR_PLLAR
+#define AT91C_PMC_LOCK AT91C_PMC_LOCKA
 
 static const struct ClockConfiguration clockConfigurations[] = {
 
@@ -94,17 +94,16 @@ static const struct ClockConfiguration clockConfigurations[] = {
     // PCK = 96 MHz, MCK = 48 MHz
     {96, 48, 0x207C3F03, 0x0000010E},
     // PCK = 48 MHz, MCK = 48 MHz
-    {48, 48, 0x207C3F03, 0x00000012}
-};
+    {48, 48, 0x207C3F03, 0x00000012}};
 
 // Clock configurations for the AT91SAM9XE-EK, AT91SAM9261-EK
 #elif defined(at91sam9xe128) || \
-      defined(at91sam9xe256) || \
-      defined(at91sam9xe512) || \
-      defined(at91sam9261)
+    defined(at91sam9xe256) ||   \
+    defined(at91sam9xe512) ||   \
+    defined(at91sam9261)
 
-#define AT91C_CKGR_PLLR     AT91C_CKGR_PLLAR
-#define AT91C_PMC_LOCK      AT91C_PMC_LOCKA
+#define AT91C_CKGR_PLLR AT91C_CKGR_PLLAR
+#define AT91C_PMC_LOCK AT91C_PMC_LOCKA
 
 static const struct ClockConfiguration clockConfigurations[] = {
 
@@ -115,15 +114,14 @@ static const struct ClockConfiguration clockConfigurations[] = {
     // PCK = 96 MHz, MCK = 48 MHz
     {96, 48, 0x20483F0E, 0x00000102},
     // PCK = 48 MHz, MCK = 48 MHz
-    {48, 48, 0x20483F0E, 0x00000006}
-};
+    {48, 48, 0x20483F0E, 0x00000006}};
 
 // Clock configurations for the AT91SAM9RL64-EK, AT91CAP9-DK, AT91CAP9-STK
 #elif defined(at91sam9rl64) || \
-      defined(at91cap9)
+    defined(at91cap9)
 
-#define AT91C_CKGR_PLLR     AT91C_CKGR_PLLAR
-#define AT91C_PMC_LOCK      AT91C_PMC_LOCKA
+#define AT91C_CKGR_PLLR AT91C_CKGR_PLLAR
+#define AT91C_PMC_LOCK AT91C_PMC_LOCKA
 
 static const struct ClockConfiguration clockConfigurations[] = {
 
@@ -134,16 +132,10 @@ static const struct ClockConfiguration clockConfigurations[] = {
     // PCK = 96 MHz, MCK = 48 MHz
     {96, 48, 0x20073F01, 0x00000102},
     // PCK = 48 MHz, MCK = 48 MHz
-    {48, 48, 0x20073F01, 0x00000006}
-};
+    {48, 48, 0x20073F01, 0x00000006}};
 
 // Clock configuration for the AT91SAM7X-EK, AT91SAM7S-EK, AT91SAM7SE-EK
-#elif defined(at91sam7x128) || defined(at91sam7x256) || defined(at91sam7x512) \
-      || defined(at91sam7xc128) || defined(at91sam7xc256) || defined(at91sam7xc512) \
-      || defined(at91sam7s16) || defined(at91sam7s161) || defined(at91sam7s32) \
-      || defined(at91sam7s321) || defined(at91sam7s64) || defined(at91sam7s128) \
-      || defined(at91sam7s256) || defined(at91sam7s512) || defined(at91sam7se32) \
-      || defined(at91sam7se256) || defined(at91sam7se512)
+#elif defined(at91sam7x128) || defined(at91sam7x256) || defined(at91sam7x512) || defined(at91sam7xc128) || defined(at91sam7xc256) || defined(at91sam7xc512) || defined(at91sam7s16) || defined(at91sam7s161) || defined(at91sam7s32) || defined(at91sam7s321) || defined(at91sam7s64) || defined(at91sam7s128) || defined(at91sam7s256) || defined(at91sam7s512) || defined(at91sam7se32) || defined(at91sam7se256) || defined(at91sam7se512)
 
 static const struct ClockConfiguration clockConfigurations[] = {
 
@@ -161,16 +153,15 @@ static const struct ClockConfiguration clockConfigurations[] = {
     // PCK = 60 MHz, MCK = 60 MHz
     {60, 60, 0x000C3F02, 0x00000007},
     // PCK = 48 MHz, MCK = 48 MHz
-    {48, 48, 0x00483F0E, 0x00000007}
-};
+    {48, 48, 0x00483F0E, 0x00000007}};
 
 // No clock configuration
 #else
-    #error No clock configuration for this board.
+#error No clock configuration for this board.
 #endif
 
 /// Number of available clock configurations
-#define NB_CLOCK_CONFIGURATION (sizeof(clockConfigurations)/sizeof(clockConfigurations[0]))
+#define NB_CLOCK_CONFIGURATION (sizeof(clockConfigurations) / sizeof(clockConfigurations[0]))
 
 //------------------------------------------------------------------------------
 //         Global Functions
@@ -184,23 +175,27 @@ void CLOCK_SetConfig(unsigned char configuration)
 {
     printf("Setting clock configuration #%d ... ", configuration);
     currentConfig = configuration;
-    
+
     // Switch to main oscillator in two operations
     PMC->PMC_MCKR = (PMC->PMC_MCKR & ~AT91C_PMC_CSS) | AT91C_PMC_CSS_MAIN_CLK;
-    while ((PMC->PMC_SR & AT91C_PMC_MCKRDY) == 0);
+    while ((PMC->PMC_SR & AT91C_PMC_MCKRDY) == 0)
+        ;
 
     // Configure PLL
     *AT91C_CKGR_PLLAR = clockConfigurations[configuration].pllr;
-    while ((PMC->PMC_SR & AT91C_PMC_LOCKA) == 0);
+    while ((PMC->PMC_SR & AT91C_PMC_LOCKA) == 0)
+        ;
 
     // Configure master clock in two operations
     PMC->PMC_MCKR = (clockConfigurations[configuration].mckr & ~AT91C_PMC_CSS) | AT91C_PMC_CSS_MAIN_CLK;
-    while ((PMC->PMC_SR & AT91C_PMC_MCKRDY) == 0);
+    while ((PMC->PMC_SR & AT91C_PMC_MCKRDY) == 0)
+        ;
     PMC->PMC_MCKR = clockConfigurations[configuration].mckr;
-    while ((PMC->PMC_SR & AT91C_PMC_MCKRDY) == 0);
+    while ((PMC->PMC_SR & AT91C_PMC_MCKRDY) == 0)
+        ;
 
     // DBGU reconfiguration
-    DBGU_Configure(DBGU_STANDARD, 115200, clockConfigurations[configuration].mck*1000000);
+    DBGU_Configure(DBGU_STANDARD, 115200, clockConfigurations[configuration].mck * 1000000);
     printf("done.\n\r");
 }
 
@@ -212,13 +207,14 @@ void CLOCK_DisplayMenu(void)
     unsigned int i;
 
     printf("\n\rMenu Clock configuration:\n\r");
-    for (i = 0; i < NB_CLOCK_CONFIGURATION; i++) {
+    for (i = 0; i < NB_CLOCK_CONFIGURATION; i++)
+    {
 
         printf("  %d: Set PCK = %3d MHz, MCK = %3d MHz   %s\n\r",
                i,
                clockConfigurations[i].pck,
                clockConfigurations[i].mck,
-               (currentConfig==i)?"(curr)":"");
+               (currentConfig == i) ? "(curr)" : "");
     }
 }
 
@@ -244,10 +240,10 @@ unsigned short CLOCK_GetCurrPCK(void)
 void CLOCK_UserChangeConfig(void)
 {
     unsigned char key = 0;
-  
+
     while (1)
     {
-        CLOCK_DisplayMenu();      
+        CLOCK_DisplayMenu();
         key = DBGU_GetChar();
 
         if ((key >= '0') && (key <= ('0' + NB_CLOCK_CONFIGURATION - 1)))

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -31,19 +31,19 @@
 /// \unit
 ///
 /// !!!Purpose
-/// 
+///
 /// Utility for BMP
-/// 
+///
 //------------------------------------------------------------------------------
 
 #ifndef BMP_H
 #define BMP_H
 
 /// BMP magic number ('BM').
-#define BMP_TYPE       0x4D42
+#define BMP_TYPE 0x4D42
 
 /// headerSize must be set to 40
-#define BITMAPINFOHEADER   40
+#define BITMAPINFOHEADER 40
 
 //------------------------------------------------------------------------------
 //         Exported types
@@ -55,7 +55,8 @@
 #endif                     // IAR
 
 // BMP (Windows) Header Format
-struct BMPHeader {
+struct BMPHeader
+{
     /// signature, must be 4D42 hex
     unsigned short type;
     /// size of BMP file in bytes (unreliable)
@@ -89,11 +90,11 @@ struct BMPHeader {
     /// number of important colors, or zero
     unsigned int importantcolours;
 
-} __attribute__ ((packed)); // GCC
+} __attribute__((packed)); // GCC
 
-#ifdef __ICCARM__          // IAR
-#pragma pack()             // IAR
-#endif                     // IAR
+#ifdef __ICCARM__ // IAR
+#pragma pack()    // IAR
+#endif            // IAR
 
 //------------------------------------------------------------------------------
 //         Exported functions
@@ -110,13 +111,13 @@ extern unsigned char BMP_Decode(
     unsigned int height,
     unsigned char bpp);
 
-extern void WriteBMPheader(unsigned int* pAddressHeader, 
-                    unsigned int  bmpHSize,
-                    unsigned int  bmpVSize,
-                    unsigned char bmpRgb,
-                    unsigned char nbByte_Pixels);
+extern void WriteBMPheader(unsigned int *pAddressHeader,
+                           unsigned int bmpHSize,
+                           unsigned int bmpVSize,
+                           unsigned char bmpRgb,
+                           unsigned char nbByte_Pixels);
 
-extern void BMP_displayHeader(unsigned int* pAddressHeader);
+extern void BMP_displayHeader(unsigned int *pAddressHeader);
 
 extern void RGB565toBGR555(
     unsigned char *fileSource,
@@ -125,6 +126,4 @@ extern void RGB565toBGR555(
     unsigned int height,
     unsigned char bpp);
 
-
 #endif //#ifndef BMP_H
-

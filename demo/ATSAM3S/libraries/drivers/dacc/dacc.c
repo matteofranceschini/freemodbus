@@ -63,8 +63,6 @@
 #include <board.h>
 #include <dacc/dacc.h>
 
-
-
 /*----------------------------------------------------------------------------
  *        Exported functions
  *----------------------------------------------------------------------------*/
@@ -82,38 +80,29 @@
   * \param user_sel user channel selection ,0 or 1
   * \param startup value of the start up time (in DACCClock) (see datasheet)
 */
-void DACC_Initialize (Dacc *pDACC,
+void DACC_Initialize(Dacc *pDACC,
                      uint8_t idDACC,
                      uint8_t trgEn,
                      uint8_t trgSel,
                      uint8_t word,
                      uint8_t sleepMode,
                      uint32_t mck,
-                     uint8_t refresh,/*refresh period*/
-                     uint8_t user_sel,/*user channel selection*/
-                     uint32_t startup
-                     )
+                     uint8_t refresh,  /*refresh period*/
+                     uint8_t user_sel, /*user channel selection*/
+                     uint32_t startup)
 {
-    ASSERT(1024*refresh*1000/(mck/2)<20,"Refresh preriod is too big!");
+  ASSERT(1024 * refresh * 1000 / (mck / 2) < 20, "Refresh preriod is too big!");
 
+  /* Enable peripheral clock*/
+  PMC->PMC_PCER0 = 1 << idDACC;
 
-    /* Enable peripheral clock*/
-    PMC->PMC_PCER0 = 1 << idDACC;
+  /*  Reset the controller */
+  DACC_SoftReset(pDACC);
 
-    /*  Reset the controller */
-    DACC_SoftReset(pDACC);
-
-    /*  Write to the MR register */
-    DACC_CfgModeReg( pDACC,
-          ( trgEn & DACC_MR_TRGEN)
-        | ( trgSel & DACC_MR_TRGSEL)
-        | ( word & DACC_MR_WORD)
-        | ( sleepMode & DACC_MR_SLEEP)
-        | ( (refresh<<8) & DACC_MR_REFRESH)
-        | ( (user_sel<<16)& DACC_MR_USER_SEL)
-        | ( (startup<<24) & DACC_MR_STARTUP));
+  /*  Write to the MR register */
+  DACC_CfgModeReg(pDACC,
+                  (trgEn & DACC_MR_TRGEN) | (trgSel & DACC_MR_TRGSEL) | (word & DACC_MR_WORD) | (sleepMode & DACC_MR_SLEEP) | ((refresh << 8) & DACC_MR_REFRESH) | ((user_sel << 16) & DACC_MR_USER_SEL) | ((startup << 24) & DACC_MR_STARTUP));
 }
-
 
 /**
  * Set the Conversion Data
@@ -123,18 +112,17 @@ void DACC_Initialize (Dacc *pDACC,
  */
 void DACC_SetConversionData(Dacc *pDACC, uint32_t data)
 {
-    uint32_t mr = pDACC->DACC_MR;
+  uint32_t mr = pDACC->DACC_MR;
 
-    if(mr & DACC_MR_WORD)
-    {
-    	pDACC->DACC_CDR = data;
-    }
-    else
-    {
-    	pDACC->DACC_CDR = (data&0xFFFF);
-    }
+  if (mr & DACC_MR_WORD)
+  {
+    pDACC->DACC_CDR = data;
+  }
+  else
+  {
+    pDACC->DACC_CDR = (data & 0xFFFF);
+  }
 }
-
 
 /**
   * \brief Write converted data through PDC channel
@@ -142,31 +130,31 @@ void DACC_SetConversionData(Dacc *pDACC, uint32_t data)
   * \param pBuffer the destination buffer
   * \param size the size of the buffer
 */
-int8_t DACC_WriteBuffer(Dacc *pDACC,int16_t *pBuffer,int32_t size)
+int8_t DACC_WriteBuffer(Dacc *pDACC, int16_t *pBuffer, int32_t size)
 {
 
-    /* Check if the first PDC bank is free*/
-    if ((pDACC->DACC_TCR == 0) && (pDACC->DACC_TNCR == 0)) {
+  /* Check if the first PDC bank is free*/
+  if ((pDACC->DACC_TCR == 0) && (pDACC->DACC_TNCR == 0))
+  {
 
-        pDACC->DACC_TPR = (uint32_t) pBuffer;
-        pDACC->DACC_TCR = size;
-        pDACC->DACC_PTCR = DACC_PTCR_RXTEN;
+    pDACC->DACC_TPR = (uint32_t)pBuffer;
+    pDACC->DACC_TCR = size;
+    pDACC->DACC_PTCR = DACC_PTCR_RXTEN;
 
-        return 1;
-    }
-    /* Check if the second PDC bank is free*/
-    else if (pDACC->DACC_TNCR == 0) {
+    return 1;
+  }
+  /* Check if the second PDC bank is free*/
+  else if (pDACC->DACC_TNCR == 0)
+  {
 
-        pDACC->DACC_TNPR = (uint32_t) pBuffer;
-        pDACC->DACC_TNCR = size;
+    pDACC->DACC_TNPR = (uint32_t)pBuffer;
+    pDACC->DACC_TNCR = size;
 
-        return 1;
-    }
-    else {
+    return 1;
+  }
+  else
+  {
 
-        return 0;
-    }
-
+    return 0;
+  }
 }
-
-

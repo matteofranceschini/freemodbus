@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -38,20 +38,20 @@
 /// \page "Hamming Code Errors"
 /// These are the possible errors when trying to verify a block of data encoded
 /// using a Hamming code:
-/// 
+///
 /// !Errors:
 ///  - Hamming_ERROR_SINGLEBIT
 ///  - Hamming_ERROR_ECC
 ///  - Hamming_ERROR_MULTIPLEBITS
 
 /// A single bit was incorrect but has been recovered.
-#define Hamming_ERROR_SINGLEBIT         1
+#define Hamming_ERROR_SINGLEBIT 1
 
 /// The original code has been corrupted.
-#define Hamming_ERROR_ECC               2
+#define Hamming_ERROR_ECC 2
 
 /// Multiple bits are incorrect in the data and they cannot be corrected.
-#define Hamming_ERROR_MULTIPLEBITS      3
+#define Hamming_ERROR_MULTIPLEBITS 3
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -69,4 +69,3 @@ extern unsigned char Hamming_Verify256x(
     const unsigned char *code);
 
 #endif //#ifndef HAMMING_H
-

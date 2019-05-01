@@ -30,24 +30,23 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ----------------------------------------- */
-#define PIT_PRESCALER 				1024UL
-#define PIT_TIMER_TICKS             ( FCPU / PIT_PRESCALER )
-#define PIT_MODULUS_REGISTER(t50us)	\
-	( (t50us * PIT_TIMER_TICKS )/20000UL - 1UL)
+#define PIT_PRESCALER 1024UL
+#define PIT_TIMER_TICKS (FCPU / PIT_PRESCALER)
+#define PIT_MODULUS_REGISTER(t50us) \
+    ((t50us * PIT_TIMER_TICKS) / 20000UL - 1UL)
 
 /* ----------------------- Static variables -------------------------------- */
-USHORT          usTimerModulus;
+USHORT usTimerModulus;
 
 /* ----------------------- Start implementation ---------------------------- */
 
-BOOL
-xMBPortTimersInit( USHORT usTim1Timerout50us )
+BOOL xMBPortTimersInit(USHORT usTim1Timerout50us)
 {
-    usTimerModulus = PIT_MODULUS_REGISTER( usTim1Timerout50us );
+    usTimerModulus = PIT_MODULUS_REGISTER(usTim1Timerout50us);
     /* Configure prescaler */
-    MCF_PIT_PCSR0 = MCF_PIT_PCSR_PRE( 0x9 ) | MCF_PIT_PCSR_OVW;
+    MCF_PIT_PCSR0 = MCF_PIT_PCSR_PRE(0x9) | MCF_PIT_PCSR_OVW;
     /* Configure interrupt priority and level */
-    MCF_INTC0_ICR36 = MCF_INTC0_ICRn_IL( 0x1 ) | MCF_INTC0_ICRn_IP( 0x2 );
+    MCF_INTC0_ICR36 = MCF_INTC0_ICRn_IL(0x1) | MCF_INTC0_ICRn_IP(0x2);
     /* Unmask interrupt */
     MCF_INTC0_IMRH &= ~MCF_INTC0_IMRH_INT_MASK36;
 
@@ -55,23 +54,22 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
 }
 
 inline void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable()
 {
     MCF_PIT_PMR0 = usTimerModulus;
     MCF_PIT_PCSR0 |= MCF_PIT_PCSR_PIE | MCF_PIT_PCSR_EN | MCF_PIT_PCSR_PIF;
 }
 
 inline void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable()
 {
     MCF_PIT_PCSR0 |= MCF_PIT_PCSR_PIF;
     MCF_PIT_PCSR0 &= ~MCF_PIT_PCSR_PIE;
     MCF_PIT_PCSR0 &= ~MCF_PIT_PCSR_EN;
 }
 
-void
-prvvMBPortTimerISR(  )
+void prvvMBPortTimerISR()
 {
-    ( void )pxMBPortCBTimerExpired(  );
+    (void)pxMBPortCBTimerExpired();
     MCF_PIT_PCSR0 |= MCF_PIT_PCSR_PIF;
 }

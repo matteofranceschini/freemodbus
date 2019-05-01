@@ -25,23 +25,25 @@
 #include <assert.h>
 #include <inttypes.h>
 
-#define	INLINE
-#define PR_BEGIN_EXTERN_C           extern "C" {
-#define	PR_END_EXTERN_C             }
+#define INLINE
+#define PR_BEGIN_EXTERN_C \
+    extern "C"            \
+    {
+#define PR_END_EXTERN_C }
 
-#define ENTER_CRITICAL_SECTION( )		EnterCriticalSection( )
-#define EXIT_CRITICAL_SECTION( )    ExitCriticalSection( )
+#define ENTER_CRITICAL_SECTION() EnterCriticalSection()
+#define EXIT_CRITICAL_SECTION() ExitCriticalSection()
 
-#define CCLK	60000000L
-#define PCLK	CCLK/4
+#define CCLK 60000000L
+#define PCLK CCLK / 4
 
-void            EnterCriticalSection( void );
-void            ExitCriticalSection( void );
+void EnterCriticalSection(void);
+void ExitCriticalSection(void);
 
 typedef uint8_t BOOL;
 
 typedef unsigned char UCHAR;
-typedef char    CHAR;
+typedef char CHAR;
 
 typedef uint16_t USHORT;
 typedef int16_t SHORT;
@@ -50,11 +52,11 @@ typedef uint32_t ULONG;
 typedef int32_t LONG;
 
 #ifndef TRUE
-#define TRUE            1
+#define TRUE 1
 #endif
 
 #ifndef FALSE
-#define FALSE           0
+#define FALSE 0
 #endif
 
 #endif

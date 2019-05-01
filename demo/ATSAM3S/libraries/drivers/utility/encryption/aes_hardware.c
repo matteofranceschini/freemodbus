@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -56,25 +56,30 @@
 /// \param Buffer to store integer value
 /// \param Length of string
 //------------------------------------------------------------------------------
-static inline void ASCII2Hex(const unsigned char * ascii,
-                             unsigned char * binary,
+static inline void ASCII2Hex(const unsigned char *ascii,
+                             unsigned char *binary,
                              unsigned int length)
 {
     unsigned int i;
 
-    for (i=0; i < length; i++) {
-        if (ascii[i*2] >= 'A') {
-            binary[i] = ascii[i*2] - 'A' + 10;
+    for (i = 0; i < length; i++)
+    {
+        if (ascii[i * 2] >= 'A')
+        {
+            binary[i] = ascii[i * 2] - 'A' + 10;
         }
-        else {
-            binary[i] = ascii[i*2] - '0';
+        else
+        {
+            binary[i] = ascii[i * 2] - '0';
         }
         binary[i] <<= 4;
-        if (ascii[i*2+1] >= 'A') {
-            binary[i] += ascii[i*2+1] - 'A' + 10;
+        if (ascii[i * 2 + 1] >= 'A')
+        {
+            binary[i] += ascii[i * 2 + 1] - 'A' + 10;
         }
-        else {
-            binary[i] += ascii[i*2+1] - '0';
+        else
+        {
+            binary[i] += ascii[i * 2 + 1] - '0';
         }
     }
 }
@@ -87,23 +92,23 @@ static inline void ASCII2Hex(const unsigned char * ascii,
 /// Initializes the AES peripheral
 //------------------------------------------------------------------------------
 #ifdef ONLY_ONE_ENCRYPTION
-void aes_hard_init(void) 
+void aes_hard_init(void)
 {
     unsigned char key[16];
 
 #if defined(ENCRYPTION_CTR) || defined(ENCRYPTION_CBC)
     unsigned char IV[16];
 #endif
-  
+
     TRACE_DEBUG("AES/HARD: Initializing ...\n\r");
 
     // Activate peripheral clock
 #ifdef AT91C_ID_AES
-    PMC_EnablePeripheral( AT91C_ID_AES );
+    PMC_EnablePeripheral(AT91C_ID_AES);
 #elif AT91C_ID_AESTDES
-    PMC_EnablePeripheral( AT91C_ID_AESTDES );
+    PMC_EnablePeripheral(AT91C_ID_AESTDES);
 #elif AT91C_ID_TDES
-    PMC_EnablePeripheral( AT91C_ID_TDES );
+    PMC_EnablePeripheral(AT91C_ID_TDES);
 #else
 #error AES undefined
 #endif
@@ -118,17 +123,17 @@ void aes_hard_init(void)
 #elif defined(ENCRYPTION_CTR)
     AT91C_BASE_AES->AES_MR = AT91C_AES_SMOD_PDC | AT91C_AES_OPMOD_CTR;
 #endif
-  
-    // Convert and load key
-    ASCII2Hex((unsigned char*)ENCRYPTION_KEY, key, ENCRYPTION_KEY_LENGTH);
 
-    AES_SetKey((unsigned int*)key);
+    // Convert and load key
+    ASCII2Hex((unsigned char *)ENCRYPTION_KEY, key, ENCRYPTION_KEY_LENGTH);
+
+    AES_SetKey((unsigned int *)key);
 
     // Convert and load IV
 #if defined(ENCRYPTION_CTR) || defined(ENCRYPTION_CBC)
-    ASCII2Hex((unsigned char*)ENCRYPTION_IV, IV, ENCRYPTION_BLOCK_LENGTH);
+    ASCII2Hex((unsigned char *)ENCRYPTION_IV, IV, ENCRYPTION_BLOCK_LENGTH);
 
-    AES_SetVector((unsigned int*)IV);
+    AES_SetVector((unsigned int *)IV);
 #endif
 
     TRACE_DEBUG("AES/HARD: Initialization done.\n\r");
@@ -140,36 +145,36 @@ void aes_hard_init(void)
 //------------------------------------------------------------------------------
 #ifndef ONLY_ONE_ENCRYPTION
 #if defined(ENCRYPTION_CBC)
-void aes_hard_init_CBC(void) 
+void aes_hard_init_CBC(void)
 {
     unsigned char key[16];
     unsigned char IV[16];
-  
+
     TRACE_DEBUG("aes_hard_init_CBC\n\r");
 
     // Activate peripheral clock
 #ifdef AT91C_ID_AES
-    PMC_EnablePeripheral( AT91C_ID_AES );
+    PMC_EnablePeripheral(AT91C_ID_AES);
 #elif AT91C_ID_AESTDES
-    PMC_EnablePeripheral( AT91C_ID_AESTDES );
+    PMC_EnablePeripheral(AT91C_ID_AESTDES);
 #elif AT91C_ID_TDES
-    PMC_EnablePeripheral( AT91C_ID_TDES );
+    PMC_EnablePeripheral(AT91C_ID_TDES);
 #else
 #error AES undefined
 #endif
 
     // Load mode
     AT91C_BASE_AES->AES_MR = AT91C_AES_SMOD_PDC | AT91C_AES_OPMOD_CBC;
-  
-    // Convert and load key
-    ASCII2Hex((unsigned char*)ENCRYPTION_KEY, key, ENCRYPTION_KEY_LENGTH);
 
-    AES_SetKey((unsigned int*)key);
+    // Convert and load key
+    ASCII2Hex((unsigned char *)ENCRYPTION_KEY, key, ENCRYPTION_KEY_LENGTH);
+
+    AES_SetKey((unsigned int *)key);
 
     // Convert and load IV
-    ASCII2Hex((unsigned char*)ENCRYPTION_IV, IV, ENCRYPTION_BLOCK_LENGTH);
+    ASCII2Hex((unsigned char *)ENCRYPTION_IV, IV, ENCRYPTION_BLOCK_LENGTH);
 
-    AES_SetVector((unsigned int*)IV);
+    AES_SetVector((unsigned int *)IV);
 }
 #endif
 
@@ -177,36 +182,36 @@ void aes_hard_init_CBC(void)
 /// Initializes the AES peripheral for CTR mode
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_CTR)
-void aes_hard_init_CTR(void) 
+void aes_hard_init_CTR(void)
 {
     unsigned char key[16];
     unsigned char IV[16];
-  
+
     TRACE_DEBUG("aes_hard_init_CTR\n\r");
 
     // Activate peripheral clock
 #ifdef AT91C_ID_AES
-    PMC_EnablePeripheral( AT91C_ID_AES );
+    PMC_EnablePeripheral(AT91C_ID_AES);
 #elif AT91C_ID_AESTDES
-    PMC_EnablePeripheral( AT91C_ID_AESTDES );
+    PMC_EnablePeripheral(AT91C_ID_AESTDES);
 #elif AT91C_ID_TDES
-    PMC_EnablePeripheral( AT91C_ID_TDES );
+    PMC_EnablePeripheral(AT91C_ID_TDES);
 #else
 #error AES undefined
 #endif
 
     // Load mode
     AT91C_BASE_AES->AES_MR = AT91C_AES_SMOD_PDC | AT91C_AES_OPMOD_CTR;
-  
-    // Convert and load key
-    ASCII2Hex((unsigned char*)ENCRYPTION_KEY, key, ENCRYPTION_KEY_LENGTH);
 
-    AES_SetKey((unsigned int*)key);
+    // Convert and load key
+    ASCII2Hex((unsigned char *)ENCRYPTION_KEY, key, ENCRYPTION_KEY_LENGTH);
+
+    AES_SetKey((unsigned int *)key);
 
     // Convert and load IV
-    ASCII2Hex((unsigned char*)ENCRYPTION_IV, IV, ENCRYPTION_BLOCK_LENGTH);
+    ASCII2Hex((unsigned char *)ENCRYPTION_IV, IV, ENCRYPTION_BLOCK_LENGTH);
 
-    AES_SetVector((unsigned int*)IV);
+    AES_SetVector((unsigned int *)IV);
 }
 #endif
 
@@ -214,7 +219,7 @@ void aes_hard_init_CTR(void)
 /// Initializes the AES peripheral for ECB mode
 //------------------------------------------------------------------------------
 #if defined(ENCRYPTION_ECB)
-void aes_hard_init_ECB(void) 
+void aes_hard_init_ECB(void)
 {
     unsigned char key[16];
 
@@ -222,11 +227,11 @@ void aes_hard_init_ECB(void)
 
     // Activate peripheral clock
 #ifdef AT91C_ID_AES
-    PMC_EnablePeripheral( AT91C_ID_AES );
+    PMC_EnablePeripheral(AT91C_ID_AES);
 #elif AT91C_ID_AESTDES
-    PMC_EnablePeripheral( AT91C_ID_AESTDES );
+    PMC_EnablePeripheral(AT91C_ID_AESTDES);
 #elif AT91C_ID_TDES
-    PMC_EnablePeripheral( AT91C_ID_TDES );
+    PMC_EnablePeripheral(AT91C_ID_TDES);
 #else
 #error AES undefined
 #endif
@@ -234,11 +239,11 @@ void aes_hard_init_ECB(void)
     // Load mode
     //AES_Configure(AT91C_AES_CIPHER, AT91C_AES_SMOD_MANUAL, AT91C_AES_OPMOD_ECB);
     AT91C_BASE_AES->AES_MR = AT91C_AES_SMOD_PDC | AT91C_AES_OPMOD_ECB;
-  
-    // Convert and load key
-    ASCII2Hex((unsigned char*)ENCRYPTION_KEY, key, ENCRYPTION_KEY_LENGTH);
 
-    AES_SetKey((unsigned int*)key);
+    // Convert and load key
+    ASCII2Hex((unsigned char *)ENCRYPTION_KEY, key, ENCRYPTION_KEY_LENGTH);
+
+    AES_SetKey((unsigned int *)key);
 }
 #endif
 #endif // ONLY_ONE_ENCRYPTION
@@ -246,18 +251,18 @@ void aes_hard_init_ECB(void)
 //------------------------------------------------------------------------------
 /// Cleans up the AES peripheral
 //------------------------------------------------------------------------------
-void aes_hard_cleanup(void) 
+void aes_hard_cleanup(void)
 {
     TRACE_DEBUG("AES/HARD: Cleaning up ...\n\r");
 
     AT91C_BASE_AES->AES_MR = 0;
 
 #ifdef AT91C_ID_AES
-    PMC_DisablePeripheral( AT91C_ID_AES );
+    PMC_DisablePeripheral(AT91C_ID_AES);
 #elif AT91C_ID_AESTDES
-    PMC_DisablePeripheral( AT91C_ID_AESTDES );
+    PMC_DisablePeripheral(AT91C_ID_AESTDES);
 #elif AT91C_ID_TDES
-    PMC_DisablePeripheral( AT91C_ID_TDES );
+    PMC_DisablePeripheral(AT91C_ID_TDES);
 #else
 #error AES undefined
 #endif
@@ -293,24 +298,24 @@ int aes_hard_decrypt(const unsigned char *pCipherText,
     TRACE_DEBUG("aes_hard_decrypt\n\r");
 
     // Check parameters
-    if ((pCipherText == NULL) || (pPlainText == NULL)) {
+    if ((pCipherText == NULL) || (pPlainText == NULL))
+    {
         return 0;
     }
 
     // Set source and destination buffers in PDC
-    AT91C_BASE_PDC_AES->PDC_TPR = (unsigned int) pCipherText;
-    AT91C_BASE_PDC_AES->PDC_RPR = (unsigned int) pPlainText;
+    AT91C_BASE_PDC_AES->PDC_TPR = (unsigned int)pCipherText;
+    AT91C_BASE_PDC_AES->PDC_RPR = (unsigned int)pPlainText;
 
     AT91C_BASE_PDC_AES->PDC_TCR = length >> 2;
     AT91C_BASE_PDC_AES->PDC_RCR = length >> 2;
 
     // Start decryption and wait
     AT91C_BASE_PDC_AES->PDC_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
-    while (((AES_GetStatus()) & AT91C_AES_ENDRX) == 0);
+    while (((AES_GetStatus()) & AT91C_AES_ENDRX) == 0)
+        ;
 
     return 1;
 }
 
 #endif // defined(USE_ENCRYPTION) && defined(ENCRYPTION_AES_HARD)
-
-

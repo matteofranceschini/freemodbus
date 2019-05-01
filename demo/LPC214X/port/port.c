@@ -1,4 +1,4 @@
- /*
+/*
   * FreeModbus Libary: LPC214X Port
   * Copyright (C) 2007 Tiago Prado Lone <tiago@maxwellbohr.com.br>
   *
@@ -25,18 +25,16 @@
 /* ----------------------- Modbus includes ----------------------------------*/
 
 /* ----------------------- Variables ----------------------------------------*/
-int             VIC_Temp;
+int VIC_Temp;
 
 /* ----------------------- Start implementation -----------------------------*/
-void
-EnterCriticalSection(  )
+void EnterCriticalSection()
 {
-    VIC_Temp = VICIntEnable;    /* Save VICIntEnable */
-    VICIntEnClr = VIC_Temp;     /* Disable Interruptions */
+    VIC_Temp = VICIntEnable; /* Save VICIntEnable */
+    VICIntEnClr = VIC_Temp;  /* Disable Interruptions */
 }
 
-void
-ExitCriticalSection(  )
+void ExitCriticalSection()
 {
-    VICIntEnable = VIC_Temp;    /* Restore VICIntEnable */
+    VICIntEnable = VIC_Temp; /* Restore VICIntEnable */
 }

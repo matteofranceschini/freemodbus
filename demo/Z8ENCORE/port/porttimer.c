@@ -27,17 +27,16 @@
 #include "mbport.h"
 
 /* ----------------------- static functions ---------------------------------*/
-static void interrupt prvvTIMERExpiredISR( void );
+static void interrupt prvvTIMERExpiredISR(void);
 
 /* ----------------------- Start implementation -----------------------------*/
-BOOL
-xMBPortTimersInit( USHORT usTim1Timerout50us )
+BOOL xMBPortTimersInit(USHORT usTim1Timerout50us)
 {
-    /* Configure Timer 0 (One Shot, Prescale = 1, Disabled) 
+    /* Configure Timer 0 (One Shot, Prescale = 1, Disabled)
      *
      * Timer Control #00000000b
      *                 || ||_|_______ One Shot
-     * Disabled = 0  __||_|_____________/1 Prescale                                 
+     * Disabled = 0  __||_|_____________/1 Prescale
      * */
     T0CTL1 = 0x00;
 
@@ -49,21 +48,19 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
      * 50us = CLOCK/20000
      * reload = usTim1Timerout50us*(CLOCK/20000)
      */
-    T0CPH = ( usTim1Timerout50us * ( CLOCK / 20000 ) ) >> 8;
-    T0CPL = ( usTim1Timerout50us * ( CLOCK / 20000 ) ) & 0x00FF;
+    T0CPH = (usTim1Timerout50us * (CLOCK / 20000)) >> 8;
+    T0CPL = (usTim1Timerout50us * (CLOCK / 20000)) & 0x00FF;
 
     IRQ0ENH |= 0x20;
-    IRQ0ENL |= 0x20;            /* Enable Timer0 High Priority */
+    IRQ0ENL |= 0x20; /* Enable Timer0 High Priority */
 
     /* Set Interrupt Vector */
-    SET_VECTOR( TIMER0, prvvTIMERExpiredISR );
+    SET_VECTOR(TIMER0, prvvTIMERExpiredISR);
 
     return TRUE;
 }
 
-
-void
-vMBPortTimersEnable(  )
+void vMBPortTimersEnable()
 {
     T0H = 0x00;
     T0L = 0x00;
@@ -71,19 +68,18 @@ vMBPortTimersEnable(  )
     T0CTL1 |= 0x80;
 }
 
-void
-vMBPortTimersDisable(  )
+void vMBPortTimersDisable()
 {
     T0CTL1 &= ~0x80;
 }
 
-/* 
+/*
  * Create an ISR which is called whenever the timer has expired. This function
  * must then call pxMBPortCBTimerExpired( ) to notify the protocol stack that
  * the timer has expired.
  */
 static void interrupt
-prvvTIMERExpiredISR( void )
+prvvTIMERExpiredISR(void)
 {
-    ( void )pxMBPortCBTimerExpired(  );
+    (void)pxMBPortCBTimerExpired();
 }

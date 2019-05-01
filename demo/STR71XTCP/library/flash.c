@@ -20,8 +20,7 @@
 
 #include "flash.h"
 
-  u32 D0_temp;
-
+u32 D0_temp;
 
 /*******************************************************************************
 * Function Name  : FLASH_Init
@@ -31,14 +30,14 @@
 *******************************************************************************/
 void FLASH_Init(void)
 {
-// Reset Flash Control Registers
+  // Reset Flash Control Registers
   FLASHR->CR0 = 0x00000000;
   FLASHR->CR1 = 0x00000000;
-// Reset Flash Data Registers
+  // Reset Flash Data Registers
   FLASHR->DR0 = 0xFFFFFFFF;
   FLASHR->DR1 = 0xFFFFFFFF;
-// Reset Flash Error Register
-  FLASHR->ER  = 0x00000000;
+  // Reset Flash Error Register
+  FLASHR->ER = 0x00000000;
 }
 
 /*******************************************************************************
@@ -54,9 +53,9 @@ void FLASH_WordWrite(u32 XtargetAdd, u32 Xdata)
   // set the Word Programming bit 'WPG' in the CR0 Reg
   FLASHR->CR0 |= FLASH_WPG_Mask;
   // Load the destination address in AR
-  FLASHR->AR   = XtargetAdd;
+  FLASHR->AR = XtargetAdd;
   // Load DATA to be programmed in DR0
-  FLASHR->DR0  = Xdata;
+  FLASHR->DR0 = Xdata;
   // Set the Write Mode Start bit 'WMS' in the CR0 Reg to Start Write Operation
   FLASHR->CR0 |= FLASH_WMS_Mask;
   // Wait until the write operation is completed
@@ -78,17 +77,16 @@ void FLASH_DWordWrite(u32 XtargetAdd, u32 Xdata0, u32 Xdata1)
   // set the Double Word Programming bit 'DWPG' in the CR0 Reg
   FLASHR->CR0 |= FLASH_DWPG_Mask;
   // Load the destination address in AR
-  FLASHR->AR   = XtargetAdd;
+  FLASHR->AR = XtargetAdd;
   // Load DATA0 in DR0 Reg
-  FLASHR->DR0  = Xdata0;
+  FLASHR->DR0 = Xdata0;
   // Load DATA1 in DR1 Reg
-  FLASHR->DR1  = Xdata1;
+  FLASHR->DR1 = Xdata1;
   // Set the Write Mode Start bit 'WMS' in the CR0 Reg to Start Write Operation
   FLASHR->CR0 |= FLASH_WMS_Mask;
   // Wait until the write operation is completed
   FLASH_WaitForLastTask();
 }
-
 
 /*******************************************************************************
 * Function Name  : FLASH_SectorErase
@@ -139,7 +137,7 @@ void FLASH_Resume(u32 FLASH_LastOperation)
   // Resume last operation
   FLASHR->CR0 = FLASH_LastOperation & 0x7FFFFFFF;
   // Set write mode bit
-  FLASHR->CR0  |= FLASH_WMS_Mask;
+  FLASHR->CR0 |= FLASH_WMS_Mask;
 }
 
 /*******************************************************************************
@@ -164,15 +162,15 @@ u32 FLASH_WordRead(u32 FLASH_SourceAdd)
 void FLASH_WritePrConfig(u32 Xsectors, FunctionalState NewState)
 {
   FLASH_WaitForLastTask();
-  
+
   if (NewState == ENABLE)
   {
-   // Set the Set protection Bit
+    // Set the Set protection Bit
     FLASHR->CR0 |= FLASH_SPR_Mask;
     // Set the Register Address
-    FLASHR->AR  = 0x4010DFB0;
+    FLASHR->AR = 0x4010DFB0;
     // Data To be Programmed to the Protection Register
-    FLASHR->DR0  = ~Xsectors;
+    FLASHR->DR0 = ~Xsectors;
     // Set the WMS bit to Start the Sequence
     FLASHR->CR0 |= FLASH_WMS_Mask;
   }
@@ -181,9 +179,9 @@ void FLASH_WritePrConfig(u32 Xsectors, FunctionalState NewState)
     // Set the Set protection Bit
     FLASHR->CR0 |= FLASH_SPR_Mask;
     // Set the Register Address
-    FLASHR->AR  = 0x4010DFB0;
+    FLASHR->AR = 0x4010DFB0;
     // Data To be Programmed to the Protection Register
-    FLASHR->DR0  = FLASHPR->NVWPAR|Xsectors;
+    FLASHR->DR0 = FLASHPR->NVWPAR | Xsectors;
     // Set the WMS bit to Start the Sequence
     FLASHR->CR0 |= FLASH_WMS_Mask;
   }
@@ -199,16 +197,15 @@ void FLASH_PermanantDebugPrConfig(FunctionalState NewState)
 {
   u16 ProtectionLevel = FLASH_ProtectionLevel();
 
-
   if (NewState == ENABLE)
   {
     //  If the First Protection Reset the DBGP bit
-    if(!ProtectionLevel)
+    if (!ProtectionLevel)
     {
       // Set the Set protection Bit
       FLASHR->CR0 |= FLASH_SPR_Mask;
       // Set the Register Address
-      FLASHR->AR  = 0x4010DFB8;
+      FLASHR->AR = 0x4010DFB8;
       // Data To be Programmed to the Protection Register
       FLASHR->DR0 = ~2;
       // Set the WMS bit to Start the Sequence
@@ -216,30 +213,28 @@ void FLASH_PermanantDebugPrConfig(FunctionalState NewState)
     }
     else
     {
-       // Set the Set protection Bit
-      FLASHR->CR0 |= FLASH_SPR_Mask;
-      // Set the Register Address
-      FLASHR->AR  = 0x4010DFBC;
-      // Data To be Programmed to the Protection Register
-      D0_temp=~(1<<(15+ProtectionLevel));
-      FLASHR->DR0 =D0_temp;
-      // Set the WMS bit to Start the Sequence
-      FLASHR->CR0 |= FLASH_WMS_Mask;
-    }
-
-  }
-    else if(ProtectionLevel)
-   {
       // Set the Set protection Bit
       FLASHR->CR0 |= FLASH_SPR_Mask;
       // Set the Register Address
-      FLASHR->AR  = 0x4010DFBC;
+      FLASHR->AR = 0x4010DFBC;
       // Data To be Programmed to the Protection Register
-      FLASHR->DR0 =~(1<<(ProtectionLevel-1));
+      D0_temp = ~(1 << (15 + ProtectionLevel));
+      FLASHR->DR0 = D0_temp;
       // Set the WMS bit to Start the Sequence
       FLASHR->CR0 |= FLASH_WMS_Mask;
+    }
   }
-
+  else if (ProtectionLevel)
+  {
+    // Set the Set protection Bit
+    FLASHR->CR0 |= FLASH_SPR_Mask;
+    // Set the Register Address
+    FLASHR->AR = 0x4010DFBC;
+    // Data To be Programmed to the Protection Register
+    FLASHR->DR0 = ~(1 << (ProtectionLevel - 1));
+    // Set the WMS bit to Start the Sequence
+    FLASHR->CR0 |= FLASH_WMS_Mask;
+  }
 }
 
 /*******************************************************************************
@@ -258,28 +253,28 @@ FlagStatus FLASH_FlagStatus(flashflags Xflag)
   // get the Flag Index
   TmpPos = (Xflag & FLASH_Flag_Mask);
 
-  switch(TmpReg)
+  switch (TmpReg)
   {
-    case 0 : // CR0
-    {
-      // Returns the status of the CR0[TmpPos] flag
-      TmpResult = (FLASHR->CR0 & (1<<TmpPos))==0 ? RESET : SET;
-      break;
-    }
-    case 1 : // CR1
-    {
-      // Returns the status of the CR1[TmpPos] flag
-      TmpResult = (FLASHR->CR1 & (1<<TmpPos))==0 ? RESET : SET;
-      break;
-    }
-    case 5 : // ER
-    {
-      // Returns the status of the ER[TmpPos] flag
-      TmpResult = (FLASHR->ER  & (1<<TmpPos))==0 ? RESET : SET;
-      break;
-    }
+  case 0: // CR0
+  {
+    // Returns the status of the CR0[TmpPos] flag
+    TmpResult = (FLASHR->CR0 & (1 << TmpPos)) == 0 ? RESET : SET;
+    break;
   }
-  return(TmpResult);
+  case 1: // CR1
+  {
+    // Returns the status of the CR1[TmpPos] flag
+    TmpResult = (FLASHR->CR1 & (1 << TmpPos)) == 0 ? RESET : SET;
+    break;
+  }
+  case 5: // ER
+  {
+    // Returns the status of the ER[TmpPos] flag
+    TmpResult = (FLASHR->ER & (1 << TmpPos)) == 0 ? RESET : SET;
+    break;
+  }
+  }
+  return (TmpResult);
 }
 
 /*******************************************************************************
@@ -294,26 +289,26 @@ void FLASH_FlagClear(flashflags Xflag)
   TmpReg = (Xflag & FLASH_Reg_Mask) >> 5;
   TmpPos = (Xflag & FLASH_Flag_Mask);
 
-  switch(TmpReg)
+  switch (TmpReg)
   {
-    case 0 : // CR0
-    {
-      // Clears the status of the CR0[TmpPos] flag
-      FLASHR->CR0 &= ~(1<<TmpPos);
-      break;
-    }
-    case 1 : // CR1
-    {
-      // Clears the status of the CR1[TmpPos] flag
-      FLASHR->CR1 &= ~(1<<TmpPos);
-      break;
-    }
-    case 5 : // ER
-    {
-      // Clears the status of the ER[TmpPos] flag
-      FLASHR->ER &= ~(1<<TmpPos);
-      break;
-    }
+  case 0: // CR0
+  {
+    // Clears the status of the CR0[TmpPos] flag
+    FLASHR->CR0 &= ~(1 << TmpPos);
+    break;
+  }
+  case 1: // CR1
+  {
+    // Clears the status of the CR1[TmpPos] flag
+    FLASHR->CR1 &= ~(1 << TmpPos);
+    break;
+  }
+  case 5: // ER
+  {
+    // Clears the status of the ER[TmpPos] flag
+    FLASHR->ER &= ~(1 << TmpPos);
+    break;
+  }
   }
 }
 /*******************************************************************************
@@ -324,18 +319,18 @@ void FLASH_FlagClear(flashflags Xflag)
 *******************************************************************************/
 u16 FLASH_ProtectionLevel(void)
 {
-  u16 TmpBitIndex =0;
+  u16 TmpBitIndex = 0;
   u16 ProtectionRegs;
 
-  if(FLASHPR->NVAPR0&2)
-    TmpBitIndex=0;
+  if (FLASHPR->NVAPR0 & 2)
+    TmpBitIndex = 0;
   else
-    TmpBitIndex=1;
+    TmpBitIndex = 1;
 
-  ProtectionRegs=~(FLASHPR->NVAPR1>>16);
+  ProtectionRegs = ~(FLASHPR->NVAPR1 >> 16);
   while (((ProtectionRegs) != 0) && (TmpBitIndex < 16))
   {
-    ProtectionRegs  = ProtectionRegs >>  1 ;
+    ProtectionRegs = ProtectionRegs >> 1;
     TmpBitIndex++;
   }
   return TmpBitIndex;
@@ -348,7 +343,8 @@ u16 FLASH_ProtectionLevel(void)
 *******************************************************************************/
 void FLASH_WaitForLastTask(void)
 {
-  while (FLASHR->CR0&0x16);
+  while (FLASHR->CR0 & 0x16)
+    ;
 }
 
 /*******************(C)COPYRIGHT 2003 STMicroelectronics *****END OF FILE****/

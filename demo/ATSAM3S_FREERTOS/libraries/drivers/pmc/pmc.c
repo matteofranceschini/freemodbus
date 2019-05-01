@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -41,7 +41,6 @@
 #define MASK_STATUS0 0xFFFFFFFC
 #define MASK_STATUS1 0xFFFFFFFF
 
-
 /*----------------------------------------------------------------------------
  *        Exported functions
  *----------------------------------------------------------------------------*/
@@ -55,22 +54,32 @@
 void PMC_EnablePeripheral(unsigned int id)
 {
     SANITY_CHECK(id < 35);
-    if (id < 32) {
-        if ((PMC->PMC_PCSR0 & (1 << id)) == (1 << id)) {
+    if (id < 32)
+    {
+        if ((PMC->PMC_PCSR0 & (1 << id)) == (1 << id))
+        {
 
-            TRACE_DEBUG("PMC_EnablePeripheral: clock of peripheral"  " %u is already enabled\n\r", id);
+            TRACE_DEBUG("PMC_EnablePeripheral: clock of peripheral"
+                        " %u is already enabled\n\r",
+                        id);
         }
-        else {
+        else
+        {
             PMC->PMC_PCER0 = 1 << id;
         }
     }
-    else {
-         id -= 32;
-        if ((PMC->PMC_PCSR1 & (1 << id)) == (1 << id)) {
+    else
+    {
+        id -= 32;
+        if ((PMC->PMC_PCSR1 & (1 << id)) == (1 << id))
+        {
 
-            TRACE_DEBUG("PMC_EnablePeripheral: clock of peripheral"  " %u is already enabled\n\r", id + 32);
+            TRACE_DEBUG("PMC_EnablePeripheral: clock of peripheral"
+                        " %u is already enabled\n\r",
+                        id + 32);
         }
-        else {
+        else
+        {
             PMC->PMC_PCER1 = 1 << id;
         }
     }
@@ -85,20 +94,30 @@ void PMC_EnablePeripheral(unsigned int id)
 void PMC_DisablePeripheral(unsigned int id)
 {
     SANITY_CHECK(id < 35);
-    if (id < 32) {
-        if ((PMC->PMC_PCSR0 & (1 << id)) != (1 << id)) {
-            TRACE_DEBUG("PMC_DisablePeripheral: clock of peripheral" " %u is not enabled\n\r", id);
+    if (id < 32)
+    {
+        if ((PMC->PMC_PCSR0 & (1 << id)) != (1 << id))
+        {
+            TRACE_DEBUG("PMC_DisablePeripheral: clock of peripheral"
+                        " %u is not enabled\n\r",
+                        id);
         }
-        else {
+        else
+        {
             PMC->PMC_PCDR0 = 1 << id;
         }
     }
-    else {
+    else
+    {
         id -= 32;
-        if ((PMC->PMC_PCSR1 & (1 << id)) != (1 << id)) {
-            TRACE_DEBUG("PMC_DisablePeripheral: clock of peripheral" " %u is not enabled\n\r", id + 32);
+        if ((PMC->PMC_PCSR1 & (1 << id)) != (1 << id))
+        {
+            TRACE_DEBUG("PMC_DisablePeripheral: clock of peripheral"
+                        " %u is not enabled\n\r",
+                        id + 32);
         }
-        else {
+        else
+        {
             PMC->PMC_PCDR1 = 1 << id;
         }
     }
@@ -110,10 +129,12 @@ void PMC_DisablePeripheral(unsigned int id)
 void PMC_EnableAllPeripherals(void)
 {
     PMC->PMC_PCER0 = MASK_STATUS0;
-    while( (PMC->PMC_PCSR0 & MASK_STATUS0) != MASK_STATUS0);
+    while ((PMC->PMC_PCSR0 & MASK_STATUS0) != MASK_STATUS0)
+        ;
     PMC->PMC_PCER1 = MASK_STATUS1;
-    while( (PMC->PMC_PCSR1 & MASK_STATUS1) != MASK_STATUS1);
-    TRACE_DEBUG("Enable all periph clocks\n\r"); 
+    while ((PMC->PMC_PCSR1 & MASK_STATUS1) != MASK_STATUS1)
+        ;
+    TRACE_DEBUG("Enable all periph clocks\n\r");
 }
 /**
  * \brief Disable all the periph clock via PMC
@@ -121,9 +142,11 @@ void PMC_EnableAllPeripherals(void)
 void PMC_DisableAllPeripherals(void)
 {
     PMC->PMC_PCDR0 = MASK_STATUS0;
-    while((PMC->PMC_PCSR0 & MASK_STATUS0) != 0);
+    while ((PMC->PMC_PCSR0 & MASK_STATUS0) != 0)
+        ;
     PMC->PMC_PCDR1 = MASK_STATUS1;
-    while((PMC->PMC_PCSR1 & MASK_STATUS1) != 0);
+    while ((PMC->PMC_PCSR1 & MASK_STATUS1) != 0)
+        ;
     TRACE_DEBUG("Disable all periph clocks\n\r");
 }
 
@@ -134,10 +157,12 @@ void PMC_DisableAllPeripherals(void)
 unsigned int PMC_IsPeriphEnabled(unsigned int id)
 {
     SANITY_CHECK(id < 35);
-    if (id < 32) {
+    if (id < 32)
+    {
         return (PMC->PMC_PCSR0 & (1 << id));
     }
-    else {
+    else
+    {
         return (PMC->PMC_PCSR1 & (1 << (id - 32)));
     }
 }

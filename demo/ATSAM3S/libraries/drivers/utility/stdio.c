@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -54,14 +54,14 @@
 //------------------------------------------------------------------------------
 
 // Maximum string size allowed (in bytes).
-#define MAX_STRING_SIZE         100
+#define MAX_STRING_SIZE 100
 
 //------------------------------------------------------------------------------
 //         Global Variables
 //------------------------------------------------------------------------------
 
 // Required for proper compilation.
-struct _reent r = {0, (FILE *) 0, (FILE *) 1, (FILE *) 0};
+struct _reent r = {0, (FILE *)0, (FILE *)1, (FILE *)0};
 struct _reent *_impure_ptr = &r;
 
 //------------------------------------------------------------------------------
@@ -90,7 +90,8 @@ signed int PutString(char *pStr, const char *pSource)
 {
     signed int num = 0;
 
-    while (*pSource != 0) {
+    while (*pSource != 0)
+    {
 
         *pStr++ = *pSource++;
         num++;
@@ -120,15 +121,18 @@ signed int PutUnsignedInt(
     width--;
 
     // Recursively write upper digits
-    if ((value / 10) > 0) {
+    if ((value / 10) > 0)
+    {
 
         num = PutUnsignedInt(pStr, fill, width, value / 10);
         pStr += num;
     }
     // Write filler characters
-    else {
+    else
+    {
 
-        while (width > 0) {
+        while (width > 0)
+        {
 
             PutChar(pStr, fill);
             pStr++;
@@ -162,11 +166,13 @@ signed int PutSignedInt(
     unsigned int absolute;
 
     // Compute absolute value
-    if (value < 0) {
+    if (value < 0)
+    {
 
         absolute = -value;
     }
-    else {
+    else
+    {
 
         absolute = value;
     }
@@ -175,28 +181,34 @@ signed int PutSignedInt(
     width--;
 
     // Recursively write upper digits
-    if ((absolute / 10) > 0) {
+    if ((absolute / 10) > 0)
+    {
 
-        if (value < 0) {
-        
+        if (value < 0)
+        {
+
             num = PutSignedInt(pStr, fill, width, -(absolute / 10));
         }
-        else {
+        else
+        {
 
             num = PutSignedInt(pStr, fill, width, absolute / 10);
         }
         pStr += num;
     }
-    else {
+    else
+    {
 
         // Reserve space for sign
-        if (value < 0) {
+        if (value < 0)
+        {
 
             width--;
         }
 
         // Write filler characters
-        while (width > 0) {
+        while (width > 0)
+        {
 
             PutChar(pStr, fill);
             pStr++;
@@ -205,7 +217,8 @@ signed int PutSignedInt(
         }
 
         // Write sign
-        if (value < 0) {
+        if (value < 0)
+        {
 
             num += PutChar(pStr, '-');
             pStr++;
@@ -241,15 +254,18 @@ signed int PutHexa(
     width--;
 
     // Recursively output upper digits
-    if ((value >> 4) > 0) {
+    if ((value >> 4) > 0)
+    {
 
         num += PutHexa(pStr, fill, width, maj, value >> 4);
         pStr += num;
     }
     // Write filler chars
-    else {
+    else
+    {
 
-        while (width > 0) {
+        while (width > 0)
+        {
 
             PutChar(pStr, fill);
             pStr++;
@@ -259,15 +275,18 @@ signed int PutHexa(
     }
 
     // Write current digit
-    if ((value & 0xF) < 10) {
+    if ((value & 0xF) < 10)
+    {
 
         PutChar(pStr, (value & 0xF) + '0');
     }
-    else if (maj) {
+    else if (maj)
+    {
 
         PutChar(pStr, (value & 0xF) - 10 + 'A');
     }
-    else {
+    else
+    {
 
         PutChar(pStr, (value & 0xF) - 10 + 'a');
     }
@@ -291,69 +310,90 @@ signed int PutHexa(
 //------------------------------------------------------------------------------
 signed int vsnprintf(char *pStr, size_t length, const char *pFormat, va_list ap)
 {
-    char          fill;
+    char fill;
     unsigned char width;
-    signed int    num = 0;
-    signed int    size = 0;
+    signed int num = 0;
+    signed int size = 0;
 
     // Clear the string
-    if (pStr) {
+    if (pStr)
+    {
 
         *pStr = 0;
     }
 
     // Phase string
-    while (*pFormat != 0 && size < length) {
+    while (*pFormat != 0 && size < length)
+    {
 
         // Normal character
-        if (*pFormat != '%') {
+        if (*pFormat != '%')
+        {
 
             *pStr++ = *pFormat++;
             size++;
         }
         // Escaped '%'
-        else if (*(pFormat+1) == '%') {
+        else if (*(pFormat + 1) == '%')
+        {
 
             *pStr++ = '%';
             pFormat += 2;
             size++;
         }
         // Token delimiter
-        else {
+        else
+        {
 
             fill = ' ';
             width = 0;
             pFormat++;
 
             // Parse filler
-            if (*pFormat == '0') {
+            if (*pFormat == '0')
+            {
 
                 fill = '0';
                 pFormat++;
             }
 
             // Parse width
-            while ((*pFormat >= '0') && (*pFormat <= '9')) {
-        
-                width = (width*10) + *pFormat-'0';
+            while ((*pFormat >= '0') && (*pFormat <= '9'))
+            {
+
+                width = (width * 10) + *pFormat - '0';
                 pFormat++;
             }
 
             // Check if there is enough space
-            if (size + width > length) {
+            if (size + width > length)
+            {
 
                 width = length - size;
             }
-        
+
             // Parse type
-            switch (*pFormat) {
-            case 'd': 
-            case 'i': num = PutSignedInt(pStr, fill, width, va_arg(ap, signed int)); break;
-            case 'u': num = PutUnsignedInt(pStr, fill, width, va_arg(ap, unsigned int)); break;
-            case 'x': num = PutHexa(pStr, fill, width, 0, va_arg(ap, unsigned int)); break;
-            case 'X': num = PutHexa(pStr, fill, width, 1, va_arg(ap, unsigned int)); break;
-            case 's': num = PutString(pStr, va_arg(ap, char *)); break;
-            case 'c': num = PutChar(pStr, va_arg(ap, unsigned int)); break;
+            switch (*pFormat)
+            {
+            case 'd':
+            case 'i':
+                num = PutSignedInt(pStr, fill, width, va_arg(ap, signed int));
+                break;
+            case 'u':
+                num = PutUnsignedInt(pStr, fill, width, va_arg(ap, unsigned int));
+                break;
+            case 'x':
+                num = PutHexa(pStr, fill, width, 0, va_arg(ap, unsigned int));
+                break;
+            case 'X':
+                num = PutHexa(pStr, fill, width, 1, va_arg(ap, unsigned int));
+                break;
+            case 's':
+                num = PutString(pStr, va_arg(ap, char *));
+                break;
+            case 'c':
+                num = PutChar(pStr, va_arg(ap, unsigned int));
+                break;
             default:
                 return EOF;
             }
@@ -365,11 +405,13 @@ signed int vsnprintf(char *pStr, size_t length, const char *pFormat, va_list ap)
     }
 
     // NULL-terminated (final \0 is not counted)
-    if (size < length) {
+    if (size < length)
+    {
 
         *pStr = 0;
     }
-    else {
+    else
+    {
 
         *(--pStr) = 0;
         size--;
@@ -389,7 +431,7 @@ signed int vsnprintf(char *pStr, size_t length, const char *pFormat, va_list ap)
 //------------------------------------------------------------------------------
 signed int snprintf(char *pString, size_t length, const char *pFormat, ...)
 {
-    va_list    ap;
+    va_list ap;
     signed int rc;
 
     va_start(ap, pFormat);
@@ -425,10 +467,12 @@ signed int vfprintf(FILE *pStream, const char *pFormat, va_list ap)
     char pError[] = "stdio.c: increase MAX_STRING_SIZE\n\r";
 
     // Write formatted string in buffer
-    if (vsprintf(pStr, pFormat, ap) >= MAX_STRING_SIZE) {
+    if (vsprintf(pStr, pFormat, ap) >= MAX_STRING_SIZE)
+    {
 
         fputs(pError, stderr);
-        while (1); // Increase MAX_STRING_SIZE
+        while (1)
+            ; // Increase MAX_STRING_SIZE
     }
 
     // Display string

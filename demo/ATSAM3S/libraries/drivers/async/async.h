@@ -26,8 +26,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
- 
- /**
+
+/**
  * \file
  *
  * Provide a routine for asynchronos transfer.
@@ -37,18 +37,18 @@
 #ifndef ASYNC_H
 #define ASYNC_H
 
-
 /*----------------------------------------------------------------------------
  *        Definition
  *----------------------------------------------------------------------------*/
 /** Transfer is still pending.*/
-#define ASYNC_STATUS_PENDING        0xFF
+#define ASYNC_STATUS_PENDING 0xFF
 
 /*----------------------------------------------------------------------------
  *        Type
  *----------------------------------------------------------------------------*/
 /** Asynchronous transfer descriptor. */
-typedef struct _Async {
+typedef struct _Async
+{
 
     /** Asynchronous transfer status.*/
     volatile uint8_t status;
@@ -64,4 +64,3 @@ typedef struct _Async {
 extern uint8_t ASYNC_IsFinished(Async *pAsync);
 
 #endif //#ifndef ASYNC_H
-

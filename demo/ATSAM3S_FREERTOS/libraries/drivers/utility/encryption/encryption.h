@@ -31,9 +31,9 @@
 /// \unit
 ///
 /// !Purpose
-/// 
+///
 /// Firmware encryption
-/// 
+///
 /// !Usage
 ///
 /// This file must include the header of every encryption module implemented for
@@ -55,44 +55,42 @@
 //------------------------------------------------------------------------------
 #include "config.h"
 
-
 //------------------------------------------------------------------------------
 // Check configuration
 //------------------------------------------------------------------------------
 #ifdef ONLY_ONE_ENCRYPTION
 #if !defined(ENCRYPTION_INIT) && !defined(USE_ENCRYPTION)
-  #define ENCRYPTION_INIT();
-  #define ENCRYPTION_CLEANUP();
-  #define ENCRYPTION_DECRYPT(...) 1
+#define ENCRYPTION_INIT() ;
+#define ENCRYPTION_CLEANUP() ;
+#define ENCRYPTION_DECRYPT(...) 1
 
 #elif !defined(ENCRYPTION_INIT) && defined(USE_ENCRYPTION)
-  #error USE_ENCRYPTION defined but no encryption method selected.
+#error USE_ENCRYPTION defined but no encryption method selected.
 
 #elif !defined(ENCRYPTION_AES_LTC) && \
-      !defined(ENCRYPTION_AES_REF) && \
-      !defined(ENCRYPTION_AES_HARD) && \
-      !defined(ENCRYPTION_3DES_LTC) && \
-      !defined(ENCRYPTION_3DES_HARD)
-  #error No algorithm selected.
+    !defined(ENCRYPTION_AES_REF) &&   \
+    !defined(ENCRYPTION_AES_HARD) &&  \
+    !defined(ENCRYPTION_3DES_LTC) &&  \
+    !defined(ENCRYPTION_3DES_HARD)
+#error No algorithm selected.
 
 #elif !defined(ENCRYPTION_ECB) && \
-      !defined(ENCRYPTION_CBC) && \
-      !defined(ENCRYPTION_CTR)
-  #error No encryption mode selected.
+    !defined(ENCRYPTION_CBC) &&   \
+    !defined(ENCRYPTION_CTR)
+#error No encryption mode selected.
 
 #elif !defined(ENCRYPTION_KEY)
-  #error No key defined.
+#error No key defined.
 
 #elif !defined(ENCRYPTION_KEY_LENGTH)
-  #error No key length selected.
+#error No key length selected.
 
 #elif !defined(ENCRYPTION_IV)
-  #error No initialization vector defined.
+#error No initialization vector defined.
 
 #elif !defined(ENCRYPTION_BLOCK_LENGTH)
-  #error No block length selected.
+#error No block length selected.
 
 #endif
 #endif // ONLY_ONE_ENCRYPTION
 #endif // BOOTLOADER_ENCRYPTION_H
-

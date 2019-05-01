@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -31,7 +31,7 @@
 /// \unit
 ///
 /// !!!Purpose
-/// 
+///
 /// Video structure, used for LCD and ISI.
 /// Conversion Video from YCC to RGB
 ///
@@ -54,31 +54,30 @@
 typedef struct _AT91S_VIDEO
 {
     /// LCD Vertical Size
-    unsigned int  lcd_vsize;
+    unsigned int lcd_vsize;
     /// LCD Horizontal Size
-    unsigned int  lcd_hsize;
+    unsigned int lcd_hsize;
     /// LCD Number of Bit Per Pixel
-    unsigned int  lcd_nbpp;
+    unsigned int lcd_nbpp;
     /// LCD Frame Buffer Address
-    unsigned int  lcd_fb_addr;
+    unsigned int lcd_fb_addr;
     /// Base address for the frame buffer descriptors list
-    unsigned int  Isi_fbd_base;
+    unsigned int Isi_fbd_base;
     /// Start of Line Delay
-    unsigned int  Hblank;
-    /// Start of frame Delay 
-    unsigned int  Vblank;
+    unsigned int Hblank;
+    /// Start of frame Delay
+    unsigned int Vblank;
     /// Vertical size of the Image sensor [0..2047]
-    unsigned int  codec_vsize;
+    unsigned int codec_vsize;
     /// Horizontal size of the Image sensor [0..2047]
-    unsigned int  codec_hsize;
+    unsigned int codec_hsize;
     /// Base address for codec DMA
-    unsigned int  codec_fb_addr;
+    unsigned int codec_fb_addr;
     /// Buffer index
-    unsigned int  IsiPrevBuffIndex;
-    /// Type of video 
-    unsigned char rgb_or_yuv;        
-}AT91S_VIDEO, *AT91PS_VIDEO;
-
+    unsigned int IsiPrevBuffIndex;
+    /// Type of video
+    unsigned char rgb_or_yuv;
+} AT91S_VIDEO, *AT91PS_VIDEO;
 
 //------------------------------------------------------------------------------
 //         Exported functions
@@ -86,4 +85,3 @@ typedef struct _AT91S_VIDEO
 extern void VIDEO_Ycc2Rgb(unsigned char *ycc, unsigned short *rgb, unsigned int len);
 
 #endif
-

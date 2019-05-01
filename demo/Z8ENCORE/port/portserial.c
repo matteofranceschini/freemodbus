@@ -25,38 +25,36 @@
 #include "mb.h"
 #include "mbport.h"
 
-#define PORTA_UART_RXD			0x10
-#define PORTA_UART_TXD			0x20
+#define PORTA_UART_RXD 0x10
+#define PORTA_UART_TXD 0x20
 
-#define RX_ENABLE				0x40
-#define TX_ENABLE				0x80
+#define RX_ENABLE 0x40
+#define TX_ENABLE 0x80
 
-#define UART0_RXD_INT_PENDING	0x10
-#define UART0_TXD_INT_PENDING	0x08
+#define UART0_RXD_INT_PENDING 0x10
+#define UART0_TXD_INT_PENDING 0x08
 
-#define UART0_RXD_INT_EN_H		0x10
-#define UART0_RXD_INT_EN_L		0x10
-#define UART0_TXD_INT_EN_H		0x08
-#define UART0_TXD_INT_EN_L		0x08
+#define UART0_RXD_INT_EN_H 0x10
+#define UART0_RXD_INT_EN_L 0x10
+#define UART0_TXD_INT_EN_H 0x08
+#define UART0_TXD_INT_EN_L 0x08
 
-#define UART_PARITY_ODD			0x18
-#define UART_PARITY_EVEN		0x10
+#define UART_PARITY_ODD 0x18
+#define UART_PARITY_EVEN 0x10
 
-#define UART_ERRORS				0x70
-
+#define UART_ERRORS 0x70
 
 /* ----------------------- static functions ---------------------------------*/
-static void interrupt prvvUARTTxReadyISR( void );
-static void interrupt prvvUARTRxISR( void );
+static void interrupt prvvUARTTxReadyISR(void);
+static void interrupt prvvUARTRxISR(void);
 
 /* ----------------------- Start implementation -----------------------------*/
-void
-vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
+void vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
 {
     /* If xRXEnable enable serial receive interrupts. If xTxENable enable
      * transmitter empty interrupts.
      */
-    if( xRxEnable )
+    if (xRxEnable)
     {
         IRQ0ENL |= UART0_RXD_INT_EN_L;
     }
@@ -64,7 +62,7 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
     {
         IRQ0ENL &= ~UART0_RXD_INT_EN_L;
     }
-    if( xTxEnable )
+    if (xTxEnable)
     {
         IRQ0ENL |= UART0_TXD_INT_EN_L;
         /* Force Tx Interruption */
@@ -76,17 +74,16 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
     }
 }
 
-BOOL
-xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
+BOOL xMBPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity)
 {
-    UCHAR           cfg = 0;
+    UCHAR cfg = 0;
 
-    if( ucDataBits != 8 )
+    if (ucDataBits != 8)
     {
         return FALSE;
     }
 
-    switch ( eParity )
+    switch (eParity)
     {
     case MB_PAR_NONE:
         break;
@@ -104,14 +101,14 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     }
 
     /* Baud Rate -> U0BR = (CLOCK/(16*BAUD) */
-    U0BRH = CLOCK / ( 16 * ulBaudRate ) >> 8;
-    U0BRL = CLOCK / ( 16 * ulBaudRate ) & 0x00FF;
+    U0BRH = CLOCK / (16 * ulBaudRate) >> 8;
+    U0BRL = CLOCK / (16 * ulBaudRate) & 0x00FF;
 
     /* Enable Alternate Function of UART Pins */
     PAAF |= PORTA_UART_RXD | PORTA_UART_TXD;
 
     /* Disable Interrupts */
-    DI(  );
+    DI();
 
     /* Configure Stop Bits, Parity and Enable Rx/Tx */
     U0CTL0 = cfg | RX_ENABLE | TX_ENABLE;
@@ -120,25 +117,24 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     /* Low Priority Rx/Tx Interrupts */
     IRQ0ENH &= ~UART0_TXD_INT_EN_H & ~UART0_RXD_INT_EN_H;
 
-    vMBPortSerialEnable( FALSE, FALSE );
+    vMBPortSerialEnable(FALSE, FALSE);
 
     /* Set Rx/Tx Interruption Vectors */
-    SET_VECTOR( UART0_RX, prvvUARTRxISR );
-    SET_VECTOR( UART0_TX, prvvUARTTxReadyISR );
+    SET_VECTOR(UART0_RX, prvvUARTRxISR);
+    SET_VECTOR(UART0_TX, prvvUARTTxReadyISR);
 
     /* Enable Interrupts */
-    EI(  );
+    EI();
 
     return TRUE;
 }
 
-BOOL
-xMBPortSerialPutByte( CHAR ucByte )
+BOOL xMBPortSerialPutByte(CHAR ucByte)
 {
     /* Put a byte in the UARTs transmit buffer. This function is called
      * by the protocol stack if pxMBFrameCBTransmitterEmpty( ) has been
      * called. */
-    while( !( U0STAT0 & 0x04 ) )
+    while (!(U0STAT0 & 0x04))
     {
     }
 
@@ -147,13 +143,12 @@ xMBPortSerialPutByte( CHAR ucByte )
     return TRUE;
 }
 
-BOOL
-xMBPortSerialGetByte( CHAR * pucByte )
+BOOL xMBPortSerialGetByte(CHAR *pucByte)
 {
     /* Return the byte in the UARTs receive buffer. This function is called
      * by the protocol stack after pxMBFrameCBByteReceived( ) has been called.
      */
-    while( !( U0STAT0 & 0x80 ) )
+    while (!(U0STAT0 & 0x80))
     {
     }
 
@@ -166,19 +161,18 @@ xMBPortSerialGetByte( CHAR * pucByte )
  * Create an interrupt handler for the transmit buffer empty interrupt
  * (or an equivalent) for your target processor. This function should then
  * call pxMBFrameCBTransmitterEmpty( ) which tells the protocol stack that
- * a new character can be sent. The protocol stack will then call 
+ * a new character can be sent. The protocol stack will then call
  * xMBPortSerialPutByte( ) to send the character.
  */
 static unsigned int uiCnt = 0;
 
 static void interrupt
-prvvUARTTxReadyISR( void )
+prvvUARTTxReadyISR(void)
 {
-    pxMBFrameCBTransmitterEmpty(  );
+    pxMBFrameCBTransmitterEmpty();
 
     IRQ0 &= ~UART0_TXD_INT_PENDING;
 }
-
 
 /*
  * Create an interrupt handler for the receive interrupt for your target
@@ -187,18 +181,18 @@ prvvUARTTxReadyISR( void )
  * character.
  */
 static void interrupt
-prvvUARTRxISR( void )
+prvvUARTRxISR(void)
 {
-    UCHAR           tmp;
+    UCHAR tmp;
 
     /* Verify UART error flags */
-    if( U0STAT0 & UART_ERRORS )
+    if (U0STAT0 & UART_ERRORS)
     {
         tmp = U0D;
     }
     else
     {
-        pxMBFrameCBByteReceived(  );
+        pxMBFrameCBByteReceived();
     }
 
     IRQ0 &= ~UART0_RXD_INT_PENDING;

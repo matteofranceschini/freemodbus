@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2009, Atmel Corporation
  *
@@ -52,8 +52,8 @@
 /// \param x The address to check.
 //------------------------------------------------------------------------------
 #define IS_BITBAND_SRAM_ADDR(x)       \
-    ( ((uint32_t)(x)) >= 0x20000000 && \
-      ((uint32_t)(x)) < (0x20000000+0x100000) )
+    (((uint32_t)(x)) >= 0x20000000 && \
+     ((uint32_t)(x)) < (0x20000000 + 0x100000))
 
 //------------------------------------------------------------------------------
 /// \def IS_BITBAND_PERIPH_ADDR(x)
@@ -61,9 +61,9 @@
 /// \note The address should be in area of 0x4000000 ~ 0x400FFFFF
 /// \param x The address to check
 //------------------------------------------------------------------------------
-#define IS_BITBAND_PERIPH_ADDR(x)       \
-    ( ((uint32_t)(x)) >= 0x40000000 && \
-      ((uint32_t)(x)) < (0x40000000+0x100000) )
+#define IS_BITBAND_PERIPH_ADDR(x)     \
+    (((uint32_t)(x)) >= 0x40000000 && \
+     ((uint32_t)(x)) < (0x40000000 + 0x100000))
 
 //------------------------------------------------------------------------------
 /// \def BITBAND_ALIAS_ADDRESS(addr, bit)
@@ -75,9 +75,7 @@
 /// \callergraph
 //------------------------------------------------------------------------------
 #define BITBAND_ALIAS_ADDRESS(addr, bit) \
-    ((volatile uint32_t*)((((uint32_t)(addr) & 0xF0000000) + 0x02000000) \
-                          +((((uint32_t)(addr)&0xFFFFF)*32)\
-                          +(  (uint32_t)(bit)*4))))
+    ((volatile uint32_t *)((((uint32_t)(addr)&0xF0000000) + 0x02000000) + ((((uint32_t)(addr)&0xFFFFF) * 32) + ((uint32_t)(bit)*4))))
 
 //------------------------------------------------------------------------------
 /// \def WRITE_BITBANDING(addr32, bit, val)
@@ -87,8 +85,10 @@
 /// \param val    The value that the bit is set to.
 /// \callergraph
 //------------------------------------------------------------------------------
-#define WRITE_BITBANDING(addr32, bit, val) do {\
-        *BITBAND_ALIAS_ADDRESS(addr32,bit) = (val); \
+#define WRITE_BITBANDING(addr32, bit, val)           \
+    do                                               \
+    {                                                \
+        *BITBAND_ALIAS_ADDRESS(addr32, bit) = (val); \
     } while (0);
 
 //------------------------------------------------------------------------------
@@ -97,12 +97,15 @@
 /// \param addr32 32-bit aligned byte address where the bit exists.
 /// \param bit    Bit position.
 //------------------------------------------------------------------------------
-#define TOGGLE_BITBANDING(addr32, bit) do {\
-        volatile uint32_t * p = \
-            BITBAND_ALIAS_ADDRESS(addr32,bit); \
-        if (*p) *p = 0; \
-        else    *p = 1; \
-    }while(0);
+#define TOGGLE_BITBANDING(addr32, bit)          \
+    do                                          \
+    {                                           \
+        volatile uint32_t *p =                  \
+            BITBAND_ALIAS_ADDRESS(addr32, bit); \
+        if (*p)                                 \
+            *p = 0;                             \
+        else                                    \
+            *p = 1;                             \
+    } while (0);
 
 #endif //#ifndef BITBANDING_H
-

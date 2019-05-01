@@ -28,15 +28,15 @@ typedef enum
   GPIO_HI_AIN_TRI,
   GPIO_IN_TRI_TTL,
   GPIO_IN_TRI_CMOS,
-  GPIO_IPUPD_WP,    
+  GPIO_IPUPD_WP,
   GPIO_OUT_OD,
   GPIO_OUT_PP,
   GPIO_AF_OD,
   GPIO_AF_PP
 } GpioPinMode_TypeDef;
 
-#define GPIO_LSB  0x00
-#define GPIO_MSB  0x08
+#define GPIO_LSB 0x00
+#define GPIO_MSB 0x08
 
 /*******************************************************************************
 * Function Name  : GPIO_Config
@@ -47,7 +47,7 @@ typedef enum
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void GPIO_Config (GPIO_TypeDef *GPIOx, u16 Port_Pins, GpioPinMode_TypeDef GPIO_Mode);
+void GPIO_Config(GPIO_TypeDef *GPIOx, u16 Port_Pins, GpioPinMode_TypeDef GPIO_Mode);
 
 /*******************************************************************************
 * Function Name  : GPIO_BitRead

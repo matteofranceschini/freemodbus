@@ -30,19 +30,17 @@
 #include "mbport.h"
 
 /* ----------------------- Static variables ---------------------------------*/
-static int      uiRegSR;
-static char    *heap_ptr;
+static int uiRegSR;
+static char *heap_ptr;
 
 /* ----------------------- Start implementation -----------------------------*/
-void
-prvvPortEnterCritical(  )
+void prvvPortEnterCritical()
 {
 
-    uiRegSR = asm_set_ipl( 7 );
+    uiRegSR = asm_set_ipl(7);
 }
 
-void
-prvvPortExitCritical(  )
+void prvvPortExitCritical()
 {
-    ( void )asm_set_ipl( ( uint32 ) uiRegSR );
+    (void)asm_set_ipl((uint32)uiRegSR);
 }

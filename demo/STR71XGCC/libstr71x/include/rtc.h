@@ -26,20 +26,19 @@
 
 typedef enum
 {
-  RTC_GIR  = 0x0008,
+  RTC_GIR = 0x0008,
   RTC_OWIR = 0x0004,
-  RTC_AIR  = 0x0002,
-  RTC_SIR  = 0x0001
+  RTC_AIR = 0x0002,
+  RTC_SIR = 0x0001
 } RTC_FLAGS;
 
 typedef enum
 {
-  RTC_GIT  = 0x0008,
+  RTC_GIT = 0x0008,
   RTC_OWIT = 0x0004,
-  RTC_AIT  = 0x0002,
-  RTC_SIT  = 0x0001
+  RTC_AIT = 0x0002,
+  RTC_SIT = 0x0001
 } RTC_IT;
-
 
 /*******************************************************************************
 * Function Name  : RTC_CounterClear
@@ -47,7 +46,7 @@ typedef enum
 * Input          : None
 * Return         : None
 *******************************************************************************/
-void RTC_CounterClear (void);
+void RTC_CounterClear(void);
 
 /*******************************************************************************
 * Function Name  : RTC_CounterValue
@@ -55,9 +54,9 @@ void RTC_CounterClear (void);
 * Input          : None
 * Return         : The current counter value.
 *******************************************************************************/
-inline u32 RTC_CounterValue (void)
+inline u32 RTC_CounterValue(void)
 {
-	return ( (u32)RTC->CNTH << 16 ) | RTC->CNTL;
+  return ((u32)RTC->CNTH << 16) | RTC->CNTL;
 }
 
 /*******************************************************************************
@@ -66,7 +65,7 @@ inline u32 RTC_CounterValue (void)
 * Input          : The new counter value.
 * Return         : None
 *******************************************************************************/
-void RTC_CounterConfig (u32 CounterValue);
+void RTC_CounterConfig(u32 CounterValue);
 
 /*******************************************************************************
 * Function Name  : RTC_PrescalerValue
@@ -74,9 +73,9 @@ void RTC_CounterConfig (u32 CounterValue);
 * Input          : None
 * Return         : an u32 value that holds the prescaler Value.
 *******************************************************************************/
-inline u32 RTC_PrescalerValue (void)
+inline u32 RTC_PrescalerValue(void)
 {
-	return ( (u32)(RTC->PRLH & 0x000F) << 16 ) | RTC->PRLL;
+  return ((u32)(RTC->PRLH & 0x000F) << 16) | RTC->PRLL;
 }
 
 /*******************************************************************************
@@ -85,7 +84,7 @@ inline u32 RTC_PrescalerValue (void)
 * Input          : The New prescaler Value
 * Return         : None
 *******************************************************************************/
-void RTC_PrescalerConfig (u32 Xprescaler);
+void RTC_PrescalerConfig(u32 Xprescaler);
 
 /*******************************************************************************
 * Function Name  : RTC_AlarmValue
@@ -93,9 +92,9 @@ void RTC_PrescalerConfig (u32 Xprescaler);
 * Input          : None
 * Return         : an u32 value that holds the Real Time clock alarm time .
 *******************************************************************************/
-inline u32 RTC_AlarmValue (void)
+inline u32 RTC_AlarmValue(void)
 {
-	return ( (u32)RTC->ALRH << 16 ) | RTC->ALRL;
+  return ((u32)RTC->ALRH << 16) | RTC->ALRL;
 }
 
 /*******************************************************************************
@@ -104,7 +103,7 @@ inline u32 RTC_AlarmValue (void)
 * Input          : an u32 value that holds the Real Time clock alarm time .
 * Return         : None
 *******************************************************************************/
-void RTC_AlarmConfig (u32 Xalarm);
+void RTC_AlarmConfig(u32 Xalarm);
 
 /*******************************************************************************
 * Function Name  : RTC_FlagStatus
@@ -112,9 +111,9 @@ void RTC_AlarmConfig (u32 Xalarm);
 * Input          : an RTC flag RTC_GIR, RTC_OWIR, RTC_AIR or RTC_SIR
 * Return         : SET or RESET
 *******************************************************************************/
-inline FlagStatus RTC_FlagStatus (RTC_FLAGS Xflag)
+inline FlagStatus RTC_FlagStatus(RTC_FLAGS Xflag)
 {
-	return ( RTC->CRL & Xflag ) == 0 ? RESET : SET;
+  return (RTC->CRL & Xflag) == 0 ? RESET : SET;
 }
 
 /*******************************************************************************
@@ -123,7 +122,7 @@ inline FlagStatus RTC_FlagStatus (RTC_FLAGS Xflag)
 * Input          : an RTC flag RTC_GIR, RTC_OWIR, RTC_AIR or RTC_SIR
 * Return         : None
 *******************************************************************************/
-void RTC_FlagClear (RTC_FLAGS Xflag);
+void RTC_FlagClear(RTC_FLAGS Xflag);
 
 /*******************************************************************************
 * Function Name  : RTC_ITConfig
@@ -132,9 +131,12 @@ void RTC_FlagClear (RTC_FLAGS Xflag);
 * Input 2        : ENABLE or DISABLE
 * Return         : None
 *******************************************************************************/
-inline void RTC_ITConfig (RTC_IT Xrtcit, FunctionalState NewState)
+inline void RTC_ITConfig(RTC_IT Xrtcit, FunctionalState NewState)
 {
-  if (NewState == ENABLE) RTC->CRH |= Xrtcit; else RTC->CRH &= ~Xrtcit;
+  if (NewState == ENABLE)
+    RTC->CRH |= Xrtcit;
+  else
+    RTC->CRH &= ~Xrtcit;
 }
 
 /*******************************************************************************
@@ -143,9 +145,9 @@ inline void RTC_ITConfig (RTC_IT Xrtcit, FunctionalState NewState)
 * Input          : an RTC interrupt RTC_GIT, RTC_OWIT, RTC_AIT or RTC_SIT
 * Return         : ENABLE or DISABLE
 *******************************************************************************/
-inline FunctionalState RTC_ITStatus (RTC_IT Xrtcit)
+inline FunctionalState RTC_ITStatus(RTC_IT Xrtcit)
 {
-  return ( RTC->CRH & Xrtcit ) == 0 ? DISABLE : ENABLE;
+  return (RTC->CRH & Xrtcit) == 0 ? DISABLE : ENABLE;
 }
 
 /*******************************************************************************
@@ -154,7 +156,7 @@ inline FunctionalState RTC_ITStatus (RTC_IT Xrtcit)
 * Input          : an RTC interrupt RTC_GIT, RTC_OWIT, RTC_AIT or RTC_SIT
 * Return         : None
 *******************************************************************************/
-void RTC_ITClear (RTC_IT Xrtcit);
+void RTC_ITClear(RTC_IT Xrtcit);
 
 /*******************************************************************************
 * Function Name  : RTC_EnterCfgMode

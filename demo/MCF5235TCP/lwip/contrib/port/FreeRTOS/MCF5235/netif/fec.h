@@ -35,6 +35,6 @@
 /* ------------------------ Defines --------------------------------------- */
 
 /* ------------------------ Prototypes ------------------------------------ */
-err_t           mcf523xfec_init( struct netif * netif );
+err_t mcf523xfec_init(struct netif *netif);
 
 #endif
